@@ -3,13 +3,14 @@ import { Layout } from "antd";
 import { Sider, Header, Content, Footer } from "../layout";
 
 const Home = () => {
-  const [selectedKey, setSelectedKey] = useState("dashboard");
+  const [selectedKey, setSelectedKey] = useState("home");
   return (
     <>
       <Layout>
         <Sider
           selectedIndex={(e) => setSelectedKey(e.key)}
           selectedKey={selectedKey}
+          items={[]}
         />
         <Layout>
           <Header />

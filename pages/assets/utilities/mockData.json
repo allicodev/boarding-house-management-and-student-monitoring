@@ -1,0 +1,39 @@
+{
+  "student-table": [
+    {
+      "_id": "1234567890",
+      "status": "verified",
+      "name": "Mock Name",
+      "address": "Mock Address",
+      "roomStatus": { "occupied": 10, "total": 16 }
+    },
+    {
+      "_id": "1234567890",
+      "status": "verified",
+      "name": "Mock Name2",
+      "address": "Mock Address2",
+      "roomStatus": { "occupied": 16, "total": 16 }
+    },
+    {
+      "_id": "1234567890",
+      "status": "not-verified",
+      "name": "Mock Name3",
+      "address": "Mock Address3",
+      "roomStatus": { "occupied": 10, "total": 50 }
+    },
+    {
+      "_id": "1234567890",
+      "status": "not-verified",
+      "name": "Mock Name4",
+      "address": "Mock Address4",
+      "roomStatus": { "occupied": 16, "total": 16 }
+    },
+    {
+      "_id": "1234567890",
+      "status": "verified",
+      "name": "Mock Name5",
+      "address": "Mock Address5",
+      "roomStatus": { "occupied": 16, "total": 16 }
+    }
+  ]
+}

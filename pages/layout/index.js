@@ -2,28 +2,19 @@ import React, { useEffect, useState } from "react";
 import {
   Layout,
   Menu,
-  Button,
   Typography,
-  Space,
-  Tooltip,
-  Form,
   Affix,
+  Avatar,
+  Dropdown,
+  Tag,
+  Badge,
 } from "antd";
-import { LogoutOutlined, SettingOutlined } from "@ant-design/icons";
+import { UserOutlined, LogoutOutlined, BellOutlined } from "@ant-design/icons";
 
-import { FcBullish } from "react-icons/fc";
 import Cookies from "js-cookie";
 import { PageHeader } from "@ant-design/pro-layout";
 
-const Sider = ({ selectedIndex, selectedKey }) => {
-  let [items, setItems] = useState([
-    {
-      label: "Dashboard",
-      key: "dashboard",
-      icon: <FcBullish />,
-    },
-  ]);
-
+const Sider = ({ selectedIndex, selectedKey, items }) => {
   return (
     <Affix>
       <Layout.Sider collapsible theme="light">
@@ -43,12 +34,6 @@ const Sider = ({ selectedIndex, selectedKey }) => {
 };
 
 const Header = () => {
-  const [currentUser, setCurrentUser] = useState({ name: "", lastname: "" });
-  const [openEdit, setOpenEdit] = useState(false);
-  const [openChangePass, setOpenChangePass] = useState(false);
-  const [form] = Form.useForm();
-  const [location, setLocation] = useState();
-
   return (
     <>
       <Layout.Header
@@ -56,49 +41,63 @@ const Header = () => {
           backgroundColor: "#aaa",
           display: "flex",
           alignItems: "center",
-          justifyContent: "flex-end",
-          paddingInline: 20,
+          justifyContent: "space-between",
+          height: 50,
+          width: "100%",
+          paddingInline: 10,
         }}
       >
-        <Space>
-          <Tooltip title="Profile Settings">
-            <Button
-              size="large"
-              icon={<SettingOutlined />}
-              style={{
-                backgroundColor: "#aaa",
-                color: "#fff",
-                padding: 0,
-              }}
-              onClick={() => {
-                setOpenEdit(true);
-              }}
+        <Tag color="#87d068">{Cookies.get("mode")?.toLocaleUpperCase()}</Tag>
+        <div style={{ display: "flex", alignSelf: "center" }}>
+          {/* <Badge count={1} showZero={false}>
+            <BellOutlined style={{ fontSize: 25 }} />
+          </Badge> */}
+
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  label: "OPTION 1",
+                  key: "option1",
+                },
+                {
+                  label: "OPTION 1",
+                  key: "option2",
+                },
+                {
+                  type: "divider",
+                },
+                {
+                  label: (
+                    <div style={{ color: "#ff0000" }}>
+                      logout <LogoutOutlined />
+                    </div>
+                  ),
+                  key: "3",
+                  onClick: () => {
+                    Cookies.remove("currentUser");
+                    Cookies.remove("loggedIn");
+                    Cookies.remove("mode");
+                    window.location.reload();
+                  },
+                },
+              ],
+            }}
+            trigger={["click"]}
+          >
+            <Avatar
+              icon={<UserOutlined />}
+              size={40}
+              style={{ cursor: "pointer" }}
             />
-          </Tooltip>
-          <Tooltip title="Logout">
-            <Button
-              size="large"
-              icon={<LogoutOutlined />}
-              style={{
-                backgroundColor: "#aaa",
-                color: "#fff",
-                padding: 0,
-              }}
-              onClick={() => {
-                Cookies.remove("currentUser");
-                Cookies.remove("loggedIn");
-                Cookies.remove("mode");
-                window.location.reload();
-              }}
-            />
-          </Tooltip>
-        </Space>
+          </Dropdown>
+        </div>
       </Layout.Header>
     </>
   );
 };
 
-const Content = ({ selectedKey, setSelectedKey }) => {
+const Content = ({ selectedKey, children }) => {
   return (
     <div
       style={{
@@ -109,7 +108,7 @@ const Content = ({ selectedKey, setSelectedKey }) => {
       }}
     >
       <PageHeader title={selectedKey.toString().toUpperCase()}>
-        {Cookies.get("mode")}
+        {children}
       </PageHeader>
     </div>
   );
