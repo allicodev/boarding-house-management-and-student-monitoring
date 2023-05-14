@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { Layout } from "antd";
 import { Sider, Header, Content, Footer } from "../layout";
+import { FcBullish } from "react-icons/fc";
 
-const Home = () => {
+import Home from "../components/landlord/home";
+
+const MyApp = () => {
   const [selectedKey, setSelectedKey] = useState("home");
   return (
     <>
@@ -10,11 +13,13 @@ const Home = () => {
         <Sider
           selectedIndex={(e) => setSelectedKey(e.key)}
           selectedKey={selectedKey}
-          items={[]}
+          items={[{ label: "Home", key: "home", icon: <FcBullish /> }]}
         />
         <Layout>
           <Header />
-          <Content selectedKey={selectedKey} setSelectedKey={setSelectedKey} />
+          <Content selectedKey={selectedKey} setSelectedKey={setSelectedKey}>
+            {selectedKey == "home" ? <Home /> : null}
+          </Content>
         </Layout>
       </Layout>
       {/* <Footer /> */}
@@ -22,4 +27,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default MyApp;

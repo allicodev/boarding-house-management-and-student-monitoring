@@ -1,15 +1,6 @@
-import React, { useEffect, useState } from "react";
-import {
-  Layout,
-  Menu,
-  Typography,
-  Affix,
-  Avatar,
-  Dropdown,
-  Tag,
-  Badge,
-} from "antd";
-import { UserOutlined, LogoutOutlined, BellOutlined } from "@ant-design/icons";
+import React from "react";
+import { Layout, Menu, Typography, Affix, Avatar, Dropdown, Tag } from "antd";
+import { UserOutlined, LogoutOutlined, CheckOutlined } from "@ant-design/icons";
 
 import Cookies from "js-cookie";
 import { PageHeader } from "@ant-design/pro-layout";
@@ -17,7 +8,7 @@ import { PageHeader } from "@ant-design/pro-layout";
 const Sider = ({ selectedIndex, selectedKey, items }) => {
   return (
     <Affix>
-      <Layout.Sider collapsible theme="light">
+      <Layout.Sider collapsible theme="light" defaultCollapsed={true}>
         <Menu
           onClick={selectedIndex}
           selectedKeys={selectedKey}
@@ -35,7 +26,7 @@ const Sider = ({ selectedIndex, selectedKey, items }) => {
 
 const Header = () => {
   return (
-    <>
+    <Affix>
       <Layout.Header
         style={{
           backgroundColor: "#aaa",
@@ -47,7 +38,14 @@ const Header = () => {
           paddingInline: 10,
         }}
       >
-        <Tag color="#87d068">{Cookies.get("mode")?.toLocaleUpperCase()}</Tag>
+        <div>
+          <Tag color="#87d068">{Cookies.get("mode")?.toLocaleUpperCase()}</Tag>
+          {Cookies.get("mode")?.toLocaleUpperCase() == "LANDLORD" && (
+            <Tag color="#87d068">
+              VERIFIED <CheckOutlined />
+            </Tag>
+          )}
+        </div>
         <div style={{ display: "flex", alignSelf: "center" }}>
           <Dropdown
             menu={{
@@ -89,7 +87,7 @@ const Header = () => {
           </Dropdown>
         </div>
       </Layout.Header>
-    </>
+    </Affix>
   );
 };
 

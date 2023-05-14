@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { Button, Modal, Table, Tag, Tooltip, Typography } from "antd";
-import { ExportOutlined } from "@ant-design/icons";
+import {
+  ExportOutlined,
+  FieldTimeOutlined,
+  CheckOutlined,
+  EditOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
 import { mockData } from "../../../../assets/utilities";
 import ContentWithSteps from "./content_with_steps";
 
@@ -21,11 +27,17 @@ const RequestHistory = () => {
       align: "center",
       render: (_, row) =>
         row?.status.at(-1)?.name == "accepted" ? (
-          <Tag color="#87d068">ACCEPTED</Tag>
+          <Tag color="#87d068">
+            <CheckOutlined /> ACCEPTED
+          </Tag>
         ) : row?.status.at(-1)?.name == "draft" ? (
-          <Tag color="#87CEEB">DRAFT</Tag>
+          <Tag color="#87CEEB">
+            <EditOutlined /> DRAFT
+          </Tag>
         ) : row?.status.at(-1)?.name == "pending" ? (
-          <Tag color="#108ee9">PENDING</Tag>
+          <Tag color="#108ee9">
+            <FieldTimeOutlined /> PENDING
+          </Tag>
         ) : (
           <Tooltip title="Click to know the reason">
             <Tag
@@ -38,7 +50,7 @@ const RequestHistory = () => {
                 })
               }
             >
-              DECLINED
+              <CloseOutlined /> DECLINED
             </Tag>
           </Tooltip>
         ),
