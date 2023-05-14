@@ -21,6 +21,10 @@ const ListView = ({ source, setOpenFullDetails }) => {
       render: (_, row) => row?.address ?? "No Address",
     },
     {
+      title: "Owner Name",
+      render: (_, row) => row?.ownerName ?? "No owner. Its free",
+    },
+    {
       title: "Rooms Status",
       align: "center",
       render: (_, row) =>
@@ -44,7 +48,14 @@ const ListView = ({ source, setOpenFullDetails }) => {
     },
   ];
 
-  return <Table columns={columns} pagination={false} dataSource={source} />;
+  return (
+    <Table
+      columns={columns}
+      pagination={false}
+      dataSource={source}
+      rowKey={(_) => _._id}
+    />
+  );
 };
 
 const GridView = ({ source, setOpenFullDetails }) => {
@@ -101,7 +112,7 @@ const GridView = ({ source, setOpenFullDetails }) => {
       grid={{ gutter: 3, column: 4 }}
       dataSource={source}
       renderItem={(el, i) => (
-        <List.Item>
+        <List.Item key={i}>
           <Card
             key={i}
             style={{

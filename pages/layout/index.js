@@ -49,10 +49,6 @@ const Header = () => {
       >
         <Tag color="#87d068">{Cookies.get("mode")?.toLocaleUpperCase()}</Tag>
         <div style={{ display: "flex", alignSelf: "center" }}>
-          {/* <Badge count={1} showZero={false}>
-            <BellOutlined style={{ fontSize: 25 }} />
-          </Badge> */}
-
           <Dropdown
             menu={{
               items: [

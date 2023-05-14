@@ -1,5 +1,8 @@
+import React from "react";
+import RequestHistory from "./component/requestHistory";
+
 const Requests = () => {
-  return <>1</>;
+  return <RequestHistory />;
 };
 
 export default Requests;
