@@ -3,6 +3,8 @@ import User from "../../../database/models/User";
 
 export default async function handler(req, res) {
   try {
+    if (req.method !== 'POST') throw new Error('Invalid method');
+
     await dbConnect();
     const data = { ...req.body, role: "landlord" };
 

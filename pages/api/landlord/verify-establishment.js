@@ -3,10 +3,13 @@ import dbConnect from "../../../database/dbConnect";
 
 export default async function handler(req, res) {
   try {
-    if (req.method !== 'POST') throw new Error('Invalid method');
-    
+    if (req.method !== "POST") throw new Error("Invalid method");
+
     await dbConnect();
-    await Establishment.create({ ...req.body });
+
+    const { placeId, status } = req.body;
+
+    await Establishment.findByIdAndUpdate(placeId, { $set: { status } });
 
     res.status(200).json({ message: "Registered successfully" });
   } catch (err) {
