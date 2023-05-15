@@ -1,3 +1,4 @@
+import React from "react";
 import "../styles/globals.css";
 import "../styles/main.styles.css";
 import { ConfigProvider } from "antd";

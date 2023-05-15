@@ -15,18 +15,30 @@ export default async function handler(req, res) {
     const validUser = await User.findOne({ email }).lean();
 
     if (validUser) {
-      const validPassword = bcrypt.compare(password, validUser.password);
+      const validPassword = await bcrypt.compare(password, validUser.password);
 
       if (validPassword) {
+        delete validUser.password;
+        delete validUser.createdAt;
+        delete validUser.updatedAt;
+        delete validUser.__v;
+
+        console.log(validUser);
+
         const token = jwt.sign(validUser, JWT_PRIVATE_KEY);
-        res.status(200).json({ jwt: token, userData: validUser });
+        res.json({
+          jwt: token,
+          userData: validUser,
+          status: 200,
+          message: "Login Success",
+        });
       } else {
-        res.status(400).json({ message: "Invalid credentials" });
+        res.json({ message: "Wrong Password", status: 452 });
       }
     } else {
-      res.status(400).json({ message: "Invalid credentials" });
+      res.json({ message: "Account doesn't exist", status: 451 });
     }
   } else {
-    res.status(404).json({ success: false });
+    res.json({ success: false, status: 404 });
   }
 }

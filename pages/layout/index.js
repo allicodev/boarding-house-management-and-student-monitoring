@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Layout, Menu, Typography, Affix, Avatar, Dropdown, Tag } from "antd";
 import { UserOutlined, LogoutOutlined, CheckOutlined } from "@ant-design/icons";
 
 import Cookies from "js-cookie";
 import { PageHeader } from "@ant-design/pro-layout";
+import EditProfile from "./components/edit_profile";
+import ChangePassword from "./components/change_password";
 
 const Sider = ({ selectedIndex, selectedKey, items }) => {
   return (
@@ -25,69 +27,94 @@ const Sider = ({ selectedIndex, selectedKey, items }) => {
 };
 
 const Header = () => {
+  const [openEditModal, setOpenEditModal] = useState({
+    open: false,
+    data: null,
+  });
+  const [openChangePassword, setOpenChangedPassword] = useState(false);
+
   return (
-    <Affix>
-      <Layout.Header
-        style={{
-          backgroundColor: "#aaa",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          height: 50,
-          width: "100%",
-          paddingInline: 10,
-        }}
-      >
-        <div>
-          <Tag color="#87d068">{Cookies.get("mode")?.toLocaleUpperCase()}</Tag>
-          {Cookies.get("mode")?.toLocaleUpperCase() == "LANDLORD" && (
+    <>
+      <Affix>
+        <Layout.Header
+          style={{
+            backgroundColor: "#aaa",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            height: 50,
+            width: "100%",
+            paddingInline: 10,
+          }}
+        >
+          <div>
             <Tag color="#87d068">
-              VERIFIED <CheckOutlined />
+              {Cookies.get("mode")?.toLocaleUpperCase()}
             </Tag>
-          )}
-        </div>
-        <div style={{ display: "flex", alignSelf: "center" }}>
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  label: "OPTION 1",
-                  key: "option1",
-                },
-                {
-                  label: "OPTION 1",
-                  key: "option2",
-                },
-                {
-                  type: "divider",
-                },
-                {
-                  label: (
-                    <div style={{ color: "#ff0000" }}>
-                      logout <LogoutOutlined />
-                    </div>
-                  ),
-                  key: "3",
-                  onClick: () => {
-                    Cookies.remove("currentUser");
-                    Cookies.remove("loggedIn");
-                    Cookies.remove("mode");
-                    window.location.reload();
+            {Cookies.get("mode")?.toLocaleUpperCase() == "LANDLORD" && (
+              <Tag color="#87d068">
+                VERIFIED <CheckOutlined />
+              </Tag>
+            )}
+          </div>
+          <div style={{ display: "flex", alignSelf: "center" }}>
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    label: "Edit Profile",
+                    key: "edit",
+                    onClick: () =>
+                      setOpenEditModal({
+                        open: true,
+                        data: JSON.parse(Cookies.get("currentUser")),
+                      }),
                   },
-                },
-              ],
-            }}
-            trigger={["click"]}
-          >
-            <Avatar
-              icon={<UserOutlined />}
-              size={40}
-              style={{ cursor: "pointer" }}
-            />
-          </Dropdown>
-        </div>
-      </Layout.Header>
-    </Affix>
+                  {
+                    type: "divider",
+                  },
+                  {
+                    label: (
+                      <div style={{ color: "#ff0000" }}>
+                        logout <LogoutOutlined />
+                      </div>
+                    ),
+                    key: "3",
+                    onClick: () => {
+                      Cookies.remove("currentUser");
+                      Cookies.remove("loggedIn");
+                      Cookies.remove("mode");
+                      window.location.reload();
+                    },
+                  },
+                ],
+              }}
+              trigger={["click"]}
+            >
+              <Avatar
+                icon={<UserOutlined />}
+                size={40}
+                style={{ cursor: "pointer" }}
+              />
+            </Dropdown>
+          </div>
+        </Layout.Header>
+      </Affix>
+
+      {/* UTILS */}
+      <EditProfile
+        openEditModal={openEditModal}
+        setOpenEditModal={setOpenEditModal}
+        setOpenChangedPassword={setOpenChangedPassword}
+      />
+      <ChangePassword
+        open={openChangePassword}
+        close={() => setOpenChangedPassword(false)}
+        id={openEditModal.data?._id}
+        openEditModal={openEditModal}
+        setOpenEditModal={setOpenEditModal}
+      />
+    </>
   );
 };
 

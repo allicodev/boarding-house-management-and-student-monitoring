@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Cookies from "js-cookie";
-import { Form, Input, Button, Alert, Row, Col, Menu } from "antd";
+import { Form, Input, Button, Menu, message } from "antd";
+import axios from "axios";
 
 const Login = () => {
-  const [mode, setMode] = useState("student");
   return (
     <div
       style={{
@@ -27,52 +27,28 @@ const Login = () => {
           background: "#eee",
           borderRadius: 20,
         }}
-        onFinish={() => {}}
-      >
-        {/* {isError.show && (
-            <Alert
-              description={isError.description}
-              onClose={() => setIsError({ show: false, description: "" })}
-              type="error"
-              closable
-            />
-          )} */}
-        <Menu
-          items={[
-            {
-              label: "Student",
-              key: "student",
-              style: {
-                width: "33%",
-                textAlign: "center",
-              },
-            },
-            {
-              label: "Landlord",
-              key: "landlord",
-              style: {
-                width: "33%",
-                textAlign: "center",
-              },
-            },
-            {
-              label: "Admin",
-              key: "admin",
-              style: {
-                width: "33%",
-                textAlign: "center",
-              },
-            },
-          ]}
-          style={{ backgroundColor: "#eee" }}
-          onClick={(e) => setMode(e.key)}
-          selectedKeys={[mode]}
-          mode="horizontal"
-        />
-        <Form.Item label="Email" name="email">
-          <Input size="large" onChange={(e) => {}} />
-        </Form.Item>
+        onFinish={(val) => {
+          (async () => {
+            let { data } = await axios.post("/api/auth/login", val);
 
+            if ([451, 452].includes(data.status)) {
+              message.error(data.message);
+              return;
+            }
+
+            if (data.status == 200) {
+              Cookies.set("loggedIn", "true");
+              Cookies.set("mode", data.userData.role);
+              Cookies.set("currentUser", JSON.stringify(data.userData));
+              message.success(data.message);
+              location?.reload();
+            }
+          })();
+        }}
+      >
+        <Form.Item label="Email" name="email">
+          <Input size="large" />
+        </Form.Item>
         <Form.Item label="Password" name="password">
           <Input.Password />
         </Form.Item>
@@ -83,15 +59,8 @@ const Login = () => {
             style={{ width: "100%" }}
             htmlType="submit"
             size="large"
-            onClick={() => {
-              // Cookies.set("currentUser", JSON.stringify(data.currentUser));
-              Cookies.set("loggedIn", "true");
-              Cookies.set("mode", mode);
-              // message.success(data.message);
-              location?.reload();
-            }}
           >
-            Login as <strong> {mode.toLocaleUpperCase()}</strong>
+            Login
           </Button>
         </Form.Item>
       </Form>

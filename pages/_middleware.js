@@ -7,7 +7,6 @@ export async function middleware(req = NextRequest) {
     "/user/home-student",
     "/user/home-landlord",
     "/user/home-admin",
-    "/user/home",
   ];
   if (validPath.includes(url.pathname)) {
     const isLoggedIn = req.cookies["loggedIn"] || false;
