@@ -6,8 +6,6 @@ let TenantSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-  },
-  {
     establishmentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Establishment",
