@@ -7,6 +7,7 @@ export default async function handler(req, res) {
 
     await dbConnect();
 
+    // status declined or 
     const { placeId, status } = req.body;
 
     await Establishment.findByIdAndUpdate(placeId, { $set: { status } });
