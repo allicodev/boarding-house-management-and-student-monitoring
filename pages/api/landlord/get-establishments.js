@@ -6,9 +6,13 @@ export default async function handler(req, res) {
     if (req.method !== "GET") throw new Error("Invalid method");
 
     await dbConnect();
-    let establishment = await Establishment.find({
-      ownerId: req.query._id,
-    });
+    let establishment = await Establishment.find(
+      req.query._id != undefined
+        ? {
+            ownerId: req.query._id,
+          }
+        : {}
+    ).populate("ownerId");
 
     res.json({ establishment, status: 200, message: "Fetched successfully" });
   } catch (err) {

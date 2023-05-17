@@ -23,8 +23,6 @@ export default async function handler(req, res) {
         delete validUser.updatedAt;
         delete validUser.__v;
 
-        console.log(validUser);
-
         const token = jwt.sign(validUser, JWT_PRIVATE_KEY);
         res.json({
           jwt: token,

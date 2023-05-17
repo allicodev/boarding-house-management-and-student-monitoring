@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Table, Tag, Button, List, Card, Typography } from "antd";
+import {
+  Table,
+  Tag,
+  Button,
+  List,
+  Card,
+  Typography,
+  Image,
+  Segmented,
+  Carousel,
+} from "antd";
 import {
   EllipsisOutlined,
   CheckOutlined,
@@ -10,7 +20,12 @@ const ListView = ({ source, setOpenFullDetails }) => {
   const columns = [
     {
       title: "id",
-      render: (_, row) => row?._id.substr(row?._id.length - 6, 6) ?? "No ID",
+      render: (_, row) =>
+        (
+          <Typography.Link>
+            {row?._id.substr(row?._id.length - 6, 6)}
+          </Typography.Link>
+        ) ?? "No ID",
     },
     {
       title: "Name",
@@ -22,7 +37,9 @@ const ListView = ({ source, setOpenFullDetails }) => {
     },
     {
       title: "Owner Name",
-      render: (_, row) => row?.ownerName ?? "No owner. Its free",
+      render: (_, row) =>
+        row?.ownerId?.firstName + " " + row?.ownerId?.lastName ??
+        "No owner. Its free",
     },
     {
       title: "Rooms Status",
@@ -30,7 +47,7 @@ const ListView = ({ source, setOpenFullDetails }) => {
       render: (_, row) =>
         (
           <Tag color="#87d068">
-            {row?.roomStatus.occupied}/{row?.roomStatus.total}
+            {0}/{row?.totalSpaceForRent}
           </Tag>
         ) ?? "No Status", // occupied rooms or space / total room [red text when full, otherwise green]
     },
@@ -61,11 +78,12 @@ const ListView = ({ source, setOpenFullDetails }) => {
 const GridView = ({ source, setOpenFullDetails }) => {
   const [activeTab, setActiveTab] = useState("p_info");
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [imageType, setImageType] = useState("Photos");
 
   const content = (tab, el) => {
     switch (tab) {
       case "p_info": {
-        let flag = el?.roomStatus.occupied >= el?.roomStatus.total;
+        let flag = 0 >= el?.totalSpaceForRent;
         let verified = el?.status == "verified";
         return (
           <>
@@ -79,16 +97,11 @@ const GridView = ({ source, setOpenFullDetails }) => {
             <Typography.Title level={5}>{el?.name}</Typography.Title>
             <Typography.Text>{el?.address}</Typography.Text> <br />
             <Typography.Text>
-              Occupied:{" "}
-              {
-                <Tag color={flag ? "#aaa" : "#108ee9"}>
-                  {el?.roomStatus.occupied}
-                </Tag>
-              }
+              Occupied: {<Tag color={flag ? "#aaa" : "#108ee9"}>{0}</Tag>}
               Total:{" "}
               {
                 <Tag color={flag ? "#aaa" : "#108ee9"}>
-                  {el?.roomStatus.total}
+                  {el?.totalSpaceForRent}
                 </Tag>
               }
             </Typography.Text>
@@ -96,10 +109,43 @@ const GridView = ({ source, setOpenFullDetails }) => {
         );
       }
       case "o_info": {
-        return "o";
+        const owner = el?.ownerId;
+        return (
+          <>
+            {owner?.profilePhoto && (
+              <Image src={owner?.profilePhoto} preview={false} width={250} />
+            )}
+            <Typography.Title level={5}>
+              {owner?.firstName + " " + owner?.lastName}
+            </Typography.Title>
+            <small style={{ color: "#aaa" }}>{owner?.email}</small> <br />
+            <small style={{ color: "#aaa" }}>{owner?.phoneNumber}</small>
+          </>
+        );
       }
       case "i_info": {
-        return "i";
+        return (
+          <>
+            <Segmented
+              options={["Photos", "Business Permit"]}
+              onChange={(e) => setImageType(e)}
+              style={{ padding: 5 }}
+            />
+            <Carousel
+              autoplaySpeed={2000}
+              style={{ width: 250, marginTop: 10 }}
+              autoplay
+            >
+              {imageType == "Photos" &&
+                el?.establishmentPhotos.map((_, i) => (
+                  <Image src={_} width={250} key={i} />
+                ))}
+              {imageType == "Business Permit" && (
+                <Image src={el?.businessPermitPhoto} width={250} />
+              )}
+            </Carousel>
+          </>
+        );
       }
       default:
         return "ERROR";

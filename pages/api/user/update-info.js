@@ -8,7 +8,6 @@ export default async function handler(req, res) {
     await dbConnect();
 
     const { _id } = req.body;
-    console.log(req.body);
 
     await User.findByIdAndUpdate(_id, { $set: { ...req.body } });
 
