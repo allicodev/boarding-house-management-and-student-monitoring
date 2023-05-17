@@ -21,6 +21,7 @@ let EstablishmentSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["pending", "approved", "declined"],
+      default: "pending",
       required: true,
     },
     establishmentPhotos: {
@@ -31,7 +32,7 @@ let EstablishmentSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    totalVacantTenant: {
+    totalSpaceForRent: {
       type: Number,
       required: true,
     },

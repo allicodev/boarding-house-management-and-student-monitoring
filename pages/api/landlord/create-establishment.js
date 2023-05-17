@@ -1,15 +1,18 @@
 import Establishment from "../../../database/models/Establishment";
 import dbConnect from "../../../database/dbConnect";
+import mongoose from "mongoose";
 
 export default async function handler(req, res) {
   try {
-    if (req.method !== 'POST') throw new Error('Invalid method');
-    
+    if (req.method !== "POST") throw new Error("Invalid method");
     await dbConnect();
-    await Establishment.create({ ...req.body });
+    let newEstablishment = Establishment(req.body);
+    newEstablishment.ownerId = mongoose.Types.ObjectId(req.body.ownerId);
+    await newEstablishment.save();
 
-    res.status(200).json({ message: "Registered successfully" });
+    res.json({ status: 200, message: "Registered successfully" });
   } catch (err) {
-    res.status(500).json({ success: false, message: err });
+    console.log(err);
+    res.json({ status: 500, success: false, message: err });
   }
 }

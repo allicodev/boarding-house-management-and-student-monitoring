@@ -14,7 +14,7 @@ const RequestTable = ({ sourceData }) => {
         <>
           {row._id}{" "}
           {!row?.seen ? (
-            <small style={{ color: "#ff0000" }} italic={true}>
+            <small style={{ color: "#ff0000" }} italic="true">
               New
             </small>
           ) : null}
