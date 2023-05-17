@@ -8,11 +8,12 @@ export default async function handler(req, res) {
     await dbConnect();
 
     const { _id } = req.body;
+    console.log(req.body);
 
     await User.findByIdAndUpdate(_id, { $set: { ...req.body } });
 
-    res.status(200).json({ message: "Updated successfully" });
+    res.json({ status: 200, message: "Updated successfully" });
   } catch (err) {
-    res.status(500).json({ success: false, message: err });
+    res.json({ status: 500, success: false, message: err });
   }
 }

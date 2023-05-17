@@ -5,7 +5,6 @@ import { UserOutlined, LogoutOutlined, CheckOutlined } from "@ant-design/icons";
 import Cookies from "js-cookie";
 import { PageHeader } from "@ant-design/pro-layout";
 import EditProfile from "./components/edit_profile";
-import ChangePassword from "./components/change_password";
 
 const Sider = ({ selectedIndex, selectedKey, items }) => {
   return (
@@ -31,7 +30,6 @@ const Header = () => {
     open: false,
     data: null,
   });
-  const [openChangePassword, setOpenChangedPassword] = useState(false);
 
   return (
     <>
@@ -103,14 +101,6 @@ const Header = () => {
 
       {/* UTILS */}
       <EditProfile
-        openEditModal={openEditModal}
-        setOpenEditModal={setOpenEditModal}
-        setOpenChangedPassword={setOpenChangedPassword}
-      />
-      <ChangePassword
-        open={openChangePassword}
-        close={() => setOpenChangedPassword(false)}
-        id={openEditModal.data?._id}
         openEditModal={openEditModal}
         setOpenEditModal={setOpenEditModal}
       />

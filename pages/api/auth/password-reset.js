@@ -8,23 +8,23 @@ export default async function handler(req, res) {
 
     await dbConnect();
 
-    const { idNumber, oldPassword, newPassword } = req.body;
-
-    const user = await User.findOne({ idNumber }).lean();
+    const { id, oldPassword, newPassword } = req.body;
+    const user = await User.findOne({ _id: id }).lean();
 
     if (!user) throw new Error("Invalid user");
 
     if (await bcrypt.compare(oldPassword, user?.password)) {
+      let _newPassword = await bcrypt.hash(newPassword, 8);
       await User.findOneAndUpdate(
-        { idNumber },
-        { $set: { password: await bcrypt.hash(newPassword, 8) } }
+        { _id: id },
+        { $set: { password: _newPassword } }
       );
-      res.status(200).json({ message: "Registered successfully" });
+      res.json({ status: 200, message: "Password Updated Successfully" });
     } else {
-      res.status(500).json({ message: "Password didnt match" });
+      res.json({ status: 401, message: "Old Password is wrong" });
     }
   } catch (err) {
-    console.log('ERR', err);
-    res.status(500).json({ success: false, message: err });
+    console.log("ERR", err);
+    res.json({ success: false, message: err });
   }
 }

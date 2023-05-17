@@ -1,26 +1,42 @@
 import React, { useState } from "react";
-import { Alert, Button, Form, Input, Modal } from "antd";
+import { Button, Form, Input, Modal, message } from "antd";
+import axios from "axios";
 
-const ChangePassword = ({
-  open,
-  close,
-  id,
-  openEditModal,
-  setOpenEditModal,
-}) => {
+const ChangePassword = ({ open, close, openEditModal }) => {
   const [updated, setUpdated] = useState(false);
   const [form] = Form.useForm();
   const [passwords, setPasswords] = useState({ newPass: "", confirmPass: "" });
 
-  const handleFinish = (val) => {};
+  const handleFinish = async (val) => {
+    if (Object.values(val).filter((e) => e == undefined).length > 0) {
+      message.error("Please fill blank fields");
+      return;
+    }
+
+    const { confirmPassword, newPassword, oldPassword } = val;
+
+    if (confirmPassword != newPassword) {
+      message.error("New Password and Confirm Password didn't match");
+      return;
+    }
+    let { data } = await axios.post("/api/auth/password-reset", {
+      id: openEditModal.data._id,
+      oldPassword,
+      newPassword,
+    });
+
+    if (data.status != 200) {
+      message.error(data.message);
+    } else {
+      message.success(data.message);
+      setUpdated(false);
+    }
+  };
 
   return (
     <Modal
       open={open}
-      onCancel={() => {
-        close();
-        setOpenEditModal({ open: true, data: openEditModal });
-      }}
+      onCancel={close}
       closable={false}
       footer={
         <Button disabled={!updated} onClick={() => form.submit()}>
@@ -47,14 +63,6 @@ const ChangePassword = ({
             }
           />
         </Form.Item>
-        {passwords.newPass != passwords.confirmPass ||
-          ((passwords.newPass != "" || passwords.confirmPass != "") && (
-            <Alert
-              message="New Password and Confirm Password didn't match"
-              type="warning"
-              showIcon
-            />
-          ))}
         <Form.Item label="Confirm Password" name="confirmPassword">
           <Input.Password
             onChange={(e) =>
