@@ -28,9 +28,10 @@ let UserSchema = new mongoose.Schema(
       default: "",
     },    
     idNumber: {
+      // only for student and admin
       type: String,
       unique: true,
-      required: true,
+      required: false,
     },    
     role: {
       type: String,
