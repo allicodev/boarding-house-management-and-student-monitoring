@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert, Badge, Table, Typography } from "antd";
+import { Alert, Badge, Space, Table, Typography } from "antd";
 import StudentProfile from "./student_profile";
 
 const RequestTable = ({ sourceData }) => {
@@ -26,23 +26,31 @@ const RequestTable = ({ sourceData }) => {
   ];
   return (
     <>
-      <Alert
-        message="You can open student profile by click a row"
-        type="warning"
-        style={{ marginBottom: 10 }}
-        closable
-      />
       <Table
         title={() => (
-          <Badge
-            count={sourceData?.filter((e) => !e.seen).length}
-            offset={[10, 0]}
-            showZero={false}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
           >
-            <Typography.Text style={{ fontWeight: "bold" }}>
-              List of Requests
-            </Typography.Text>
-          </Badge>
+            <Badge
+              count={sourceData?.filter((e) => !e.seen).length}
+              offset={[10, 0]}
+              showZero={false}
+            >
+              <Typography.Text style={{ fontWeight: "bold" }}>
+                List of Requests
+              </Typography.Text>
+            </Badge>
+            <Alert
+              message="You can open student profile by clicking a row"
+              type="warning"
+              style={{ width: 350 }}
+              closable
+            />
+          </div>
         )}
         dataSource={sourceData}
         pagination={false}
@@ -56,6 +64,7 @@ const RequestTable = ({ sourceData }) => {
           };
         }}
       />
+      {/* UTILS */}
       <StudentProfile
         open={openStudentProfile.open}
         close={() => setOpenStudentProfile({ open: false, data: null })}

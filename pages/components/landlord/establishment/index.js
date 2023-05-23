@@ -13,17 +13,37 @@ import {
   Space,
   FloatButton,
   Segmented,
+  Spin,
 } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
 import NewEstablishment from "./components/new_establishment";
 import axios from "axios";
 import Cookies from "js-cookie";
+import ModalTable from "./components/modal_table";
 
 const Establishment = () => {
   const [openNewEstablishment, setOpenNewEstablishment] = useState(false);
   const [establishment, setEstablishment] = useState([]);
   const [trigger, setTrigger] = useState(0);
   const [imageType, setImageType] = useState("Establishment Photos");
+  const [openTable, setOpenTable] = useState({ open: false, data: null });
+  const [loader, setLoader] = useState("");
+
+  const fetchData = async (type) => {
+    let { data } = await axios.get(`/api/landlord/request-data`, {
+      params: { type },
+    });
+
+    if (data.status != 200) {
+      message.error(data.message);
+      return;
+    } else {
+      if (data.data.length > 0) {
+        setOpenTable({ open: true, data: data.data });
+        message.success(data.message);
+      } else message.warning("Empty");
+    }
+  };
 
   const updatedTabData = (estab) => {
     return estab.map((e, i) => {
@@ -62,14 +82,20 @@ const Establishment = () => {
               <Typography.Text type="secondary">{e?.address}</Typography.Text>
               <br />
               <Space>
-                <Card hoverable>
-                  <Statistic title="Request" value="99+" />
+                <Card onClick={() => fetchData("request")} hoverable>
+                  <Statistic
+                    title="Request"
+                    value={e?.totalRequests > 99 ? "99+" : e?.totalRequests}
+                  />
+                </Card>
+                <Card onClick={() => fetchData("tenants")} hoverable>
+                  <Statistic title="Tenants" value={e?.totalSpaceRented} />
                 </Card>
                 <Card hoverable>
-                  <Statistic title="Tenants" value="99+" />
-                </Card>
-                <Card hoverable>
-                  <Statistic title="Rooms" value="16 / 32" />
+                  <Statistic
+                    title="Rooms"
+                    value={`${e?.totalSpaceRented} / ${e?.totalSpaceForRent}`}
+                  />
                 </Card>
               </Space>
             </Col>
@@ -88,6 +114,7 @@ const Establishment = () => {
 
   useEffect(() => {
     (async () => {
+      setLoader("init");
       let { data } = await axios.get("/api/landlord/get-establishments", {
         params: {
           _id: JSON.parse(Cookies.get("currentUser"))._id,
@@ -96,11 +123,12 @@ const Establishment = () => {
 
       if (data.status == 200) setEstablishment(data.establishment);
       else message.error(data.message);
+      setLoader("");
     })();
   }, [trigger]);
 
   return (
-    <>
+    <Spin spinning={loader == "init"}>
       {establishment.length > 0 && (
         <Tabs
           type="editable-card"
@@ -122,7 +150,12 @@ const Establishment = () => {
         close={() => setOpenNewEstablishment(false)}
         refresh={() => setTrigger(trigger + 1)}
       />
-    </>
+      <ModalTable
+        open={openTable.open}
+        close={() => setOpenTable({ open: false, data: null })}
+        data={openTable.data}
+      />
+    </Spin>
   );
 };
 

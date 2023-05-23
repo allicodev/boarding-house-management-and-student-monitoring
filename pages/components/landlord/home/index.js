@@ -1,15 +1,30 @@
-import React from "react";
-import { Card, Col, Row, Space, Statistic } from "antd";
+import React, { useState, useEffect } from "react";
+import { Card, Col, Row, Space, Statistic, message } from "antd";
 import { mockData } from "../../../assets/utilities";
 import RequestTable from "./component/request_table";
 import RecentTable from "./component/recent_table";
+import axios from "axios";
 
 const Home = () => {
+  const [requests, setRequests] = useState([]);
   const status = "full";
+
+  useEffect(() => {
+    (async () => {
+      let { data } = await axios.get("/api/landlord/request-data", {
+        params: { type: "request" },
+      });
+
+      if (data.status != 200) {
+        message.error(data.message);
+      } else setRequests(data.data);
+    })();
+  }, []);
+
   return (
     <Row gutter={[16, 16]}>
       <Col span={12}>
-        <RequestTable sourceData={mockData["incoming_request"]} />
+        <RequestTable sourceData={requests} />
       </Col>
       <Col span={8}>
         <RecentTable sourceData={mockData["incoming_request"]} />
