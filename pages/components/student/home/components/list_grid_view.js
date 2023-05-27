@@ -9,6 +9,7 @@ import {
   Image,
   Segmented,
   Carousel,
+  Empty,
 } from "antd";
 import {
   EllipsisOutlined,
@@ -47,9 +48,9 @@ const ListView = ({ source, setOpenFullDetails }) => {
       render: (_, row) =>
         (
           <Tag color="#87d068">
-            {0}/{row?.totalSpaceForRent}
+            {row?.totalOccupied}/{row?.totalSpaceForRent}
           </Tag>
-        ) ?? "No Status", // occupied rooms or space / total room [red text when full, otherwise green]
+        ) ?? "No Status",
     },
     {
       title: "",
@@ -83,7 +84,7 @@ const GridView = ({ source, setOpenFullDetails }) => {
   const content = (tab, el) => {
     switch (tab) {
       case "p_info": {
-        let flag = 0 >= el?.totalSpaceForRent;
+        let flag = el?.totalOccupied >= el?.totalSpaceForRent;
         let verified = el?.status == "verified";
         return (
           <>
@@ -97,7 +98,8 @@ const GridView = ({ source, setOpenFullDetails }) => {
             <Typography.Title level={5}>{el?.name}</Typography.Title>
             <Typography.Text>{el?.address}</Typography.Text> <br />
             <Typography.Text>
-              Occupied: {<Tag color={flag ? "#aaa" : "#108ee9"}>{0}</Tag>}
+              Occupied:{" "}
+              {<Tag color={flag ? "#aaa" : "#108ee9"}>{el?.totalOccupied}</Tag>}
               Total:{" "}
               {
                 <Tag color={flag ? "#aaa" : "#108ee9"}>
@@ -126,24 +128,31 @@ const GridView = ({ source, setOpenFullDetails }) => {
       case "i_info": {
         return (
           <>
-            <Segmented
-              options={["Photos", "Business Permit"]}
-              onChange={(e) => setImageType(e)}
-              style={{ padding: 5 }}
-            />
-            <Carousel
-              autoplaySpeed={2000}
-              style={{ width: 250, marginTop: 10 }}
-              autoplay
-            >
-              {imageType == "Photos" &&
-                el?.establishmentPhotos.map((_, i) => (
-                  <Image src={_} width={250} key={i} />
-                ))}
-              {imageType == "Business Permit" && (
-                <Image src={el?.businessPermitPhoto} width={250} />
-              )}
-            </Carousel>
+            {el?.establishmentPhotos?.length == 0 &&
+            el?.businessPermitPhoto == null ? (
+              <Empty description={false} />
+            ) : (
+              <>
+                <Segmented
+                  options={["Photos", "Business Permit"]}
+                  onChange={(e) => setImageType(e)}
+                  style={{ padding: 5 }}
+                />
+                <Carousel
+                  autoplaySpeed={2000}
+                  style={{ width: 250, marginTop: 10 }}
+                  autoplay
+                >
+                  {imageType == "Photos" &&
+                    el?.establishmentPhotos.map((_, i) => (
+                      <Image src={_} width={250} key={i} />
+                    ))}
+                  {imageType == "Business Permit" && (
+                    <Image src={el?.businessPermitPhoto} width={250} />
+                  )}
+                </Carousel>
+              </>
+            )}
           </>
         );
       }

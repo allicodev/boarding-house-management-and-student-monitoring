@@ -23,9 +23,9 @@ const Home = () => {
 
   useEffect(() => {
     (async () => {
-      let { data } = await axios.get("/api/landlord/get-establishments");
+      let { data } = await axios.get("/api/student/get-establishments");
 
-      if (data.status == 200) setEstablishment(data.establishment);
+      if (data.status == 200) setEstablishment(data.data);
       else message.error(data.message);
     })();
   }, []);

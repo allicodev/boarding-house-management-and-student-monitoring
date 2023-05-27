@@ -11,12 +11,12 @@ export default async function handler(req, res) {
     let doc = await Establishment.find({ ownerId });
     let estabId = doc.map((_) => _._id);
 
-    let totalOccupied = await Tenant.countDocuments({ _id: { $in: estabId } });
+    let totalOccupied = await Tenant.countDocuments({
+      establishmentId: { $in: estabId },
+    });
 
     let total = doc.reduce((p, n) => p + n.totalSpaceForRent, 0);
     let totalVacant = total - totalOccupied;
-
-    console.log(totalVacant);
 
     res.json({
       data: {
