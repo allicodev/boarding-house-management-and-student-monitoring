@@ -7,9 +7,16 @@ import axios from "axios";
 
 const Home = () => {
   const [requests, setRequests] = useState([]);
-  const status = "full";
+  const [acceptedTenants, setAcceptedTenants] = useState([]);
+  const [totalData, setTotalData] = useState({ vacant: 0, total: 0 });
 
   useEffect(() => {
+    (async () => {
+      let { data } = await axios.get("/api/landlord/request-extra-data");
+      if (data.status != 200) {
+        message.error(data.message);
+      } else setTotalData(data.data);
+    })();
     (async () => {
       let { data } = await axios.get("/api/landlord/request-data", {
         params: { type: "request" },
@@ -19,6 +26,12 @@ const Home = () => {
         message.error(data.message);
       } else setRequests(data.data);
     })();
+    (async () => {
+      let { data } = await axios.get("/api/landlord/recent-accepted-tenants");
+      if (data.status != 200) {
+        message.error(data.message);
+      } else setAcceptedTenants(data.data); //
+    })();
   }, []);
 
   return (
@@ -27,27 +40,27 @@ const Home = () => {
         <RequestTable sourceData={requests} />
       </Col>
       <Col span={8}>
-        <RecentTable sourceData={mockData["incoming_request"]} />
+        <RecentTable sourceData={acceptedTenants} />
       </Col>
       <Col span={4}>
         <Space direction="vertical">
           <Card
             bordered={false}
             style={{
-              backgroundColor: status == "full" ? "#ff0000" : "#87d068",
+              backgroundColor: totalData.vacant <= 0 ? "#ff0000" : "#87d068",
               textAlign: "center",
               color: "#ffffff",
               fontSize: "2em",
               opacity: 0.7,
             }}
           >
-            {status == "full" ? "Full" : "Available"}
+            {totalData.vacant <= 0 ? "Full" : "Available"}
           </Card>
           <Card bordered={false}>
-            <Statistic title="Vacant" value={0} />
+            <Statistic title="Vacant" value={totalData.vacant} />
           </Card>
           <Card bordered={false}>
-            <Statistic title="Total Room Space" value={16} />
+            <Statistic title="Total Room Space" value={totalData.total} />
           </Card>
         </Space>
       </Col>

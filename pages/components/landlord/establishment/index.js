@@ -14,8 +14,10 @@ import {
   FloatButton,
   Segmented,
   Spin,
+  Tooltip,
+  Modal,
 } from "antd";
-import { SettingOutlined } from "@ant-design/icons";
+import { SettingOutlined, DeleteOutlined } from "@ant-design/icons";
 import NewEstablishment from "./components/new_establishment";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -28,6 +30,7 @@ const Establishment = () => {
   const [imageType, setImageType] = useState("Establishment Photos");
   const [openTable, setOpenTable] = useState({ open: false, data: null });
   const [loader, setLoader] = useState("");
+  const [modal, contextHolder] = Modal.useModal();
 
   const fetchData = async (type) => {
     let { data } = await axios.get(`/api/landlord/request-data`, {
@@ -42,6 +45,19 @@ const Establishment = () => {
         setOpenTable({ open: true, data: data.data });
         message.success(data.message);
       } else message.warning("Empty");
+    }
+  };
+
+  const handleDeleteEstablishment = async (id) => {
+    let { data } = await axios.get(`/api/landlord/delete-establishment`, {
+      params: { id },
+    });
+
+    if (data.status != 200) {
+      message.error(data.message);
+      return;
+    } else {
+      message.success(data.message);
     }
   };
 
@@ -99,11 +115,34 @@ const Establishment = () => {
                 </Card>
               </Space>
             </Col>
-            <FloatButton
+            <FloatButton.Group
               tooltip={<div>SETTINGS</div>}
               icon={<SettingOutlined />}
               type="primary"
-            />
+              trigger="click"
+              style={{
+                right: 50,
+              }}
+            >
+              <Tooltip title="Delete establishment">
+                <Button
+                  icon={<DeleteOutlined />}
+                  onClick={() =>
+                    modal.confirm({
+                      title: "Are you sure you want to delete ?",
+                      content: (
+                        <Typography.Text type="secondary">
+                          Click "confirm" to remove {estab[i].name}.
+                        </Typography.Text>
+                      ),
+                      okText: "Confirm",
+                      onOk: () => handleDeleteEstablishment(estab[i]._id),
+                    })
+                  }
+                  danger
+                />
+              </Tooltip>
+            </FloatButton.Group>
           </Row>
         ),
         key: i,
@@ -145,6 +184,7 @@ const Establishment = () => {
         </Button>
       )}
       {/* UTILS */}
+      {contextHolder}
       <NewEstablishment
         open={openNewEstablishment}
         close={() => setOpenNewEstablishment(false)}
