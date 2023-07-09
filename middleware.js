@@ -9,9 +9,9 @@ export async function middleware(req = NextRequest) {
     "/user/home-admin",
   ];
   if (validPath.includes(url.pathname)) {
-    const isLoggedIn = req.cookies["loggedIn"] || false;
+    const isLoggedIn = req.cookies.get("loggedIn") || false;
     url.pathname = isLoggedIn
-      ? `user/home-${req.cookies["mode"]}`
+      ? `user/home-${req.cookies.get("mode")}`
       : "user/login";
     return NextResponse.rewrite(url);
   }

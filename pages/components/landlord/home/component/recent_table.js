@@ -1,10 +1,20 @@
 import { Table, Typography } from "antd";
+import dayjs from "dayjs";
 import React from "react";
 
 const RecentTable = ({ sourceData }) => {
   const columns = [
-    { title: "Name", align: "center", dataIndex: "requestor_name" },
-    { title: "Date Accepted", align: "center", dataIndex: "date_requested" },
+    {
+      title: "Name",
+      align: "center",
+      render: (_, row) =>
+        row?.studentId?.firstName + " " + row?.studentId?.lastName,
+    },
+    {
+      title: "Date Accepted",
+      align: "center",
+      render: (_, row) => dayjs(row?.createdAt).format("MMMM D, YYYY"),
+    },
   ];
   return (
     <Table

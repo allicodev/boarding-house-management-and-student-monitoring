@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { mockData } from "../../../assets/utilities";
 import FullViewer from "./components/full_viewer";
 import CustomMenu from "./components/custom_menu";
 import { ListView, GridView } from "./components/list_grid_view";
 import axios from "axios";
-import Cookies from "js-cookie";
 import { message } from "antd";
 
 const Home = () => {

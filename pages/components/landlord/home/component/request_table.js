@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Badge, Space, Table, Typography } from "antd";
 import StudentProfile from "./student_profile";
+import dayjs from "dayjs";
 
-const RequestTable = ({ sourceData }) => {
+const RequestTable = ({ sourceData, refresh }) => {
+  let [_sourceData, setSourceData] = useState([]);
   const [openStudentProfile, setOpenStudentProfile] = useState({
     open: false,
     data: null,
   });
+  const [index, setIndex] = useState(-1);
+
   const columns = [
     {
       title: "id",
@@ -21,9 +25,28 @@ const RequestTable = ({ sourceData }) => {
         </>
       ),
     },
-    { title: "Name", align: "center", dataIndex: "requestor_name" },
-    { title: "Date Requested", align: "center", dataIndex: "date_requested" },
+    {
+      title: "Name",
+      align: "center",
+      render: (_, row) =>
+        row?.studentId?.firstName + " " + row?.studentId?.lastName,
+    },
+    {
+      title: "Establishment",
+      align: "center",
+      render: (_, row) => row?.establishmentId.name,
+    },
+    {
+      title: "Date Requested",
+      align: "center",
+      render: (_, row) => dayjs(row?.createdAt).format("MMMM D, YYYY"),
+    },
   ];
+
+  useEffect(() => {
+    setSourceData(sourceData);
+  }, [sourceData]);
+
   return (
     <>
       <Table
@@ -52,15 +75,18 @@ const RequestTable = ({ sourceData }) => {
             />
           </div>
         )}
-        dataSource={sourceData}
+        dataSource={_sourceData}
         pagination={false}
         columns={columns}
         rowKey={(_) => _._id}
         style={{ cursor: "pointer" }}
         bordered
-        onRow={(row) => {
+        onRow={(row, index) => {
           return {
-            onClick: () => setOpenStudentProfile({ open: true, data: row }), // click row
+            onClick: (_) => {
+              setOpenStudentProfile({ open: true, data: row });
+              setIndex(index);
+            },
           };
         }}
       />
@@ -69,6 +95,15 @@ const RequestTable = ({ sourceData }) => {
         open={openStudentProfile.open}
         close={() => setOpenStudentProfile({ open: false, data: null })}
         data={openStudentProfile.data}
+        refresh={refresh}
+        update={() => {
+          setSourceData((e) => {
+            if (e[index]) {
+              e[index].seen = true;
+            }
+            return [...e];
+          });
+        }}
       />
     </>
   );

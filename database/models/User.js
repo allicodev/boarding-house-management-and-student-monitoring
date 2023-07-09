@@ -26,16 +26,16 @@ let UserSchema = new mongoose.Schema(
     profilePhoto: {
       type: String,
       default: "",
-    },    
+    },
     idNumber: {
       // only for student and admin
       type: String,
       unique: true,
       required: false,
-    },    
+    },
     role: {
       type: String,
-      default: "student",
+      enum: ["admin", "landlord", "student"],
     },
   },
   { timestamps: true }

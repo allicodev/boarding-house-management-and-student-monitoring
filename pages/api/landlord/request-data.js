@@ -1,6 +1,7 @@
 import Request from "../../../database/models/Request";
 import dbConnect from "../../../database/dbConnect";
 import Tenant from "../../../database/models/Tenant";
+import mongoose from "mongoose";
 
 export default async function handler(req, res) {
   try {
@@ -16,8 +17,13 @@ export default async function handler(req, res) {
     if (type === "request") {
       data = await Request.aggregate([
         {
+          $match: {
+            status: "pending",
+          },
+        },
+        {
           $lookup: {
-            from: "user",
+            from: "users",
             localField: "studentId",
             foreignField: "_id",
             as: "studentId",
@@ -25,12 +31,12 @@ export default async function handler(req, res) {
         },
         {
           $lookup: {
-            from: "establishment",
+            from: "establishments",
             localField: "establishmentId",
             foreignField: "_id",
             pipeline: [
               {
-                $match: { ownerId },
+                $match: { ownerId: mongoose.Types.ObjectId(ownerId) },
               },
             ],
             as: "establishmentId",
@@ -48,7 +54,7 @@ export default async function handler(req, res) {
       data = await Tenant.aggregate([
         {
           $lookup: {
-            from: "user",
+            from: "users",
             localField: "studentId",
             foreignField: "_id",
             as: "studentId",
@@ -56,10 +62,15 @@ export default async function handler(req, res) {
         },
         {
           $lookup: {
-            from: "establishment",
+            from: "establishments",
             localField: "establishmentId",
             foreignField: "_id",
             as: "establishmentId",
+            pipeline: [
+              {
+                $match: { ownerId: mongoose.Types.ObjectId(ownerId) },
+              },
+            ],
           },
         },
         {

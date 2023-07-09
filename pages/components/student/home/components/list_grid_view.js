@@ -43,6 +43,16 @@ const ListView = ({ source, setOpenFullDetails }) => {
         "No owner. Its free",
     },
     {
+      title: "Status",
+      align: "center",
+      render: (_, row) =>
+        row.status == "verified" ? (
+          <Tag color="green">VERIFIED</Tag>
+        ) : (
+          <Tag color="red">UNVERIFIED</Tag>
+        ),
+    },
+    {
       title: "Rooms Status",
       align: "center",
       render: (_, row) =>
@@ -71,6 +81,11 @@ const ListView = ({ source, setOpenFullDetails }) => {
       columns={columns}
       pagination={false}
       dataSource={source}
+      onRow={(data) => {
+        return {
+          onClick: () => setOpenFullDetails({ open: true, data }),
+        };
+      }}
       rowKey={(_) => _._id}
     />
   );
@@ -88,6 +103,7 @@ const GridView = ({ source, setOpenFullDetails }) => {
         let verified = el?.status == "verified";
         return (
           <>
+            <Typography.Title level={3}>{el?.name}</Typography.Title>
             <Tag color={verified ? "#98e179" : "#FF0000"}>
               {verified ? <CheckOutlined /> : <CloseOutlined />}
               {verified ? "VERIFIED" : "NOT VERIFIED"}
@@ -95,8 +111,9 @@ const GridView = ({ source, setOpenFullDetails }) => {
             <Tag color={flag ? "#FFD580" : "#87d068"}>
               {flag ? "FULL" : "VACANT"}
             </Tag>
-            <Typography.Title level={5}>{el?.name}</Typography.Title>
-            <Typography.Text>{el?.address}</Typography.Text> <br />
+            <br />
+            <br />
+            <Typography.Text>{el?.address}</Typography.Text> <br /> <br />
             <Typography.Text>
               Occupied:{" "}
               {<Tag color={flag ? "#aaa" : "#108ee9"}>{el?.totalOccupied}</Tag>}

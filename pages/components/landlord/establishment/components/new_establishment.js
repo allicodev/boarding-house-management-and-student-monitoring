@@ -111,22 +111,33 @@ const NewEstablishment = ({ open, close, refresh }) => {
             <Space>
               <InputNumber
                 style={{ width: 100 }}
-                placeholder="longitude"
-                min={-180}
-                max={180}
-                controls={false}
-                onChange={(e) => setCoords([e, coords[1]])}
-              />
-              <InputNumber
-                style={{ width: 100 }}
                 placeholder="latitude"
                 min={-90}
                 max={90}
                 controls={false}
                 onChange={(e) => setCoords([coords[0], e])}
               />
+              <InputNumber
+                style={{ width: 100 }}
+                placeholder="longitude"
+                min={-180}
+                max={180}
+                controls={false}
+                onChange={(e) => setCoords([e, coords[1]])}
+              />
+
               <Tooltip title="click here on how to get coordinates">
-                <Button size="small" icon={<InfoCircleOutlined />} />
+                <Button
+                  size="small"
+                  icon={<InfoCircleOutlined />}
+                  onClick={() =>
+                    window.open(
+                      "https://www.maps.ie/coordinates.html",
+                      "_blank",
+                      "noreferrer"
+                    )
+                  }
+                />
               </Tooltip>
             </Space>
           </Form.Item>

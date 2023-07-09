@@ -12,7 +12,15 @@ let RequestSchema = new mongoose.Schema(
     },
     status: {
       type: String,
+      enum: ["pending", "accepted", "rejected", "draft"],
       default: "pending",
+    },
+    declineReason: {
+      type: String,
+    },
+    seen: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

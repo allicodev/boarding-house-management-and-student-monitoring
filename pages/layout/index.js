@@ -49,11 +49,6 @@ const Header = () => {
             <Tag color="#87d068">
               {Cookies.get("mode")?.toLocaleUpperCase()}
             </Tag>
-            {Cookies.get("mode")?.toLocaleUpperCase() == "LANDLORD" && (
-              <Tag color="#87d068">
-                VERIFIED <CheckOutlined />
-              </Tag>
-            )}
           </div>
           <div style={{ display: "flex", alignSelf: "center" }}>
             <Dropdown

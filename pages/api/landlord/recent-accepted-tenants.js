@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import dbConnect from "../../../database/dbConnect";
 import Tenant from "../../../database/models/Tenant";
 
@@ -11,7 +12,7 @@ export default async function handler(req, res) {
     let recentTenant = await Tenant.aggregate([
       {
         $lookup: {
-          from: "user",
+          from: "users",
           localField: "studentId",
           foreignField: "_id",
           as: "studentId",
@@ -19,12 +20,12 @@ export default async function handler(req, res) {
       },
       {
         $lookup: {
-          from: "establishment",
+          from: "establishments",
           localField: "establishmentId",
           foreignField: "_id",
           pipeline: [
             {
-              $match: { ownerId },
+              $match: { ownerId: mongoose.Types.ObjectId(ownerId) },
             },
           ],
           as: "establishmentId",

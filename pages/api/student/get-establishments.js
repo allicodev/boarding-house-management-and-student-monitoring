@@ -26,7 +26,7 @@ export default async function handler(req, res) {
       },
       {
         $addFields: {
-          totalOccupied: { $sum: "$tenants" },
+          totalOccupied: { $size: "$tenants" },
         },
       },
       {
@@ -36,8 +36,6 @@ export default async function handler(req, res) {
         $unwind: "$ownerId",
       },
     ]);
-
-    console.log(establishment);
 
     res.json({
       data: establishment,

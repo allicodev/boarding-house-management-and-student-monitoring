@@ -36,6 +36,10 @@ let EstablishmentSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    // type: {
+    //   type: String,
+    //   enum: ["male", "female", "mix"],
+    // },
   },
   { timestamps: true }
 );
