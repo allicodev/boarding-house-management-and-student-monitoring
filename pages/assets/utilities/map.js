@@ -3,7 +3,7 @@ import { useMemo } from "react";
 
 const Map = ({ coordinates }) => {
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: process.env.GOOGLEMAP_API_KEY,
+    googleMapsApiKey: "AIzaSyCpR0eK7UcvaY_zCyKB0UI24pU-Z7VB0XQ", //process.env.GOOGLEMAP_API_KEY,
   });
   const center = useMemo(() => ({ ...coordinates }), []);
 
