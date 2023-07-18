@@ -14,7 +14,7 @@ export default function App({ Component, pageProps }) {
     // }}
     >
       <Head>
-        // {/* <link rel='shortcut icon' href='/logo-icon.svg' /> */}
+        {/* <link rel='shortcut icon' href='/logo-icon.svg' /> */}
         <title>
           Accredited Boarding House Management and Student Monitoring System for
           University Student Services

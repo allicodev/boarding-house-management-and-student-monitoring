@@ -221,4 +221,6 @@ const GridView = ({ source, setOpenFullDetails }) => {
   );
 };
 
+const ListGridView = () => <></>;
+export default ListGridView;
 export { ListView, GridView };

@@ -16,13 +16,13 @@ const EditProfile = ({ openEditModal, setOpenEditModal }) => {
       }
     });
     let { data } = await axios.put("/api/user/update-info", {
-      _id: openEditModal.data._id,
+      _id: openEditModal?.data?._id,
       ...val,
     });
 
-    if (data.status != 200) message.error(data.message);
+    if (data?.status != 200) message.error(data?.message);
     else {
-      message.success(data.message);
+      message.success(data?.message);
       setUpdated(false);
     }
   };
@@ -30,7 +30,7 @@ const EditProfile = ({ openEditModal, setOpenEditModal }) => {
   return (
     <>
       <Modal
-        open={openEditModal.open}
+        open={openEditModal?.open}
         onCancel={() => {
           setOpenEditModal({ open: false, data: null });
           setUpdated(false);
@@ -64,42 +64,42 @@ const EditProfile = ({ openEditModal, setOpenEditModal }) => {
           <Form.Item
             label="ID Number"
             name="idNumber"
-            initialValue={openEditModal.data?.idNumber}
+            initialValue={openEditModal?.data?.idNumber}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label="First Name"
             name="firstName"
-            initialValue={openEditModal.data?.firstName}
+            initialValue={openEditModal?.data?.firstName}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label="Last Name"
             name="lastName"
-            initialValue={openEditModal.data?.lastName}
+            initialValue={openEditModal?.data?.lastName}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label="Email"
             name="email"
-            initialValue={openEditModal.data?.email}
+            initialValue={openEditModal?.data?.email}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label="Phone Number"
             name="phoneNumber"
-            initialValue={openEditModal.data?.phoneNumber}
+            initialValue={openEditModal?.data?.phoneNumber}
           >
             <Input prefix="+63" />
           </Form.Item>
           <Button
             style={{ width: "100%", fontWeight: 700 }}
             onClick={() => {
-              setOpenEditModal({ open: false, data: openEditModal.data });
+              setOpenEditModal({ open: false, data: openEditModal?.data });
               setOpenChangedPassword(true);
             }}
           >
@@ -111,7 +111,7 @@ const EditProfile = ({ openEditModal, setOpenEditModal }) => {
         open={openChangePassword}
         close={() => {
           setOpenChangedPassword(false);
-          setOpenEditModal({ open: true, data: openEditModal.data });
+          setOpenEditModal({ open: true, data: openEditModal?.data });
         }}
         openEditModal={openEditModal}
       />

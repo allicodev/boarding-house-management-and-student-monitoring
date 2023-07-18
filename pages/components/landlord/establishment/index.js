@@ -123,7 +123,7 @@ const Establishment = () => {
                 >
                   {e?.establishmentPhotos?.length > 0 ? (
                     e?.establishmentPhotos.map((_, i) => (
-                      <Image src={_} width={500} key={i} />
+                      <Image src={_} width={500} key={i} alt="image1" />
                     ))
                   ) : (
                     <NoImage />
@@ -132,7 +132,11 @@ const Establishment = () => {
                 <br />
                 <Typography.Title level={5}>Business permit</Typography.Title>
                 {e?.businessPermitPhoto != null ? (
-                  <Image src={e?.businessPermitPhoto} width={500} />
+                  <Image
+                    src={e?.businessPermitPhoto}
+                    width={500}
+                    alt="image2"
+                  />
                 ) : (
                   <NoImage />
                 )}

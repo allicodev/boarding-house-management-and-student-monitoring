@@ -33,7 +33,7 @@ const EstablishmentInfo = ({ data }) => {
           />
         ) : (
           <Typography.Text type="secondary" italic>
-            Owner didn't set the coordinates/location
+            Owner did not set the coordinates/location
           </Typography.Text>
         )}
       </Col>
@@ -47,7 +47,7 @@ const EstablishmentInfo = ({ data }) => {
             Space available
           </div>
           <div>
-            {data.status == "verified" ? (
+            {data?.status == "verified" ? (
               <Tag color="green">VERIFIED</Tag>
             ) : (
               <Tag color="red">UNVERIFIED</Tag>

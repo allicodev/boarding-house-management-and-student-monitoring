@@ -20,7 +20,7 @@ const RequestHistory = () => {
   const [openHistory, setOpenHistory] = useState({ open: false, data: null });
   const [request, setRequest] = useState([]);
   const [trigger, setTrigger] = useState(0);
-  let currentUser = JSON.parse(Cookies.get("currentUser"));
+  let currentUser = JSON.parse(Cookies.get("currentUser") ?? "{}");
 
   const columns = [
     // { title: "id", dataIndex: "_id" },

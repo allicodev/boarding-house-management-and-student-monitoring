@@ -62,6 +62,7 @@ const FullViewer = ({ data, open, close }) => {
         extra={[
           <Button
             type="primary"
+            key="key1"
             onClick={() => {
               _modal = modal.confirm({
                 title: "Confirm Request?",
@@ -69,7 +70,7 @@ const FullViewer = ({ data, open, close }) => {
                 centered: true,
                 maskClosable: true,
                 footer: [
-                  <Spin spinning={loader != ""}>
+                  <Spin spinning={loader != ""} key="footer-key-1">
                     <Space style={{ marginTop: 30 }}>
                       <Button>CANCEL</Button>
                       <Button
