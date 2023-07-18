@@ -20,6 +20,7 @@ const Map = ({ coordinates }) => {
             mapTypeId: google.maps.MapTypeId.HYBRID,
           }}
           layerTypes={["TrafficLayer", "TransitLayer"]}
+          onClick={(e) => console.log(e.latLng.ln)}
         >
           <Marker position={center} />
         </GoogleMap>

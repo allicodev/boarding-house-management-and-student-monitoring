@@ -15,10 +15,11 @@ export default async function handler(req, res) {
         },
       }
     ).then(async (e) => {
-      await Tenant.create({
-        studentId: e.studentId,
-        establishmentId: e.establishmentId,
-      });
+      if (req.body.status != "pending")
+        await Tenant.create({
+          studentId: e.studentId,
+          establishmentId: e.establishmentId,
+        });
     });
 
     res.json({
