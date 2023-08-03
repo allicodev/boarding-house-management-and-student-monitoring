@@ -6,13 +6,7 @@ import Head from "next/head";
 
 export default function App({ Component, pageProps }) {
   return (
-    <ConfigProvider
-    // theme={{
-    //   token: {
-    //     colorPrimary: "#00b96b",
-    //   },
-    // }}
-    >
+    <ConfigProvider>
       <Head>
         {/* <link rel='shortcut icon' href='/logo-icon.svg' /> */}
         <title>
