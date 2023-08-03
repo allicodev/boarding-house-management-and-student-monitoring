@@ -1,7 +1,6 @@
 import Request from "../../../database/models/Request";
 import Tenant from "../../../database/models/Tenant";
 import dbConnect from "../../../database/dbConnect";
-import { sendMail } from "../../../services/mailer";
 
 export default async function handler(req, res) {
   try {
@@ -16,13 +15,6 @@ export default async function handler(req, res) {
         },
       }
     ).then(async (e) => {
-      if (![null, "", undefined].includes(req.body.studentEmail))
-        await sendMail(
-          "Request accepted",
-          req.body.studentEmail,
-          "<div>Request is accepted by the landlord/landlady</div>"
-        );
-
       if (req.body.status != "pending")
         await Tenant.create({
           studentId: e.studentId,

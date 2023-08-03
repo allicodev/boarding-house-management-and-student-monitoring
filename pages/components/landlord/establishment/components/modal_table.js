@@ -17,7 +17,7 @@ const ModalTable = ({ open, close, data, refresh }) => {
   const [reason, setReason] = useState("");
   const [openDeclinedModal, setOpenDeclinedModal] = useState({
     open: false,
-    id: -null,
+    id: null,
   });
 
   const columns = [
@@ -48,7 +48,7 @@ const ModalTable = ({ open, close, data, refresh }) => {
             <Popconfirm
               title="Request Confirmation"
               description="Are you sure to accept this request?"
-              onConfirm={() => confirm(row?._id)}
+              onConfirm={() => confirm(row?._id, row?.studentId?.email)}
               okText="Yes"
               cancelText="No"
             >
@@ -69,7 +69,7 @@ const ModalTable = ({ open, close, data, refresh }) => {
     },
   ];
 
-  const confirm = (id) =>
+  const confirm = (id, email) =>
     (async () => {
       setLoader("saving-accept");
       let res = await axios.post("/api/request/accept-request", {
@@ -77,6 +77,15 @@ const ModalTable = ({ open, close, data, refresh }) => {
       });
 
       if (res.data.status == 200) {
+        if (![null, "", undefined].includes(email))
+          (async (_) => {
+            await _.post("/api/user/mail", {
+              subject: "Request accepted",
+              toEmail: email,
+              html: "<div>Request is accepted by the landlord/landlady</div>",
+            });
+          })(axios);
+
         message.success(res.data.message);
         close();
         setLoader("");

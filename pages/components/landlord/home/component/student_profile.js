@@ -14,11 +14,18 @@ const StudentProfile = ({ open, close, data, update, refresh }) => {
       setLoader("saving");
       let res = await axios.post("/api/request/accept-request", {
         _id: data?._id,
-        studentEmail: data?.studentId?.email,
       });
 
       if (res.data.status == 200) {
         message.success(res.data.message);
+        if (![null, "", undefined].includes(data?.studentId?.email))
+          (async (_) => {
+            await _.post("/api/user/mail", {
+              subject: "Request accepted",
+              toEmail: data?.studentId?.email,
+              html: "<div>Request is accepted by the landlord/landlady</div>",
+            });
+          })(axios);
         close();
         setLoader("");
         refresh();

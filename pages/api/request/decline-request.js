@@ -1,6 +1,5 @@
 import Request from "../../../database/models/Request";
 import dbConnect from "../../../database/dbConnect";
-import { sendMail } from "../../../services/mailer";
 
 export default async function handler(req, res) {
   try {
@@ -17,12 +16,6 @@ export default async function handler(req, res) {
       }
     );
 
-    if (![null, "", undefined].includes(req.body.studentEmail))
-      await sendMail(
-        "Request declined",
-        req.body.studentEmail,
-        "<div>Request is declined by the landlord/landlady</div>"
-      );
     res.json({
       status: 200,
       message: "Rejected Successfully",
