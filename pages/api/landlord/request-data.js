@@ -82,7 +82,7 @@ export default async function handler(req, res) {
       ]);
     }
 
-    res.json({ data, status: 200, message: `Successfully fetch ${type}` });
+    res.json({ data, status: 200 });
   } catch (err) {
     console.log(err);
     res.json({ status: 500, success: false, message: err });

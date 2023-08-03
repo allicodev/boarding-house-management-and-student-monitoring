@@ -8,12 +8,16 @@ import {
   Card,
   Segmented,
   Typography,
+  Image,
+  Select,
 } from "antd";
 import { SwapOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { PickerDropPane } from "filestack-react";
 
-const Login = () => {
+import json from "../assets/json/constant.json";
+
+const Login = ({ app_key }) => {
   const [mode, setMode] = useState("login");
   const [registerMode, setRegisterMode] = useState("Student");
   const [image, setImage] = useState(null);
@@ -32,7 +36,11 @@ const Login = () => {
       return;
     }
 
-    val = { ...val, role: registerMode.toLocaleLowerCase() };
+    val = {
+      ...val,
+      role: registerMode.toLocaleLowerCase(),
+      profilePhoto: image,
+    };
 
     (async (_) => {
       let { data } = await _.post("/api/auth/new-user", val);
@@ -181,16 +189,6 @@ const Login = () => {
                   onChange={(e) => setRegisterMode(e)}
                 />
               </Form.Item>
-              {registerMode == "Student" && (
-                <Form.Item
-                  label="ID Number:"
-                  name="idNumber"
-                  style={{ marginBottom: 0 }}
-                  rules={[{ required: true }]}
-                >
-                  <Input />
-                </Form.Item>
-              )}
               <Form.Item
                 label="First Name:"
                 name="firstName"
@@ -207,6 +205,16 @@ const Login = () => {
               >
                 <Input />
               </Form.Item>
+              {registerMode == "Student" && (
+                <Form.Item
+                  label="ID Number:"
+                  name="idNumber"
+                  style={{ marginBottom: 0 }}
+                  rules={[{ required: true }]}
+                >
+                  <Input />
+                </Form.Item>
+              )}
               <Form.Item
                 label="Email:"
                 name="email"
@@ -215,6 +223,21 @@ const Login = () => {
               >
                 <Input />
               </Form.Item>
+              {registerMode == "Student" && (
+                <Form.Item
+                  label="College:"
+                  name="college"
+                  style={{ marginBottom: 0 }}
+                  rules={[{ required: true }]}
+                >
+                  <Select
+                    style={{
+                      width: 300,
+                    }}
+                    options={json.colleges}
+                  />
+                </Form.Item>
+              )}
               <Form.Item
                 label="Password:"
                 name="password"
@@ -249,13 +272,13 @@ const Login = () => {
                 name="profilephoto"
                 style={{ marginBottom: 0 }}
               >
-                {/* <div
-                  style={{ width: 255, cursor: "pointer" }}
+                <div
+                  style={{ width: 255, cursor: "pointer", marginBottom: 10 }}
                   id="picker-container"
                 >
                   {image == null || image == "" ? (
                     <PickerDropPane
-                      apikey={process.env.FILESTACK_KEY}
+                      apikey={app_key}
                       onUploadDone={(res) =>
                         setImage(res?.filesUploaded[0]?.url)
                       }
@@ -271,7 +294,8 @@ const Login = () => {
                       flexDirection: "column",
                       justifyContent: "flex-start",
                       position: "relative",
-                      width: 200,
+                      width: 300,
+                      marginBottom: 10,
                     }}
                   >
                     <Image src={image} alt="random_photo" width="100%" />
@@ -280,7 +304,7 @@ const Login = () => {
                         padding: 0,
                         fontSize: 15,
                         position: "absolute",
-                        width: 32,
+                        width: 30,
                         borderRadius: "100%",
                         aspectRatio: 1 / 1,
                         right: 5,
@@ -294,7 +318,7 @@ const Login = () => {
                       X
                     </Button>
                   </div>
-                ) : null} */}
+                ) : null}
               </Form.Item>
               <Form.Item name="submit" noStyle>
                 <Button
@@ -312,5 +336,9 @@ const Login = () => {
     </>
   );
 };
+
+export async function getServerSideProps() {
+  return { props: { app_key: process.env.FILESTACK_KEY } };
+}
 
 export default Login;

@@ -21,7 +21,7 @@ import Cookies from "js-cookie";
 import ModalTable from "./components/modal_table";
 import NoImage from "../../../assets/utilities/no_image";
 
-const Establishment = () => {
+const Establishment = ({ app_key }) => {
   const [openNewEstablishment, setOpenNewEstablishment] = useState(false);
   const [establishment, setEstablishment] = useState([]);
   const [trigger, setTrigger] = useState(0);
@@ -40,7 +40,6 @@ const Establishment = () => {
     } else {
       if (data.data.length > 0) {
         setOpenTable({ open: true, data: data.data });
-        message.success(data.message);
       } else message.warning("Empty");
     }
   };
@@ -71,16 +70,16 @@ const Establishment = () => {
             />
             {openedTab == "Info" && (
               <>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex", marginTop: 20 }}>
                   <Typography.Title level={2} style={{ marginBottom: 1 }}>
                     {e?.name}
                   </Typography.Title>
 
                   <Tag
-                    color={e?.status == "verified" ? "#87d068" : "#ff0000"}
+                    color={e?.status == "approved" ? "#87d068" : "#ff0000"}
                     style={{ marginLeft: 10, marginBottom: 15 }}
                   >
-                    {e?.status == "verified" ? (
+                    {e?.status == "approved" ? (
                       <>VERIFIED</>
                     ) : (
                       <Tooltip title="Verification is still on process">
@@ -143,47 +142,6 @@ const Establishment = () => {
               </>
             )}
           </>
-
-          //   {(e?.establishmentPhotos?.length > 0 ||
-          //     e?.businessPermitPhoto != undefined) && (
-          //     <Col span={10}>
-          //       <Segmented
-          //         options={["Establishment Photos", "Business Permit"]}
-          //         style={{ padding: 5 }}
-          //         onChange={(e) => setImageType(e)}
-          //       />
-
-          //     </Col>
-          //   )}
-
-          //   <FloatButton.Group
-          //     tooltip={<div>SETTINGS</div>}
-          //     icon={<SettingOutlined />}
-          //     type="primary"
-          //     trigger="click"
-          //     style={{
-          //       right: 50,
-          //     }}
-          //   >
-          //     <Tooltip title="Delete establishment">
-          //       <Button
-          //         icon={<DeleteOutlined />}
-          //         onClick={() =>
-          //           modal.confirm({
-          //             title: "Are you sure you want to delete ?",
-          //             content: (
-          //               <Typography.Text type="secondary">
-          //                 Click "confirm" to remove {estab[i].name}.
-          //               </Typography.Text>
-          //             ),
-          //             okText: "Confirm",
-          //             onOk: () => handleDeleteEstablishment(estab[i]._id),
-          //           })
-          //         }
-          //         danger
-          //       />
-          //     </Tooltip>
-          //   </FloatButton.Group>
         ),
         key: i,
         closable: false,
@@ -228,6 +186,7 @@ const Establishment = () => {
         open={openNewEstablishment}
         close={() => setOpenNewEstablishment(false)}
         refresh={() => setTrigger(trigger + 1)}
+        app_key={app_key}
       />
       <ModalTable
         open={openTable.open}

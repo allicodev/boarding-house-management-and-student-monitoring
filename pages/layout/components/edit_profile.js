@@ -1,31 +1,44 @@
-import React, { useState } from "react";
-import { Modal, Form, Input, Button, message } from "antd";
+import React, { useEffect, useState } from "react";
+import { Modal, Form, Input, Button, Image, Select, message } from "antd";
 import axios from "axios";
 import ChangePassword from "./change_password";
+import { PickerDropPane } from "filestack-react";
+import Cookies from "js-cookie";
 
-const EditProfile = ({ openEditModal, setOpenEditModal }) => {
+import json from "../../assets/json/constant.json";
+
+const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
   const [updated, setUpdated] = useState(false);
   const [form] = Form.useForm();
   const [openChangePassword, setOpenChangedPassword] = useState(false);
+  const [image, setImage] = useState(openEditModal?.data?.profilePhoto);
 
   const handleFinish = async (val) => {
-    Object.values(val).forEach((e) => {
-      if (e == undefined) {
-        message.error("Please fill empty field.");
-        return;
-      }
-    });
+    delete val.profilephoto;
+
+    if (Object.values(val).includes(undefined)) {
+      message.error("Please fill empty field.");
+      return;
+    }
+
     let { data } = await axios.put("/api/user/update-info", {
       _id: openEditModal?.data?._id,
+      profilePhoto: image,
       ...val,
     });
-
-    if (data?.status != 200) message.error(data?.message);
+    if (data?.status == 500 && data.message.codeName == "DuplicateKey")
+      message.warning("ID Number is taken by another user.");
+    else if (data?.status != 200) message.error(data?.message);
     else {
       message.success(data?.message);
+      Cookies.set("currentUser", JSON.stringify(data?.user));
       setUpdated(false);
     }
   };
+
+  useEffect(() => {
+    setImage(openEditModal?.data?.profilePhoto);
+  }, [openEditModal]);
 
   return (
     <>
@@ -62,11 +75,58 @@ const EditProfile = ({ openEditModal, setOpenEditModal }) => {
           onFinish={handleFinish}
         >
           <Form.Item
-            label="ID Number"
-            name="idNumber"
-            initialValue={openEditModal?.data?.idNumber}
+            label="Profile Photo"
+            name="profilephoto"
+            style={{ marginBottom: 0 }}
           >
-            <Input />
+            <div
+              style={{ width: 255, cursor: "pointer", marginBottom: 10 }}
+              id="picker-container"
+            >
+              {image == null || image == "" ? (
+                <PickerDropPane
+                  apikey={app_key}
+                  onUploadDone={(res) => {
+                    setImage(res?.filesUploaded[0]?.url);
+                    setUpdated(true);
+                  }}
+                  pickerOptions={{ container: "picker-container" }}
+                />
+              ) : null}
+            </div>
+
+            {image != null && image != "" ? (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
+                  position: "relative",
+                  width: 300,
+                  marginBottom: 10,
+                }}
+              >
+                <Image src={image} alt="random_photo" width="100%" />
+                <Button
+                  style={{
+                    padding: 0,
+                    fontSize: 15,
+                    position: "absolute",
+                    width: 30,
+                    borderRadius: "100%",
+                    aspectRatio: 1 / 1,
+                    right: 5,
+                    top: 5,
+                  }}
+                  danger
+                  onClick={() => {
+                    setImage(null);
+                  }}
+                >
+                  X
+                </Button>
+              </div>
+            ) : null}
           </Form.Item>
           <Form.Item
             label="First Name"
@@ -81,6 +141,20 @@ const EditProfile = ({ openEditModal, setOpenEditModal }) => {
             initialValue={openEditModal?.data?.lastName}
           >
             <Input />
+          </Form.Item>
+          <Form.Item
+            label="ID Number"
+            name="idNumber"
+            initialValue={openEditModal?.data?.idNumber}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="College:"
+            name="college"
+            initialValue={openEditModal?.data?.college}
+          >
+            <Select options={json.colleges} onChange={() => setUpdated(true)} />
           </Form.Item>
           <Form.Item
             label="Email"

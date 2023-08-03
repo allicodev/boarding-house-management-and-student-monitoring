@@ -26,10 +26,14 @@ let UserSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    // for student
     idNumber: {
       type: String,
       unique: true,
       required: false,
+    },
+    college: {
+      type: String,
     },
     role: {
       type: String,

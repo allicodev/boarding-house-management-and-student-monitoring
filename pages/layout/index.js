@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Layout,
   Menu,
@@ -8,6 +8,7 @@ import {
   Dropdown,
   Tag,
   Button,
+  Tooltip,
 } from "antd";
 import { UserOutlined, LogoutOutlined, CheckOutlined } from "@ant-design/icons";
 
@@ -15,12 +16,14 @@ import Cookies from "js-cookie";
 import { PageHeader } from "@ant-design/pro-layout";
 import EditProfile from "./components/edit_profile";
 
+import json from "../assets/json/constant.json";
+
 const user = Cookies.get("currentUser");
 
 const Sider = ({ selectedIndex, selectedKey, items }) => {
   return (
     <Affix>
-      <Layout.Sider collapsible theme="light" defaultCollapsed={true}>
+      <Layout.Sider collapsible theme="light">
         <Menu
           onClick={selectedIndex}
           selectedKeys={selectedKey}
@@ -36,11 +39,20 @@ const Sider = ({ selectedIndex, selectedKey, items }) => {
   );
 };
 
-const Header = () => {
+const Header = ({ app_key }) => {
   const [openEditModal, setOpenEditModal] = useState({
     open: false,
     data: null,
   });
+  const [color, setColor] = useState("");
+
+  useEffect(() => {
+    setColor(
+      json.colleges.filter(
+        (e) => e.value == JSON.parse(user ?? "{}").college
+      )[0]?.color
+    );
+  }, []);
 
   return (
     <>
@@ -60,6 +72,21 @@ const Header = () => {
             <Tag color="#87d068">
               {Cookies.get("mode")?.toLocaleUpperCase()}
             </Tag>
+            {![null, undefined, ""].includes(
+              JSON.parse(user ?? "{}")?.college
+            ) && (
+              <Tooltip
+                title={
+                  json.colleges.filter(
+                    (e) => e.value == JSON.parse(user ?? "{}").college
+                  )[0]?.label
+                }
+              >
+                <Tag color={color}>
+                  {JSON.parse(user ?? "{}").college?.toUpperCase()}
+                </Tag>
+              </Tooltip>
+            )}
           </div>
 
           {user != null && (
@@ -126,6 +153,7 @@ const Header = () => {
       <EditProfile
         openEditModal={openEditModal}
         setOpenEditModal={setOpenEditModal}
+        app_key={app_key}
       />
     </>
   );

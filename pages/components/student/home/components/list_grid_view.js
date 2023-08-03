@@ -46,7 +46,7 @@ const ListView = ({ source, setOpenFullDetails }) => {
       title: "Status",
       align: "center",
       render: (_, row) =>
-        row.status == "verified" ? (
+        row.status == "approved" ? (
           <Tag color="green">VERIFIED</Tag>
         ) : (
           <Tag color="red">UNVERIFIED</Tag>
@@ -57,7 +57,13 @@ const ListView = ({ source, setOpenFullDetails }) => {
       align: "center",
       render: (_, row) =>
         (
-          <Tag color="#87d068">
+          <Tag
+            color={
+              row?.totalOccupied >= row?.totalSpaceForRent
+                ? "#ff5556"
+                : "#87d068"
+            }
+          >
             {row?.totalOccupied}/{row?.totalSpaceForRent}
           </Tag>
         ) ?? "No Status",
@@ -103,7 +109,9 @@ const GridView = ({ source, setOpenFullDetails }) => {
         let verified = el?.status == "verified";
         return (
           <>
-            <Typography.Title level={3}>{el?.name}</Typography.Title>
+            <Typography.Title level={3} ellipsis={{ tooltip: el?.name }}>
+              {el?.name}
+            </Typography.Title>
             <Tag color={verified ? "#98e179" : "#FF0000"}>
               {verified ? <CheckOutlined /> : <CloseOutlined />}
               {verified ? "VERIFIED" : "NOT VERIFIED"}

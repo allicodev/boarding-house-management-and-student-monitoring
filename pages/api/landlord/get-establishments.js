@@ -30,6 +30,30 @@ export default async function handler(req, res) {
           from: "tenants",
           foreignField: "establishmentId",
           localField: "_id",
+          pipeline: [
+            {
+              $lookup: {
+                from: "users",
+                foreignField: "_id",
+                localField: "studentId",
+                as: "studentId",
+              },
+            },
+            {
+              $lookup: {
+                from: "establishments",
+                foreignField: "_id",
+                localField: "establishmentId",
+                as: "establishmentId",
+              },
+            },
+            {
+              $unwind: "$studentId",
+            },
+            {
+              $unwind: "$establishmentId",
+            },
+          ],
           as: "tenants",
         },
       },
@@ -61,7 +85,7 @@ export default async function handler(req, res) {
         },
       },
       {
-        $unset: ["tenants", "requests"],
+        $unset: ["requests"],
       },
     ]);
 

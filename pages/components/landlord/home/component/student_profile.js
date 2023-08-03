@@ -72,21 +72,29 @@ const StudentProfile = ({ open, close, data, update, refresh }) => {
         centered
       >
         <Card
-          cover={<img alt="example" src="https://picsum.photos/500" />}
+          cover={
+            data?.studentId?.profilePhoto != null ? (
+              <img alt="example" src={data?.studentId?.profilePhoto} />
+            ) : null
+          }
           actions={[
             <Button
               key="confirm"
-              style={{ width: "95%", borderColor: "#87d068" }}
+              style={{ width: "95%", borderColor: "#87d068", color: "#87d068" }}
               icon={<CheckOutlined style={{ color: "#87d068" }} />}
               onClick={confirm}
               loading={loader == "saving"}
-            />,
+            >
+              ACCEPT
+            </Button>,
             <Button
               key="declined"
-              style={{ width: "95%", borderColor: "#ff0000" }}
+              style={{ width: "95%", borderColor: "#ff0000", color: "#ff0000" }}
               icon={<CloseOutlined style={{ color: "#ff0000" }} />}
               onClick={() => setOpenDeclinedModal(true)}
-            />,
+            >
+              REJECT
+            </Button>,
           ]}
         >
           <Card.Meta
@@ -96,6 +104,10 @@ const StudentProfile = ({ open, close, data, update, refresh }) => {
                 Requeston on {dayjs(data?.createdAt).format("MMMM D, YYYY")}
                 <br />
                 Student ID: {data?.studentId?.idNumber}
+                <br />
+                email: {data?.studentId?.email}
+                <br />
+                contact num: {data?.studentId?.phoneNumber}
               </Typography.Paragraph>
             }
           />

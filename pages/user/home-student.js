@@ -1,21 +1,23 @@
 import React, { useState } from "react";
 import { Layout } from "antd";
 import { Sider, Header, Content, Footer } from "../layout";
-import { FcBullish } from "react-icons/fc";
+import { BsFillHouseFill } from "react-icons/bs";
+import { TbMessage2Question } from "react-icons/tb";
+
 import Cookies from "js-cookie";
 import Home from "../components/student/home";
 import Requests from "../components/student/requests";
 
 const currentUser = JSON.parse(Cookies.get("currentUser") ?? "{}");
 
-const MyApp = () => {
+const MyApp = ({ app_key }) => {
   const [selectedKey, setSelectedKey] = useState("home");
 
   let items = [
     {
       label: "Home",
       key: "home",
-      icon: <FcBullish />,
+      icon: <BsFillHouseFill />,
     },
   ];
 
@@ -23,7 +25,7 @@ const MyApp = () => {
     items.push({
       label: "Requests",
       key: "requests",
-      icon: <FcBullish />,
+      icon: <TbMessage2Question />,
     });
 
   return (
@@ -35,7 +37,7 @@ const MyApp = () => {
           items={items}
         />
         <Layout>
-          <Header />
+          <Header app_key={app_key} />
           <Content selectedKey={selectedKey}>
             {selectedKey == "home" ? <Home /> : null}
             {selectedKey == "requests" ? <Requests /> : null}
@@ -46,5 +48,9 @@ const MyApp = () => {
     </>
   );
 };
+
+export async function getServerSideProps() {
+  return { props: { app_key: process.env.FILESTACK_KEY } };
+}
 
 export default MyApp;

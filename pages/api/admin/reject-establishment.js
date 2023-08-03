@@ -12,13 +12,13 @@ export default async function handler(req, res) {
       { _id },
       {
         $set: {
-          status: "approved",
+          status: "declined",
         },
       }
     ).then(() => {
       res.json({
         status: 200,
-        message: "Verified successfully",
+        message: "Declined successfully",
       });
     });
   } catch (err) {

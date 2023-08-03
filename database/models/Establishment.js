@@ -30,7 +30,6 @@ let EstablishmentSchema = new mongoose.Schema(
     },
     businessPermitPhoto: {
       type: String,
-      required: false,
     },
     totalSpaceForRent: {
       type: Number,

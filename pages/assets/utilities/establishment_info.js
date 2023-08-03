@@ -47,8 +47,8 @@ const EstablishmentInfo = ({ data }) => {
             Space available
           </div>
           <div>
-            {data?.status == "verified" ? (
-              <Tag color="green">VERIFIED</Tag>
+            {data?.status == "approved" ? (
+              <Tag color="#87d068">VERIFIED</Tag>
             ) : (
               <Tag color="red">UNVERIFIED</Tag>
             )}
@@ -93,7 +93,7 @@ const EstablishmentInfo = ({ data }) => {
           <NoImage />
         )}
 
-        <Typography.Title level={4}>Business Permit Photos</Typography.Title>
+        <Typography.Title level={4}>Business Permit</Typography.Title>
         {data?.businessPermitPhoto ? (
           <Image src={data?.businessPermitPhoto} alt="business permit photo" />
         ) : (
