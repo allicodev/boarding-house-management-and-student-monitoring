@@ -1,70 +1,315 @@
-import React from "react";
+import React, { useState } from "react";
 import Cookies from "js-cookie";
-import { Form, Input, Button, Menu, message } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  message,
+  Card,
+  Segmented,
+  Typography,
+} from "antd";
+import { SwapOutlined } from "@ant-design/icons";
 import axios from "axios";
+import { PickerDropPane } from "filestack-react";
 
 const Login = () => {
+  const [mode, setMode] = useState("login");
+  const [registerMode, setRegisterMode] = useState("Student");
+  const [image, setImage] = useState(null);
+
+  const validate = (val) => {
+    const { email, password, confirmpassword } = val;
+    let emailRegEx = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+
+    if (!emailRegEx.test(email)) {
+      message.error("Invalid email");
+      return;
+    }
+
+    if (password != confirmpassword) {
+      message.error("Passwords didn't match");
+      return;
+    }
+
+    val = { ...val, role: registerMode.toLocaleLowerCase() };
+
+    (async (_) => {
+      let { data } = await _.post("/api/auth/new-user", val);
+      console.log(data);
+
+      if (data.status == 201) {
+        message.error(data.message);
+        return;
+      } else if (data.status == 200) {
+        Cookies.set("loggedIn", "true");
+        Cookies.set("mode", data.user.role);
+        Cookies.set("currentUser", JSON.stringify(data.user));
+        message.success(data.message);
+        location?.reload();
+      } else message.error(data.message);
+    })(axios);
+  };
+
+  const handleFinish = (val) => {
+    let isValid = validate(val);
+
+    if (isValid) {
+      (async (_) => {
+        let { data } = await _.post();
+      })(axios);
+    } else {
+    }
+  };
+
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100vh",
-      }}
-    >
-      <Form
-        labelCol={{
-          span: 24,
-        }}
-        wrapperCol={{
-          span: 24,
-        }}
-        labelAlign="right"
+    <>
+      <Button
+        type="text"
         style={{
-          width: 400,
-          padding: 30,
-          background: "#eee",
-          borderRadius: 20,
+          position: "absolute",
         }}
-        onFinish={(val) => {
-          (async () => {
-            let { data } = await axios.post("/api/auth/login", val);
-
-            if ([451, 452].includes(data.status)) {
-              message.error(data.message);
-              return;
-            }
-
-            if (data.status == 200) {
-              Cookies.set("loggedIn", "true");
-              Cookies.set("mode", data.userData.role);
-              Cookies.set("currentUser", JSON.stringify(data.userData));
-              message.success(data.message);
-              location?.reload();
-            }
-          })();
+        icon={<SwapOutlined />}
+        onClick={() => setMode(mode == "login" ? "register" : "login")}
+      >
+        Switch to {mode == "login" ? "Registration" : "Login"}
+      </Button>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "100vh",
         }}
       >
-        <Form.Item label="Email" name="email">
-          <Input size="large" />
-        </Form.Item>
-        <Form.Item label="Password" name="password">
-          <Input.Password />
-        </Form.Item>
-
-        <Form.Item noStyle>
-          <Button
-            type="primary"
-            style={{ width: "100%" }}
-            htmlType="submit"
-            size="large"
+        {mode == "login" && (
+          <Card
+            bodyStyle={{ padding: 0 }}
+            style={{ backgroundColor: "rgba(0,0,0,0)", border: "none" }}
+            hoverable
           >
-            Login
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
+            <Form
+              labelCol={{
+                span: 24,
+              }}
+              wrapperCol={{
+                span: 24,
+              }}
+              labelAlign="right"
+              style={{
+                width: 400,
+                padding: 30,
+                background: "#eee",
+                borderRadius: 20,
+              }}
+              onFinish={(val) => {
+                (async (_) => {
+                  let { data } = await _.post("/api/auth/login", val);
+
+                  if ([451, 452].includes(data.status)) {
+                    message.error(data.message);
+                    return;
+                  }
+
+                  if (data.status == 200) {
+                    Cookies.set("loggedIn", "true");
+                    Cookies.set("mode", data.userData.role);
+                    Cookies.set("currentUser", JSON.stringify(data.userData));
+                    message.success(data.message);
+                    location?.reload();
+                  }
+                })(axios);
+              }}
+            >
+              <Form.Item label="Email" name="email">
+                <Input size="large" />
+              </Form.Item>
+              <Form.Item label="Password" name="password">
+                <Input.Password />
+              </Form.Item>
+
+              <Form.Item noStyle>
+                <Button
+                  type="primary"
+                  style={{ width: "100%" }}
+                  htmlType="submit"
+                  size="large"
+                >
+                  Login
+                </Button>
+                <Button
+                  type="text"
+                  style={{ marginLeft: "50%", transform: "translateX(-50%)" }}
+                  onClick={() => {
+                    Cookies.set("loggedIn", "true");
+                    Cookies.set("mode", "student");
+                    location?.reload();
+                  }}
+                >
+                  Login as guest
+                </Button>
+              </Form.Item>
+            </Form>
+          </Card>
+        )}
+        {mode == "register" && (
+          <Card
+            bodyStyle={{ padding: 0 }}
+            style={{ backgroundColor: "rgba(0,0,0,0)", border: "none" }}
+            hoverable
+          >
+            <Form
+              labelCol={{
+                span: 24,
+              }}
+              wrapperCol={{
+                span: 24,
+              }}
+              labelAlign="right"
+              style={{
+                width: 400,
+                padding: 30,
+                background: "#eee",
+                borderRadius: 20,
+              }}
+              onFinish={handleFinish}
+            >
+              <Form.Item style={{ marginBottom: 0 }} name="registerType">
+                <Segmented
+                  options={["Student", "Landlord"]}
+                  value={registerMode}
+                  onChange={(e) => setRegisterMode(e)}
+                />
+              </Form.Item>
+              {registerMode == "Student" && (
+                <Form.Item
+                  label="ID Number:"
+                  name="idNumber"
+                  style={{ marginBottom: 0 }}
+                  rules={[{ required: true }]}
+                >
+                  <Input />
+                </Form.Item>
+              )}
+              <Form.Item
+                label="First Name:"
+                name="firstName"
+                style={{ marginBottom: 0 }}
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label="Last Name:"
+                name="lastName"
+                style={{ marginBottom: 0 }}
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label="Email:"
+                name="email"
+                style={{ marginBottom: 0 }}
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label="Password:"
+                name="password"
+                style={{ marginBottom: 0 }}
+                rules={[{ required: true }]}
+              >
+                <Input.Password />
+              </Form.Item>
+              <Form.Item
+                label="Confirm Password:"
+                name="confirmpassword"
+                style={{ marginBottom: 0 }}
+                rules={[{ required: true }]}
+              >
+                <Input.Password />
+              </Form.Item>
+              <Form.Item
+                label="Phone Number:"
+                name="phoneNumber"
+                style={{ marginBottom: 0 }}
+                rules={[{ required: true }]}
+              >
+                <Input
+                  maxLength={10}
+                  prefix={
+                    <Typography.Text type="secondary">+63</Typography.Text>
+                  }
+                />
+              </Form.Item>
+              <Form.Item
+                label="Profile Photo"
+                name="profilephoto"
+                style={{ marginBottom: 0 }}
+              >
+                {/* <div
+                  style={{ width: 255, cursor: "pointer" }}
+                  id="picker-container"
+                >
+                  {image == null || image == "" ? (
+                    <PickerDropPane
+                      apikey={process.env.FILESTACK_KEY}
+                      onUploadDone={(res) =>
+                        setImage(res?.filesUploaded[0]?.url)
+                      }
+                      pickerOptions={{ container: "picker-container" }}
+                    />
+                  ) : null}
+                </div>
+
+                {image != null && image != "" ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      position: "relative",
+                      width: 200,
+                    }}
+                  >
+                    <Image src={image} alt="random_photo" width="100%" />
+                    <Button
+                      style={{
+                        padding: 0,
+                        fontSize: 15,
+                        position: "absolute",
+                        width: 32,
+                        borderRadius: "100%",
+                        aspectRatio: 1 / 1,
+                        right: 5,
+                        top: 5,
+                      }}
+                      danger
+                      onClick={() => {
+                        setImage(null);
+                      }}
+                    >
+                      X
+                    </Button>
+                  </div>
+                ) : null} */}
+              </Form.Item>
+              <Form.Item name="submit" noStyle>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  style={{ width: "100%" }}
+                >
+                  REGISTER
+                </Button>
+              </Form.Item>
+            </Form>
+          </Card>
+        )}
+      </div>
+    </>
   );
 };
 

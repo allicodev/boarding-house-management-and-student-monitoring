@@ -1,10 +1,21 @@
 import React, { useState } from "react";
-import { Layout, Menu, Typography, Affix, Avatar, Dropdown, Tag } from "antd";
+import {
+  Layout,
+  Menu,
+  Typography,
+  Affix,
+  Avatar,
+  Dropdown,
+  Tag,
+  Button,
+} from "antd";
 import { UserOutlined, LogoutOutlined, CheckOutlined } from "@ant-design/icons";
 
 import Cookies from "js-cookie";
 import { PageHeader } from "@ant-design/pro-layout";
 import EditProfile from "./components/edit_profile";
+
+const user = Cookies.get("currentUser");
 
 const Sider = ({ selectedIndex, selectedKey, items }) => {
   return (
@@ -50,47 +61,64 @@ const Header = () => {
               {Cookies.get("mode")?.toLocaleUpperCase()}
             </Tag>
           </div>
-          <div style={{ display: "flex", alignSelf: "center" }}>
-            <Dropdown
-              menu={{
-                items: [
-                  {
-                    label: "Edit Profile",
-                    key: "edit",
-                    onClick: () =>
-                      setOpenEditModal({
-                        open: true,
-                        data: JSON.parse(Cookies.get("currentUser")),
-                      }),
-                  },
-                  {
-                    type: "divider",
-                  },
-                  {
-                    label: (
-                      <div style={{ color: "#ff0000" }}>
-                        logout <LogoutOutlined />
-                      </div>
-                    ),
-                    key: "3",
-                    onClick: () => {
-                      Cookies.remove("currentUser");
-                      Cookies.remove("loggedIn");
-                      Cookies.remove("mode");
-                      window.location.reload();
+
+          {user != null && (
+            <div style={{ display: "flex", alignSelf: "center" }}>
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      label: "Edit Profile",
+                      key: "edit",
+                      onClick: () =>
+                        setOpenEditModal({
+                          open: true,
+                          data: JSON.parse(user),
+                        }),
                     },
-                  },
-                ],
+                    {
+                      type: "divider",
+                    },
+                    {
+                      label: (
+                        <div style={{ color: "#ff0000" }}>
+                          logout <LogoutOutlined />
+                        </div>
+                      ),
+                      key: "3",
+                      onClick: () => {
+                        Cookies.remove("currentUser");
+                        Cookies.remove("loggedIn");
+                        Cookies.remove("mode");
+                        window.location.reload();
+                      },
+                    },
+                  ],
+                }}
+                trigger={["click"]}
+              >
+                <Avatar
+                  icon={<UserOutlined />}
+                  size={40}
+                  style={{ cursor: "pointer" }}
+                />
+              </Dropdown>
+            </div>
+          )}
+
+          {user == null && (
+            <Button
+              onClick={() => {
+                Cookies.remove("loggedIn");
+                Cookies.remove("mode");
+                Cookies.remove("guestSubmit");
+                window.location.reload();
               }}
-              trigger={["click"]}
+              danger
             >
-              <Avatar
-                icon={<UserOutlined />}
-                size={40}
-                style={{ cursor: "pointer" }}
-              />
-            </Dropdown>
-          </div>
+              LOGOUT
+            </Button>
+          )}
         </Layout.Header>
       </Affix>
 

@@ -5,7 +5,6 @@ export default async function handler(req, res) {
   try {
     if (req.method !== "GET") throw new Error("Invalid method");
     await dbConnect();
-    let ownerId = JSON.parse(req.cookies.currentUser)._id;
 
     const establishment = await Establishment.aggregate([
       {

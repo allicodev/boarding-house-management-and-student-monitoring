@@ -17,7 +17,6 @@ let UserSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
     },
     phoneNumber: {
       type: String,
@@ -28,7 +27,6 @@ let UserSchema = new mongoose.Schema(
       default: "",
     },
     idNumber: {
-      // only for student and admin
       type: String,
       unique: true,
       required: false,

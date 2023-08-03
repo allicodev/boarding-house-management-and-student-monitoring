@@ -22,7 +22,6 @@ const Home = () => {
   useEffect(() => {
     (async () => {
       let { data } = await axios.get("/api/student/get-establishments");
-
       if (data.status == 200) setEstablishment(data.data);
       else message.error(data.message);
     })();

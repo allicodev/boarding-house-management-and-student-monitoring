@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Badge, Space, Table, Typography } from "antd";
+import { Alert, Badge, Table, Typography } from "antd";
 import StudentProfile from "./student_profile";
 import dayjs from "dayjs";
 

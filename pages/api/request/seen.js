@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   try {
     if (req.method !== "GET") throw new Error("Invalid method");
     await dbConnect();
-    console.log(req.query);
+
     await Request.findOneAndUpdate(
       { _id: req.query._id },
       {

@@ -160,16 +160,21 @@ const ContentWithSteps = ({ data, close, refresh }) => {
               <Typography.Title level={4}>
                 Establishment Photos
               </Typography.Title>
-              <List
-                itemLayout="horizontal"
-                grid={{ gutter: 3, column: 4 }}
-                dataSource={data?.establishmentId?.establishmentPhotos}
-                renderItem={(el, i) => (
-                  <List.Item key={i}>
-                    <Image src={el} alt={`image ${i}`} />
-                  </List.Item>
-                )}
-              />
+              {data?.establishmentId?.establishmentPhotos?.length > 0 ? (
+                <List
+                  itemLayout="horizontal"
+                  grid={{ gutter: 3, column: 4 }}
+                  dataSource={data?.establishmentId?.establishmentPhotos}
+                  renderItem={(el, i) => (
+                    <List.Item key={i}>
+                      <Image src={el} alt={`image ${i}`} />
+                    </List.Item>
+                  )}
+                />
+              ) : (
+                <NoImage />
+              )}
+
               <Typography.Title level={4}>
                 Business Permit Photos
               </Typography.Title>

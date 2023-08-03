@@ -4,12 +4,18 @@ import { EstablishmentInfo } from "../../../../assets/utilities";
 import axios from "axios";
 import Cookies from "js-cookie";
 
+import GuestForm from "./GuestForm";
+
+const user = JSON.parse(Cookies.get("currentUser") ?? "{}");
+
 const FullViewer = ({ data, open, close }) => {
   const [modal, contextHolder] = Modal.useModal();
   let _modal = null;
 
   let [loader, setLoader] = useState("");
   let [currentUser, setCurrentUser] = useState({});
+
+  const [openGuestForm, setOpenGuestForm] = useState(false);
 
   const confirm = () => {
     setLoader("loading");
@@ -48,11 +54,16 @@ const FullViewer = ({ data, open, close }) => {
     })();
 
   useEffect(() => {
-    setCurrentUser(JSON.parse(Cookies.get("currentUser")));
+    setCurrentUser(JSON.parse(Cookies.get("currentUser") ?? "{}"));
   }, [data]);
 
   return (
     <>
+      <GuestForm
+        open={openGuestForm}
+        close={() => setOpenGuestForm(false)}
+        establishmentId={data?._id}
+      />
       <Drawer
         open={open}
         onClose={close}
@@ -64,32 +75,34 @@ const FullViewer = ({ data, open, close }) => {
             type="primary"
             key="key1"
             onClick={() => {
-              _modal = modal.confirm({
-                title: "Confirm Request?",
-                width: 370,
-                centered: true,
-                maskClosable: true,
-                footer: [
-                  <Spin spinning={loader != ""} key="footer-key-1">
-                    <Space style={{ marginTop: 30 }}>
-                      <Button>CANCEL</Button>
-                      <Button
-                        style={{
-                          color: "green",
-                          borderColor: "green",
-                          background: "rgba(0,255,0,0.1)",
-                        }}
-                        onClick={saveAsDraft}
-                      >
-                        SAVE AS DRAFT
-                      </Button>
-                      <Button type="primary" onClick={confirm}>
-                        CONFIRM
-                      </Button>
-                    </Space>
-                  </Spin>,
-                ],
-              });
+              if (Object.keys(user).length != 0) {
+                _modal = modal.confirm({
+                  title: "Confirm Request?",
+                  width: 370,
+                  centered: true,
+                  maskClosable: true,
+                  footer: [
+                    <Spin spinning={loader != ""} key="footer-key-1">
+                      <Space style={{ marginTop: 30 }}>
+                        <Button>CANCEL</Button>
+                        <Button
+                          style={{
+                            color: "green",
+                            borderColor: "green",
+                            background: "rgba(0,255,0,0.1)",
+                          }}
+                          onClick={saveAsDraft}
+                        >
+                          SAVE AS DRAFT
+                        </Button>
+                        <Button type="primary" onClick={confirm}>
+                          CONFIRM
+                        </Button>
+                      </Space>
+                    </Spin>,
+                  ],
+                });
+              } else setOpenGuestForm(true);
             }}
           >
             Apply for Request

@@ -14,6 +14,7 @@ const StudentProfile = ({ open, close, data, update, refresh }) => {
       setLoader("saving");
       let res = await axios.post("/api/request/accept-request", {
         _id: data?._id,
+        studentEmail: data?.studentId?.email,
       });
 
       if (res.data.status == 200) {
@@ -32,6 +33,7 @@ const StudentProfile = ({ open, close, data, update, refresh }) => {
       let res = await axios.post("/api/request/decline-request", {
         _id: data?._id,
         declineReason: reason,
+        studentEmail: data?.studentId?.email,
       });
 
       if (res.data.status == 200) {
@@ -93,7 +95,7 @@ const StudentProfile = ({ open, close, data, update, refresh }) => {
               <Typography.Paragraph>
                 Requeston on {dayjs(data?.createdAt).format("MMMM D, YYYY")}
                 <br />
-                Student ID: {data?._id}
+                Student ID: {data?.studentId?.idNumber}
               </Typography.Paragraph>
             }
           />
