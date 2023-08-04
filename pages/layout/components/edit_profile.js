@@ -7,6 +7,8 @@ import Cookies from "js-cookie";
 
 import json from "../../assets/json/constant.json";
 
+const user = JSON.parse(Cookies.get("currentUser") ?? "{}");
+
 const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
   const [updated, setUpdated] = useState(false);
   const [form] = Form.useForm();
@@ -142,20 +144,28 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            label="ID Number"
-            name="idNumber"
-            initialValue={openEditModal?.data?.idNumber}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="College:"
-            name="college"
-            initialValue={openEditModal?.data?.college}
-          >
-            <Select options={json.colleges} onChange={() => setUpdated(true)} />
-          </Form.Item>
+          {user?.role == "student" && (
+            <Form.Item
+              label="ID Number"
+              name="idNumber"
+              initialValue={openEditModal?.data?.idNumber}
+            >
+              <Input />
+            </Form.Item>
+          )}
+
+          {user?.role == "student" && (
+            <Form.Item
+              label="College:"
+              name="college"
+              initialValue={openEditModal?.data?.college}
+            >
+              <Select
+                options={json.colleges}
+                onChange={() => setUpdated(true)}
+              />
+            </Form.Item>
+          )}
           <Form.Item
             label="Email"
             name="email"
