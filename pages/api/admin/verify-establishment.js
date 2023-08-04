@@ -11,8 +11,11 @@ export default async function handler(req, res) {
     return await Establishment.findOneAndUpdate(
       { _id },
       {
-        $set: {
-          status: "approved",
+        $push: {
+          verification: {
+            status: "approved",
+            date: new Date(),
+          },
         },
       }
     ).then(() => {

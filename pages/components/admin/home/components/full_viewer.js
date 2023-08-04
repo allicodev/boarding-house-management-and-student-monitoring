@@ -1,14 +1,55 @@
-import React from "react";
-import { Button, Drawer, Popconfirm, Space } from "antd";
+import React, { useState } from "react";
+import {
+  Button,
+  Drawer,
+  Input,
+  Modal,
+  Popconfirm,
+  Space,
+  Typography,
+} from "antd";
 import { EstablishmentInfo } from "../../../../assets/utilities";
-import axios from "axios";
-import Cookies from "js-cookie";
-
-const user = JSON.parse(Cookies.get("currentUser") ?? "{}");
+import VerificationHistory from "../../../landlord/establishment/components/verification_history";
 
 const FullViewer = ({ data, open, close, verify, decline }) => {
+  const [openDeclineForm, setOpenDeclineForm] = useState(false);
+  const [reason, setReason] = useState("");
+  const [openVerificationHistory, setOpenVerificationHistory] = useState({
+    open: false,
+    data: null,
+  });
   return (
     <>
+      <VerificationHistory
+        open={openVerificationHistory.open}
+        close={() => setOpenVerificationHistory({ open: false, data: null })}
+        data={openVerificationHistory.data}
+      />
+      <Modal
+        open={openDeclineForm}
+        onCancel={() => setOpenDeclineForm(false)}
+        footer={null}
+        closable={false}
+        title="Decline Form"
+        bodyStyle={{ display: "flex", flexDirection: "column" }}
+      >
+        <Typography.Text>Reason: </Typography.Text>
+        <Input.TextArea
+          onChange={(e) => setReason(e.target.value)}
+          style={{ width: "100%", marginBottom: 10 }}
+        />
+        <br />
+        <Button
+          type="primary"
+          style={{ alignSelf: "self-end" }}
+          onClick={() => {
+            decline(data?._id, reason);
+            setOpenDeclineForm(false);
+          }}
+        >
+          SUBMIT
+        </Button>
+      </Modal>
       <Drawer
         open={open}
         onClose={close}
@@ -16,17 +57,17 @@ const FullViewer = ({ data, open, close, verify, decline }) => {
         height="100%"
         title={data?.name}
         extra={[
-          data?.status == "pending" ? (
+          data?.verification?.at(-1).status == "pending" ? (
             <Space>
-              <Popconfirm
-                title="Are you sure ?"
-                okText="Confirm"
-                onConfirm={() => decline(data?._id)}
+              <Button
+                type="primary"
+                key="key1"
+                onClick={() => setOpenDeclineForm(true)}
+                danger
               >
-                <Button type="primary" key="key1" danger>
-                  Reject
-                </Button>
-              </Popconfirm>
+                Reject
+              </Button>
+
               <Popconfirm
                 title="Are you sure ?"
                 okText="Confirm"
@@ -37,7 +78,7 @@ const FullViewer = ({ data, open, close, verify, decline }) => {
                 </Button>
               </Popconfirm>
             </Space>
-          ) : data?.status == "approved" ? (
+          ) : data?.verification?.at(-1).status == "approved" ? (
             <Popconfirm
               title="Are you sure ?"
               okText="Confirm"
@@ -52,7 +93,18 @@ const FullViewer = ({ data, open, close, verify, decline }) => {
                 Revoke
               </Button>
             </Popconfirm>
-          ) : null,
+          ) : (
+            <Button
+              onClick={() =>
+                setOpenVerificationHistory({
+                  open: true,
+                  data: data?.verification,
+                })
+              }
+            >
+              Verification History
+            </Button>
+          ),
         ]}
       >
         <EstablishmentInfo data={data} />

@@ -55,19 +55,11 @@ const Login = ({ app_key }) => {
         Cookies.set("currentUser", JSON.stringify(data.user));
         message.success(data.message);
         location?.reload();
+      } else if (data.status == 500 && data.message.code == 11000) {
+        message.error("Student ID is taken.");
+        return;
       } else message.error(data.message);
     })(axios);
-  };
-
-  const handleFinish = (val) => {
-    let isValid = validate(val);
-
-    if (isValid) {
-      (async (_) => {
-        let { data } = await _.post();
-      })(axios);
-    } else {
-    }
   };
 
   return (
@@ -180,7 +172,6 @@ const Login = ({ app_key }) => {
                 background: "#eee",
                 borderRadius: 20,
               }}
-              onFinish={handleFinish}
             >
               <Form.Item style={{ marginBottom: 0 }} name="registerType">
                 <Segmented

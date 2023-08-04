@@ -6,13 +6,17 @@ export default async function handler(req, res) {
     if (req.method !== "GET") throw new Error("Invalid method");
     await dbConnect();
 
-    const { _id } = req.query;
+    const { _id, reason } = req.query;
 
     return await Establishment.findOneAndUpdate(
       { _id },
       {
-        $set: {
-          status: "declined",
+        $push: {
+          verification: {
+            status: "declined",
+            date: new Date(),
+            text: reason,
+          },
         },
       }
     ).then(() => {

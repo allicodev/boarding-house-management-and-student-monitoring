@@ -26,7 +26,12 @@ const RequestHistory = () => {
     // { title: "id", dataIndex: "_id" },
     {
       title: "Name of Place",
-      render: (_, row) => row?.establishmentId?.name,
+      render: (_, row) =>
+        row?.establishmentId?.name ?? (
+          <Typography.Text type="secondary" italic>
+            Establishment has been deleted
+          </Typography.Text>
+        ),
     },
     {
       title: "Application Status",

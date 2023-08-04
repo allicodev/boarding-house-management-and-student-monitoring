@@ -31,14 +31,14 @@ const Home = () => {
       render: (_, row) => (
         <Tag
           color={
-            row?.status == "approved"
+            row?.verification?.at(-1)?.status == "approved"
               ? "#87d068"
-              : row?.status == "pending"
+              : row?.verification?.at(-1)?.status == "pending"
               ? "#FFD580"
               : "#F00"
           }
         >
-          {row?.status?.toUpperCase()}
+          {row?.verification?.at(-1)?.status?.toUpperCase()}
         </Tag>
       ),
     },
@@ -60,11 +60,12 @@ const Home = () => {
     })(axios);
   };
 
-  const decline = (_id) => {
+  const decline = (_id, reason) => {
     (async (_) => {
       let { data } = await _.get("/api/admin/reject-establishment", {
         params: {
           _id,
+          reason,
         },
       });
 

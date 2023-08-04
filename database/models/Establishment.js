@@ -18,10 +18,13 @@ let EstablishmentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    status: {
-      type: String,
-      enum: ["pending", "approved", "declined"],
-      default: "pending",
+    verification: {
+      type: Array,
+      default: {
+        status: "pending",
+        text: "",
+        date: new Date(),
+      },
       required: true,
     },
     establishmentPhotos: {
