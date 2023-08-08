@@ -1,7 +1,4 @@
-import dbConnect from "../../../database/dbConnect";
-import User from "../../../database/models/User";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import dbConnect from "../../database/dbConnect";
 
 const JWT_PRIVATE_KEY = "okay";
 
