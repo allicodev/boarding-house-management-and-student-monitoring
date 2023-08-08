@@ -10,6 +10,7 @@ import {
   Typography,
   Image,
   Select,
+  DatePicker,
 } from "antd";
 import { SwapOutlined } from "@ant-design/icons";
 import axios from "axios";
@@ -172,6 +173,7 @@ const Login = ({ app_key }) => {
                 background: "#eee",
                 borderRadius: 20,
               }}
+              onFinish={validate}
             >
               <Form.Item style={{ marginBottom: 0 }} name="registerType">
                 <Segmented
@@ -198,6 +200,31 @@ const Login = ({ app_key }) => {
               </Form.Item>
               {registerMode == "Student" && (
                 <Form.Item
+                  label="Gender"
+                  name="gender"
+                  style={{ marginBottom: 0 }}
+                  rules={[{ required: true }]}
+                >
+                  <Select
+                    options={[
+                      { label: "Male", value: "male" },
+                      { label: "Female", value: "female" },
+                    ]}
+                  />
+                </Form.Item>
+              )}
+              {registerMode == "Student" && (
+                <Form.Item
+                  label="Date of Birth"
+                  name="dateOfBirth"
+                  style={{ marginBottom: 0 }}
+                  rules={[{ required: true }]}
+                >
+                  <DatePicker />
+                </Form.Item>
+              )}
+              {registerMode == "Student" && (
+                <Form.Item
                   label="ID Number:"
                   name="idNumber"
                   style={{ marginBottom: 0 }}
@@ -221,12 +248,17 @@ const Login = ({ app_key }) => {
                   style={{ marginBottom: 0 }}
                   rules={[{ required: true }]}
                 >
-                  <Select
-                    style={{
-                      width: 300,
-                    }}
-                    options={json.colleges}
-                  />
+                  <Select options={json.colleges} />
+                </Form.Item>
+              )}
+              {registerMode == "Student" && (
+                <Form.Item
+                  label="Year"
+                  name="year"
+                  style={{ marginBottom: 0 }}
+                  rules={[{ required: true }]}
+                >
+                  <Select options={json.year} />
                 </Form.Item>
               )}
               <Form.Item

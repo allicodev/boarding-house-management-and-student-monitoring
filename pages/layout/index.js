@@ -9,8 +9,9 @@ import {
   Tag,
   Button,
   Tooltip,
+  Image,
 } from "antd";
-import { UserOutlined, LogoutOutlined, CheckOutlined } from "@ant-design/icons";
+import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 
 import Cookies from "js-cookie";
 import { PageHeader } from "@ant-design/pro-layout";
@@ -24,6 +25,17 @@ const Sider = ({ selectedIndex, selectedKey, items }) => {
   return (
     <Affix>
       <Layout.Sider collapsible theme="light">
+        <div
+          style={{
+            background: "#fff",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 10,
+          }}
+        >
+          <Image preview={false} src="/logo.png" alt="logo" width={150} />
+        </div>
         <Menu
           onClick={selectedIndex}
           selectedKeys={selectedKey}
@@ -124,11 +136,20 @@ const Header = ({ app_key }) => {
                 }}
                 trigger={["click"]}
               >
-                <Avatar
-                  icon={<UserOutlined />}
-                  size={40}
-                  style={{ cursor: "pointer" }}
-                />
+                {JSON.parse(user)?.profilePhoto != null ? (
+                  <Image
+                    src={JSON.parse(user)?.profilePhoto}
+                    width={40}
+                    style={{ borderRadius: "100%", backgroundColor: "#fff" }}
+                    preview={false}
+                  />
+                ) : (
+                  <Avatar
+                    icon={<UserOutlined />}
+                    size={40}
+                    style={{ cursor: "pointer" }}
+                  />
+                )}
               </Dropdown>
             </div>
           )}

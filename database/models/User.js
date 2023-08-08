@@ -35,6 +35,17 @@ let UserSchema = new mongoose.Schema(
     college: {
       type: String,
     },
+    year: {
+      type: String,
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female"],
+    },
+    dateOfBirth: {
+      type: Date,
+    },
+    // end for student
     role: {
       type: String,
       enum: ["admin", "landlord", "student"],

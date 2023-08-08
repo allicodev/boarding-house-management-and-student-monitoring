@@ -46,7 +46,7 @@ const ListView = ({ source, setOpenFullDetails }) => {
       title: "Status",
       align: "center",
       render: (_, row) =>
-        row.status == "approved" ? (
+        row.verification.at(-1).status == "approved" ? (
           <Tag color="green">VERIFIED</Tag>
         ) : (
           <Tag color="red">UNVERIFIED</Tag>

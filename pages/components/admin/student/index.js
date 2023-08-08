@@ -3,6 +3,7 @@ import { Tag, Table, Typography } from "antd";
 import axios from "axios";
 
 import json from "../../../assets/json/constant.json";
+import dayjs from "dayjs";
 
 const Student = () => {
   const [students, setStudents] = useState([]);
@@ -12,6 +13,28 @@ const Student = () => {
       title: "Name",
       render: (_, row) => row?.firstName + " " + row?.lastName,
       sorter: (a, b) => a.firstName.length - b.firstName.length,
+    },
+    {
+      title: "Age",
+      sorter: (a, b) => a - b,
+      render: (_, row) =>
+        dayjs().diff(
+          dayjs(row?.dateOfBirth).format("YYYY-MM-DD"),
+          "years",
+          false
+        ),
+    },
+    {
+      title: "Gender",
+      sorter: (a, b) => a.length - b.length,
+      render: (_, row) => (
+        <Tag color={row?.gender == "male" ? "blue" : "pink"}>{row?.gender}</Tag>
+      ),
+    },
+    {
+      title: "Year",
+      sorter: (a, b) => a - b,
+      dataIndex: "year",
     },
     {
       title: "College",

@@ -30,5 +30,11 @@
       "label": "COL (College of Law)",
       "color": "#CF9FFF"
     }
+  ],
+  "year": [
+    { "value": 1, "label": "1st Year (Freshmen)" },
+    { "value": 2, "label": "2nd Year (Sophomore)" },
+    { "value": 3, "label": "3rd Year (Junior)" },
+    { "value": 4, "label": "4th Year (Senior)" }
   ]
 }

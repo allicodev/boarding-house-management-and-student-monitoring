@@ -8,7 +8,7 @@ export default function App({ Component, pageProps }) {
   return (
     <ConfigProvider>
       <Head>
-        {/* <link rel='shortcut icon' href='/logo-icon.svg' /> */}
+        <link rel="shortcut icon" href="/favicon.png" />
         <title>
           Accredited Boarding House Management and Student Monitoring System for
           University Student Services
