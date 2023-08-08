@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import {
   Form,
@@ -62,6 +62,12 @@ const Login = ({ app_key }) => {
       } else message.error(data.message);
     })(axios);
   };
+
+  useEffect(() => {
+    (async (_) => {
+      await _.get("/api/init");
+    })(axios);
+  }, []);
 
   return (
     <>
