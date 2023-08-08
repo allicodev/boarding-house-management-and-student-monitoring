@@ -74,7 +74,6 @@ const Student = () => {
       render: (_, row) =>
         row?.tenant?.establishmentId?.name ?? (
           <Typography.Text type="secondary" italic>
-            {" "}
             No Data
           </Typography.Text>
         ),
