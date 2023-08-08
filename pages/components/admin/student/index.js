@@ -27,14 +27,33 @@ const Student = () => {
     {
       title: "Gender",
       sorter: (a, b) => a.length - b.length,
-      render: (_, row) => (
-        <Tag color={row?.gender == "male" ? "blue" : "pink"}>{row?.gender}</Tag>
-      ),
+      render: (_, row) => {
+        if (["male", "female"].includes(row?.gender))
+          return (
+            <Tag color={row?.gender == "male" ? "blue" : "pink"}>
+              {row?.gender}
+            </Tag>
+          );
+        else
+          return (
+            <Typography.Text type="secondary" italic>
+              No Data
+            </Typography.Text>
+          );
+      },
     },
     {
       title: "Year",
       sorter: (a, b) => a - b,
-      dataIndex: "year",
+      render: (_, row) => {
+        if (row?.year) return row?.year;
+        else
+          return (
+            <Typography.Text type="secondary" italic>
+              No Data
+            </Typography.Text>
+          );
+      },
     },
     {
       title: "College",
@@ -52,7 +71,13 @@ const Student = () => {
       sorter: (a, b) =>
         a.tenant?.establishmentId?.name?.length -
         b.tenant?.establishmentId?.name?.length,
-      render: (_, row) => row?.tenant?.establishmentId?.name ?? "Not yet",
+      render: (_, row) =>
+        row?.tenant?.establishmentId?.name ?? (
+          <Typography.Text type="secondary" italic>
+            {" "}
+            No Data
+          </Typography.Text>
+        ),
     },
   ];
 
