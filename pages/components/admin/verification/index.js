@@ -80,7 +80,7 @@ const Home = () => {
 
   useEffect(() => {
     (async (_) => {
-      let { data } = await _.get("/api/student/get-establishments");
+      let { data } = await _.get("/api/admin/get-establishments");
       if (data.status == 200) setEstablishment(data.data);
     })(axios);
   }, [trigger]);

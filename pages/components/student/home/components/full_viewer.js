@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Drawer, Space, Modal, Spin, message } from "antd";
+import { Button, Drawer, Space, Modal, Spin, message, Typography } from "antd";
 import { EstablishmentInfo } from "../../../../assets/utilities";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -11,9 +11,10 @@ const user = JSON.parse(Cookies.get("currentUser") ?? "{}");
 const FullViewer = ({ data, open, close }) => {
   const [modal, contextHolder] = Modal.useModal();
   let _modal = null;
-
   let [loader, setLoader] = useState("");
   let [currentUser, setCurrentUser] = useState({});
+  let [status, setStatus] = useState("");
+  let [alreadyAccepted, setAlreadyAccepted] = useState(false);
 
   const [openGuestForm, setOpenGuestForm] = useState(false);
 
@@ -53,9 +54,102 @@ const FullViewer = ({ data, open, close }) => {
       }
     })();
 
+  const extraButtons = (_) => {
+    let comp = (
+      <Button
+        type="primary"
+        key="key1"
+        onClick={() => {
+          if (Object.keys(user).length != 0) {
+            _modal = modal.confirm({
+              title: "Confirm Request?",
+              width: 370,
+              centered: true,
+              maskClosable: true,
+              footer: [
+                <Spin spinning={loader != ""} key="footer-key-1">
+                  <Space style={{ marginTop: 30 }}>
+                    <Button>CANCEL</Button>
+                    <Button
+                      style={{
+                        color: "green",
+                        borderColor: "green",
+                        background: "rgba(0,255,0,0.1)",
+                      }}
+                      onClick={saveAsDraft}
+                    >
+                      SAVE AS DRAFT
+                    </Button>
+                    <Button type="primary" onClick={confirm}>
+                      CONFIRM
+                    </Button>
+                  </Space>
+                </Spin>,
+              ],
+            });
+          } else setOpenGuestForm(true);
+        }}
+      >
+        Apply for Request
+      </Button>
+    );
+
+    switch (_) {
+      case "pending": {
+        comp = (
+          <Typography.Text type="secondary" italic>
+            Already requested
+          </Typography.Text>
+        );
+        break;
+      }
+      case "accepted": {
+        comp = (
+          <Typography.Text type="success">Accepted Already</Typography.Text>
+        );
+        break;
+      }
+      case "draft": {
+        comp = (
+          <Typography.Text type="warning" italic>
+            Draft
+          </Typography.Text>
+        );
+      }
+    }
+
+    return comp;
+  };
+
   useEffect(() => {
     setCurrentUser(JSON.parse(Cookies.get("currentUser") ?? "{}"));
   }, [data]);
+
+  useEffect(() => {
+    if (open) {
+      (async (_) => {
+        if (user?.role == "student") {
+          let res = await _.get("/api/student/check-is-tenant", {
+            params: {
+              studentId: currentUser?._id,
+            },
+          });
+
+          if (res.data.status == 200) setAlreadyAccepted(true);
+
+          console.log(res);
+          let res2 = await _.get("/api/request/check-request", {
+            params: {
+              studentId: currentUser?._id,
+              establishmentId: data?._id,
+            },
+          });
+
+          if (res2.data.status == 200) setStatus(res2.data.request);
+        }
+      })(axios);
+    }
+  }, [open]);
 
   return (
     <>
@@ -71,44 +165,15 @@ const FullViewer = ({ data, open, close }) => {
         height="100%"
         title={data?.name}
         extra={[
-          <Button
-            type="primary"
-            key="key1"
-            onClick={() => {
-              if (Object.keys(user).length != 0) {
-                _modal = modal.confirm({
-                  title: "Confirm Request?",
-                  width: 370,
-                  centered: true,
-                  maskClosable: true,
-                  footer: [
-                    <Spin spinning={loader != ""} key="footer-key-1">
-                      <Space style={{ marginTop: 30 }}>
-                        <Button>CANCEL</Button>
-                        <Button
-                          style={{
-                            color: "green",
-                            borderColor: "green",
-                            background: "rgba(0,255,0,0.1)",
-                          }}
-                          onClick={saveAsDraft}
-                        >
-                          SAVE AS DRAFT
-                        </Button>
-                        <Button type="primary" onClick={confirm}>
-                          CONFIRM
-                        </Button>
-                      </Space>
-                    </Spin>,
-                  ],
-                });
-              } else setOpenGuestForm(true);
-            }}
-          >
-            Apply for Request
-          </Button>,
+          !alreadyAccepted ? (
+            extraButtons(status)
+          ) : (
+            <Typography.Text type="success">Accepted Already</Typography.Text>
+          ),
         ]}
+        destroyOnClose
       >
+        {status}
         <EstablishmentInfo data={data} />
       </Drawer>
 

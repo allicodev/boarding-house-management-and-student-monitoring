@@ -49,6 +49,10 @@ const RequestHistory = () => {
           <Tag color="#108ee9">
             <FieldTimeOutlined /> PENDING
           </Tag>
+        ) : row?.status == "cancelled" ? (
+          <Tag color="#FFA500">
+            <CloseOutlined /> CANCELLED
+          </Tag>
         ) : (
           <Tooltip title="Click to know the reason">
             <Tag

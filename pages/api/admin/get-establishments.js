@@ -8,11 +8,6 @@ export default async function handler(req, res) {
 
     const establishment = await Establishment.aggregate([
       {
-        $match: {
-          $expr: { $eq: [{ $last: "$verification.status" }, "approved"] },
-        },
-      },
-      {
         $lookup: {
           from: "users",
           localField: "ownerId",
@@ -44,7 +39,7 @@ export default async function handler(req, res) {
     res.json({
       data: establishment,
       status: 200,
-      message: "Registered successfully",
+      message: "Fetched successfully",
     });
   } catch (err) {
     console.log(err);

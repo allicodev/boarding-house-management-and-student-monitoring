@@ -47,7 +47,7 @@ const EstablishmentInfo = ({ data }) => {
             Space available
           </div>
           <div>
-            {data?.status == "approved" ? (
+            {data?.verification?.at(-1).status == "approved" ? (
               <Tag color="#87d068">VERIFIED</Tag>
             ) : (
               <Tag color="red">UNVERIFIED</Tag>

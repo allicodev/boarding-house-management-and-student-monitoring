@@ -74,7 +74,15 @@ const ListView = ({ source, setOpenFullDetails }) => {
       render: (_, row) => (
         <Button
           type="link"
-          onClick={() => setOpenFullDetails({ open: true, data: row })}
+          onClick={() =>
+            setOpenFullDetails({
+              open: true,
+              data: {
+                ...row,
+                isFull: row?.totalOccupied >= row?.totalSpaceForRent,
+              },
+            })
+          }
         >
           View More
         </Button>
@@ -89,7 +97,14 @@ const ListView = ({ source, setOpenFullDetails }) => {
       dataSource={source}
       onRow={(data) => {
         return {
-          onClick: () => setOpenFullDetails({ open: true, data }),
+          onClick: () =>
+            setOpenFullDetails({
+              open: true,
+              data: {
+                ...data,
+                isFull: data?.totalOccupied >= data?.totalSpaceForRent,
+              },
+            }),
         };
       }}
       rowKey={(_) => _._id}
@@ -106,7 +121,7 @@ const GridView = ({ source, setOpenFullDetails }) => {
     switch (tab) {
       case "p_info": {
         let flag = el?.totalOccupied >= el?.totalSpaceForRent;
-        let verified = el?.status == "verified";
+        let verified = el?.verification?.at(-1).status == "approved";
         return (
           <>
             <Typography.Title level={3} ellipsis={{ tooltip: el?.name }}>
@@ -189,7 +204,7 @@ const GridView = ({ source, setOpenFullDetails }) => {
   return (
     <List
       itemLayout="horizontal"
-      grid={{ gutter: 3, column: 4 }}
+      grid={{ gutter: 3, column: 3.5 }}
       dataSource={source}
       renderItem={(el, i) => (
         <List.Item key={i}>
@@ -201,7 +216,15 @@ const GridView = ({ source, setOpenFullDetails }) => {
             actions={[
               <EllipsisOutlined
                 key="ellipsis"
-                onClick={() => setOpenFullDetails({ open: true, data: el })}
+                onClick={() =>
+                  setOpenFullDetails({
+                    open: true,
+                    data: {
+                      ...el,
+                      isFull: el?.totalOccupied >= el?.totalSpaceForRent,
+                    },
+                  })
+                }
               />,
             ]}
             tabList={[

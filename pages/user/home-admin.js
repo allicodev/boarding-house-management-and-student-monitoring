@@ -17,6 +17,7 @@ const MyApp = ({ app_key }) => {
         <Sider
           selectedIndex={(e) => setSelectedKey(e.key)}
           selectedKey={selectedKey}
+          image="/oss-logo.png"
           items={[
             { label: "Home", key: "home", icon: <VscGraph /> },
             {

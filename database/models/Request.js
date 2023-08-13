@@ -12,7 +12,7 @@ let RequestSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "accepted", "rejected", "draft"],
+      enum: ["pending", "accepted", "rejected", "draft", "cancelled"],
       default: "pending",
     },
     declineReason: {

@@ -15,6 +15,22 @@ export default async function handler(req, res) {
         },
       }
     ).then(async (e) => {
+      if (req.body.hasOwnProperty("studentId")) {
+        await Request.updateMany(
+          {
+            $and: [
+              { studentId: req.body.studentId },
+              { _id: { $ne: req.body._id } },
+            ],
+          },
+          {
+            $set: {
+              status: "cancelled",
+            },
+          }
+        );
+      }
+
       if (req.body.status != "pending")
         await Tenant.create({
           studentId: e.studentId,

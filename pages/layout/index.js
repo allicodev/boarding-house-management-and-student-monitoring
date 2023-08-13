@@ -21,7 +21,7 @@ import json from "../assets/json/constant.json";
 
 const user = Cookies.get("currentUser");
 
-const Sider = ({ selectedIndex, selectedKey, items }) => {
+const Sider = ({ selectedIndex, selectedKey, items, image }) => {
   return (
     <Affix>
       <Layout.Sider collapsible theme="light">
@@ -34,7 +34,12 @@ const Sider = ({ selectedIndex, selectedKey, items }) => {
             padding: 10,
           }}
         >
-          <Image preview={false} src="/logo.png" alt="logo" width={150} />
+          <Image
+            preview={false}
+            src={image == null ? "/logo.png" : image}
+            alt="logo"
+            width={150}
+          />
         </div>
         <Menu
           onClick={selectedIndex}

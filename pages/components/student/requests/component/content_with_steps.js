@@ -22,7 +22,6 @@ const ContentWithSteps = ({ data, close, refresh }) => {
   const [lastStatus, setLastStatus] = useState("");
   const [index, setIndex] = useState(0);
   const [modal, contextHolder] = Modal.useModal(0);
-  let _modal = null;
 
   const confirmDelete = () =>
     (async () => {
@@ -73,7 +72,12 @@ const ContentWithSteps = ({ data, close, refresh }) => {
 
     if (_lastStatus == "draft") setIndex(0);
     if (_lastStatus == "pending") setIndex(1);
-    if (_lastStatus == "rejected" || _lastStatus == "accepted") setIndex(2);
+    if (
+      _lastStatus == "rejected" ||
+      _lastStatus == "accepted" ||
+      _lastStatus == "cancelled"
+    )
+      setIndex(2);
   }, [data]);
 
   return (
@@ -230,10 +234,18 @@ const ContentWithSteps = ({ data, close, refresh }) => {
       )}
       {index == 2 && (
         <Result
-          status={lastStatus == "accepted" ? "success" : "error"}
+          status={
+            lastStatus == "accepted"
+              ? "success"
+              : lastStatus == "cancelled"
+              ? "warning"
+              : "error"
+          }
           title={
             lastStatus == "accepted"
               ? "Your request has been accepted"
+              : lastStatus == "cancelled"
+              ? "The request is cancelled because you are accepted in other boarding house"
               : "Your request has been declined"
           }
         >

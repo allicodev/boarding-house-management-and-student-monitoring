@@ -48,7 +48,9 @@ const ModalTable = ({ open, close, data, refresh }) => {
             <Popconfirm
               title="Request Confirmation"
               description="Are you sure to accept this request?"
-              onConfirm={() => confirm(row?._id, row?.studentId?.email)}
+              onConfirm={() =>
+                confirm(row?._id, row?.studentId?.email, row?.studentId?._id)
+              }
               okText="Yes"
               cancelText="No"
             >
@@ -69,11 +71,12 @@ const ModalTable = ({ open, close, data, refresh }) => {
     },
   ];
 
-  const confirm = (id, email) =>
+  const confirm = (id, email, studentId) =>
     (async () => {
       setLoader("saving-accept");
       let res = await axios.post("/api/request/accept-request", {
         _id: id,
+        studentId,
       });
 
       if (res.data.status == 200) {

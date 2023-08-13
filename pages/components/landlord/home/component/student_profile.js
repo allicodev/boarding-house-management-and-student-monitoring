@@ -14,6 +14,7 @@ const StudentProfile = ({ open, close, data, update, refresh }) => {
       setLoader("saving");
       let res = await axios.post("/api/request/accept-request", {
         _id: data?._id,
+        studentId: data?.studentId?._id,
       });
 
       if (res.data.status == 200) {

@@ -9,10 +9,10 @@ export default async function handler(req, res) {
   await dbConnect();
 
   const { method } = req;
-  const { email, password } = req.body;
+  const { email, password, loginMode } = req.body;
 
   if (method === "POST") {
-    const validUser = await User.findOne({ email }).lean();
+    const validUser = await User.findOne({ email, role: loginMode }).lean();
 
     if (validUser) {
       const validPassword = await bcrypt.compare(password, validUser.password);
