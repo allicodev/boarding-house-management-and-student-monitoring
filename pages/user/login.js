@@ -16,15 +16,9 @@ import {
 } from "antd";
 import { SwapOutlined } from "@ant-design/icons";
 import { PickerDropPane } from "filestack-react";
-import { Rubik } from "next/font/google";
 import axios from "axios";
 
 import json from "../assets/json/constant.json";
-
-const font = Rubik({
-  weight: "300",
-  subsets: ["latin"],
-});
 
 const Login = ({ app_key }) => {
   const [mode, setMode] = useState("login");
@@ -409,7 +403,6 @@ const Login = ({ app_key }) => {
         >
           {/* <Typography.Title
             level={3}
-            className={font.className}
             style={{
               textAlign: "center",
             }}
