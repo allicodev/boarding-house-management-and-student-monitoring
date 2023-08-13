@@ -7,6 +7,7 @@ const nextConfig = {
       net: false,
       dns: false,
       tls: false,
+      process: require.resolve("process/browser"),
     };
 
     return config;
