@@ -77,7 +77,7 @@ const Login = ({ app_key }) => {
       <Button
         type="text"
         style={{
-          position: "absolute",
+          position: "fixed",
           zIndex: 99,
           color: "#fff",
         }}
@@ -104,7 +104,7 @@ const Login = ({ app_key }) => {
             justifyContent: "center",
             minHeight: "100vh",
             flexDirection: "row",
-            backgroundColor: "#FFA500aa",
+            backgroundColor: "#f3b965",
           }}
         >
           {mode == "login" && (

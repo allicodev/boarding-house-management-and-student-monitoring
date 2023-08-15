@@ -137,7 +137,6 @@ const FullViewer = ({ data, open, close }) => {
 
           if (res.data.status == 200) setAlreadyAccepted(true);
 
-          console.log(res);
           let res2 = await _.get("/api/request/check-request", {
             params: {
               studentId: currentUser?._id,
@@ -173,7 +172,6 @@ const FullViewer = ({ data, open, close }) => {
         ]}
         destroyOnClose
       >
-        {status}
         <EstablishmentInfo data={data} />
       </Drawer>
 

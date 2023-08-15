@@ -1,11 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Form, Input, Button, Image, Select, message } from "antd";
+import {
+  Modal,
+  Form,
+  Input,
+  Button,
+  Image,
+  Select,
+  message,
+  DatePicker,
+} from "antd";
 import axios from "axios";
 import ChangePassword from "./change_password";
 import { PickerDropPane } from "filestack-react";
 import Cookies from "js-cookie";
 
 import json from "../../assets/json/constant.json";
+import dayjs from "dayjs";
 
 const user = JSON.parse(Cookies.get("currentUser") ?? "{}");
 
@@ -17,6 +27,7 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
 
   const handleFinish = async (val) => {
     delete val.profilephoto;
+    console.log(val);
 
     if (Object.values(val).includes(undefined)) {
       message.error("Please fill empty field.");
@@ -146,6 +157,40 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
           </Form.Item>
           {user?.role == "student" && (
             <Form.Item
+              label="Gender"
+              name="gender"
+              initialValue={openEditModal?.data?.gender}
+            >
+              <Select
+                options={[
+                  { label: "Male", value: "male" },
+                  { label: "Female", value: "female" },
+                ]}
+                onChange={() => setUpdated(true)}
+              />
+            </Form.Item>
+          )}
+          {user?.role == "student" && (
+            <Form.Item
+              label="Date of Birth"
+              name="dateOfBirth"
+              initialValue={dayjs(
+                openEditModal?.data?.dateOfBirth,
+                "YYYY-MM-DD"
+              )}
+            >
+              <DatePicker
+                onChange={() => setUpdated(true)}
+                defaultValue={dayjs(
+                  openEditModal?.data?.dateOfBirth,
+                  "YYYY-MM-DD"
+                )}
+                format="YYYY-MM-DD"
+              />
+            </Form.Item>
+          )}
+          {user?.role == "student" && (
+            <Form.Item
               label="ID Number"
               name="idNumber"
               initialValue={openEditModal?.data?.idNumber}
@@ -164,6 +209,15 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
                 options={json.colleges}
                 onChange={() => setUpdated(true)}
               />
+            </Form.Item>
+          )}
+          {user?.role == "student" && (
+            <Form.Item
+              label="Year"
+              name="year"
+              initialValue={parseInt(openEditModal?.data?.year)}
+            >
+              <Select options={json.year} onChange={() => setUpdated(true)} />
             </Form.Item>
           )}
           <Form.Item

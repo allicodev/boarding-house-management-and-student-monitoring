@@ -3,10 +3,12 @@ import { Tag, Table, Typography } from "antd";
 import axios from "axios";
 
 import json from "../../../assets/json/constant.json";
+import { StudentProfile } from "../../../assets/utilities";
 import dayjs from "dayjs";
 
 const Student = () => {
   const [students, setStudents] = useState([]);
+  const [openStudent, setOpenStudent] = useState({ open: false, data: null });
 
   const column = [
     {
@@ -88,13 +90,25 @@ const Student = () => {
     })(axios);
   }, []);
   return (
-    <Table
-      title={() => (
-        <Typography.Text>Masterlist of all students</Typography.Text>
-      )}
-      columns={column}
-      dataSource={students}
-    />
+    <>
+      <StudentProfile
+        open={openStudent.open}
+        close={() => setOpenStudent({ open: false, data: null })}
+        data={openStudent.data}
+      />
+      <Table
+        title={() => (
+          <Typography.Text>Masterlist of all students</Typography.Text>
+        )}
+        columns={column}
+        dataSource={students}
+        onRow={(data) => {
+          return {
+            onClick: () => setOpenStudent({ open: true, data }),
+          };
+        }}
+      />
+    </>
   );
 };
 
