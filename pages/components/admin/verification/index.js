@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Table, Tag, message } from "antd";
+import { Typography, Table, Tag, message, Button } from "antd";
 
 import FullViewer from "./components/full_viewer";
 import axios from "axios";
-
-const Home = () => {
+import ReportGenerator from "../../../layout/components/report_generator";
+import json from "../../../assets/json/constant.json";
+const Home = ({ app_key }) => {
   const [establishment, setEstablishment] = useState([]);
   const [openViewer, setOpenViewer] = useState({ open: false, data: null });
   const [trigger, setTrigger] = useState(0);
+  const [report, setReport] = useState({
+    open: false,
+    column: [],
+    data: [],
+    title: "",
+  });
 
   const column = [
     {
@@ -29,6 +36,7 @@ const Home = () => {
     },
     {
       title: "Status",
+      align: "center",
       render: (_, row) => (
         <Tag
           color={
@@ -41,6 +49,21 @@ const Home = () => {
         >
           {row?.verification?.at(-1)?.status?.toUpperCase()}
         </Tag>
+      ),
+    },
+    {
+      title: "Functions",
+      align: "center",
+      render: (_, row) => (
+        <Button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openReport(row?._id);
+          }}
+        >
+          View Report
+        </Button>
       ),
     },
   ];
@@ -78,6 +101,65 @@ const Home = () => {
     })(axios);
   };
 
+  const openReport = (id) => {
+    const columns = [
+      {
+        title: "ID Number",
+        align: "center",
+        render: (_, row) => row?.studentId?.idNumber,
+      },
+      {
+        title: "Name",
+        align: "center",
+        render: (_, row) =>
+          row?.studentId?.firstName + " " + row?.studentId?.lastName,
+      },
+      {
+        title: "Email",
+        align: "center",
+        render: (_, row) => row?.studentId?.email,
+      },
+      {
+        title: "Gender",
+        align: "center",
+        render: (_, row) => row?.studentId?.gender,
+      },
+      {
+        title: "Year",
+        align: "center",
+        render: (_, row) => row?.studentId?.year,
+      },
+      {
+        title: "College",
+        align: "center",
+        render: (_, row) =>
+          json.colleges.filter((e) => e.value == row?.studentId?.college)[0]
+            ?.label,
+      },
+      {
+        title: "Boarding House",
+        align: "center",
+        render: (_, row) => row?.establishmentId?.name,
+      },
+    ];
+    (async (_) => {
+      let { data } = await _.get("/api/admin/students-by-establishment", {
+        params: {
+          placeId: id,
+        },
+      });
+
+      if (data.status == 200) {
+        setReport({
+          open: true,
+          data: data.students,
+          title: "Student List",
+          column: columns,
+        });
+      }
+    })(axios);
+  };
+
   useEffect(() => {
     (async (_) => {
       let { data } = await _.get("/api/admin/get-establishments");
@@ -93,11 +175,26 @@ const Home = () => {
         data={openViewer.data}
         verify={verify}
         decline={decline}
+        appkey={app_key}
+      />
+      <ReportGenerator
+        open={report.open}
+        columns={report.column}
+        data={report.data}
+        title={report.title}
+        close={() =>
+          setReport({
+            open: false,
+            column: [],
+            data: [],
+            title: "",
+          })
+        }
       />
       <Table
         columns={column}
         dataSource={establishment}
-        rowKey={(_) => _._id}
+        rowKey={(_) => _.name}
         onRow={(row, index) => {
           return {
             onClick: (_) => {

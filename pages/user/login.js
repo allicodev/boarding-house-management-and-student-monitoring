@@ -19,12 +19,14 @@ import { PickerDropPane } from "filestack-react";
 import axios from "axios";
 
 import json from "../assets/json/constant.json";
+import dayjs from "dayjs";
 
 const Login = ({ app_key }) => {
   const [mode, setMode] = useState("login");
   const [loginMode, setLoginMode] = useState("Admin");
   const [registerMode, setRegisterMode] = useState("Student");
   const [image, setImage] = useState(null);
+  const [idImage, setIdImage] = useState(null);
 
   const validate = (val) => {
     const { email, password, confirmpassword } = val;
@@ -44,11 +46,11 @@ const Login = ({ app_key }) => {
       ...val,
       role: registerMode.toLocaleLowerCase(),
       profilePhoto: image,
+      idPhoto: idImage,
     };
 
     (async (_) => {
       let { data } = await _.post("/api/auth/new-user", val);
-      console.log(data);
 
       if (data.status == 201) {
         message.error(data.message);
@@ -89,7 +91,7 @@ const Login = ({ app_key }) => {
       <Row
         style={{
           display: "flex",
-          alignItems: "center",
+          alignItems: "start",
           justifyContent: "center",
           minHeight: "100vh",
           flexDirection: "row",
@@ -97,7 +99,7 @@ const Login = ({ app_key }) => {
         gutter={[32, 32]}
       >
         <Col
-          span={10}
+          span={mode == "login" ? 10 : 24}
           style={{
             display: "flex",
             alignItems: "center",
@@ -190,7 +192,13 @@ const Login = ({ app_key }) => {
           {mode == "register" && (
             <Card
               bodyStyle={{ padding: 0 }}
-              style={{ backgroundColor: "rgba(0,0,0,0)", border: "none" }}
+              style={{
+                backgroundColor: "rgba(0,0,0,0)",
+                border: "none",
+                marginTop: 20,
+                marginBottom: 20,
+                overflow: "scroll",
+              }}
               hoverable
             >
               <Form
@@ -252,7 +260,20 @@ const Login = ({ app_key }) => {
                     label="Date of Birth"
                     name="dateOfBirth"
                     style={{ marginBottom: 0 }}
-                    rules={[{ required: true }]}
+                    rules={[
+                      {
+                        required: true,
+                        validator: (e, i) => {
+                          let age = dayjs().diff(i, "years");
+
+                          if (age < 16)
+                            return Promise.reject(
+                              "Tenant age must be above 16"
+                            );
+                          else return Promise.resolve();
+                        },
+                      },
+                    ]}
                   >
                     <DatePicker />
                   </Form.Item>
@@ -267,6 +288,59 @@ const Login = ({ app_key }) => {
                     <Input />
                   </Form.Item>
                 )}
+                <Form.Item
+                  label="ID Photo"
+                  name="profilephoto"
+                  style={{ marginBottom: 0 }}
+                >
+                  <div
+                    style={{ width: 255, cursor: "pointer", marginBottom: 10 }}
+                    id="picker-container1"
+                  >
+                    {image == null || image == "" ? (
+                      <PickerDropPane
+                        apikey={app_key}
+                        onUploadDone={(res) =>
+                          setIdImage(res?.filesUploaded[0]?.url)
+                        }
+                        pickerOptions={{ container: "picker-container1" }}
+                      />
+                    ) : null}
+                  </div>
+
+                  {image != null && image != "" ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "flex-start",
+                        position: "relative",
+                        width: 300,
+                        marginBottom: 10,
+                      }}
+                    >
+                      <Image src={image} alt="random_photo" width="100%" />
+                      <Button
+                        style={{
+                          padding: 0,
+                          fontSize: 15,
+                          position: "absolute",
+                          width: 30,
+                          borderRadius: "100%",
+                          aspectRatio: 1 / 1,
+                          right: 5,
+                          top: 5,
+                        }}
+                        danger
+                        onClick={() => {
+                          setIdImage(null);
+                        }}
+                      >
+                        X
+                      </Button>
+                    </div>
+                  ) : null}
+                </Form.Item>
                 <Form.Item
                   label="Email:"
                   name="email"
@@ -331,7 +405,7 @@ const Login = ({ app_key }) => {
                 >
                   <div
                     style={{ width: 255, cursor: "pointer", marginBottom: 10 }}
-                    id="picker-container"
+                    id="picker-container2"
                   >
                     {image == null || image == "" ? (
                       <PickerDropPane
@@ -339,7 +413,7 @@ const Login = ({ app_key }) => {
                         onUploadDone={(res) =>
                           setImage(res?.filesUploaded[0]?.url)
                         }
-                        pickerOptions={{ container: "picker-container" }}
+                        pickerOptions={{ container: "picker-container2" }}
                       />
                     ) : null}
                   </div>
@@ -355,7 +429,7 @@ const Login = ({ app_key }) => {
                         marginBottom: 10,
                       }}
                     >
-                      <Image src={image} alt="random_photo" width="100%" />
+                      <Image src={image} alt="random_photo2" width="100%" />
                       <Button
                         style={{
                           padding: 0,
@@ -390,28 +464,31 @@ const Login = ({ app_key }) => {
             </Card>
           )}
         </Col>
-        <Col
-          span={14}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            minHeight: "100vh",
-            flexDirection: "column",
-            background: "#FFA500",
-          }}
-        >
-          {/* <Typography.Title
-            level={3}
+
+        {mode == "login" && (
+          <Col
+            span={14}
             style={{
-              textAlign: "center",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              minHeight: "100vh",
+              flexDirection: "column",
+              background: "#FFA500",
             }}
           >
-            Accredited Boarding House Management and Student Monitoring System
-            for University Student Services
-          </Typography.Title> */}
-          <Image preview={false} src="/oss-logo.png" />
-        </Col>
+            <Image preview={false} src="/buksu-log.png" />
+            <Typography.Title
+              level={4}
+              style={{
+                textAlign: "center",
+              }}
+            >
+              Accredited Boarding House Management and Student Monitoring System
+              for University Student Services
+            </Typography.Title>
+          </Col>
+        )}
       </Row>
     </>
   );

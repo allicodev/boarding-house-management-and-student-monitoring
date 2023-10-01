@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const DashboardCard = ({ label = "", value, color, index }) => {
+const DashboardCard = ({ label = "", value, color, index, onClick }) => {
   const [_index, setIndex] = useState(-1);
 
   const addOpacity = (_color, opacity = 1) => {
@@ -24,6 +24,7 @@ const DashboardCard = ({ label = "", value, color, index }) => {
       }}
       onMouseEnter={() => setIndex(index)}
       onMouseLeave={() => setIndex(-1)}
+      onClick={() => onClick(index)}
     >
       <strong>{label.toUpperCase()}</strong>
       <br />

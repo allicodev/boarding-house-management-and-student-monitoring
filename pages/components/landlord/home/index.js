@@ -152,6 +152,7 @@ const Home = () => {
               },
             },
             scales: {
+              barThickness: 0.5,
               y: {
                 min: 0,
                 max,
@@ -176,7 +177,11 @@ const Home = () => {
                 label: "Tenant(s)",
                 data: establishments.map((e) => e?.total),
                 backgroundColor: "rgba(0,185,107,0.5)",
+                borderColor: "rgba(0,185,107,1)",
                 type: "bar",
+                barThickness: 30,
+                categoryPercentage: 1,
+                barPercentage: 1.0,
               },
             ],
           }}

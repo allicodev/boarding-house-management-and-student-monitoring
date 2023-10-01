@@ -38,6 +38,22 @@ let EstablishmentSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    firstPaymentRule: {
+      type: String,
+    },
+    type: {
+      type: Array,
+      default: [],
+      // pad, boarding house, bed spacer, dormitory
+    },
+    inclusions: {
+      type: Array,
+      default: [],
+    },
+    restrictions: {
+      type: Array,
+      default: [],
+    },
     // type: {
     //   type: String,
     //   enum: ["male", "female", "mix"],

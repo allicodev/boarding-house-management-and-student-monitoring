@@ -15,11 +15,10 @@ export default async function handler(req, res) {
           status: 200,
           request: doc.status,
         });
-
-        return res.json({
-          status: 400,
-        });
       }
+      return res.json({
+        status: 400,
+      });
     });
   } catch (err) {
     console.log(err);

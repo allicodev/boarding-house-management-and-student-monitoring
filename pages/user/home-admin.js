@@ -17,7 +17,7 @@ const MyApp = ({ app_key }) => {
         <Sider
           selectedIndex={(e) => setSelectedKey(e.key)}
           selectedKey={selectedKey}
-          image="/oss-logo.png"
+          image="/buksu-log.png"
           items={[
             { label: "Home", key: "home", icon: <VscGraph /> },
             {
@@ -31,9 +31,13 @@ const MyApp = ({ app_key }) => {
         <Layout>
           <Header app_key={app_key} />
           <Content selectedKey={selectedKey} setSelectedKey={setSelectedKey}>
-            {selectedKey == "verification" ? <Verification /> : null}
-            {selectedKey == "student" ? <Student /> : null}
-            {selectedKey == "home" ? <Home /> : null}
+            {selectedKey == "verification" ? (
+              <Verification app_key={app_key} />
+            ) : null}
+            {selectedKey == "student" ? <Student app_key={app_key} /> : null}
+            {selectedKey == "home" ? (
+              <Home setSelectedKey={setSelectedKey} />
+            ) : null}
           </Content>
         </Layout>
       </Layout>

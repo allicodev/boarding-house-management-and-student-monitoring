@@ -8,7 +8,9 @@ import {
   Space,
   Tooltip,
   Image,
+  Radio,
   message,
+  Select,
 } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import Cookies from "js-cookie";
@@ -19,6 +21,8 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
   const [form] = Form.useForm();
   const [photos, setPhotos] = useState([]);
   const [businessPermitPhoto, setBusinessPermitPhoto] = useState();
+  const [firstPayment, setFirstPayment] = useState("do");
+  const [firstPaymentRule, setFirstPaymentRule] = useState("Deposit Only");
 
   const [coords, setCoords] = useState([0, 0]);
 
@@ -31,6 +35,7 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
       ownerId: JSON.parse(Cookies.get("currentUser"))._id,
       establishmentPhotos: photos,
       businessPermitPhoto,
+      firstPaymentRule,
     };
 
     let { data } = await axios.post("/api/landlord/create-establishment", {
@@ -73,6 +78,22 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
             ]}
           >
             <Input />
+          </Form.Item>
+          <Form.Item label="Establishment Type" name="type">
+            <Select
+              mode="multiple"
+              style={{
+                width: "100%",
+              }}
+              optionLabelProp="label"
+              placeholder="Select one type"
+            >
+              {["Pad", "Boarding House", "Bed Spacer", "Dormitory"].map((e) => (
+                <Select.Option key={e} value={e}>
+                  {e}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
           <Form.Item
             label="Address"
@@ -119,6 +140,58 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
                 />
               </Tooltip>
             </Space>
+          </Form.Item>
+          <Form.Item
+            label="Total Spaces to Rent"
+            name="totalSpaceForRent"
+            rules={[
+              {
+                required: true,
+                message: "Please provide on this field",
+              },
+            ]}
+          >
+            <InputNumber style={{ width: 80 }} min={1} />
+          </Form.Item>
+          <Form.Item
+            label="First Payment Rule"
+            rules={[
+              {
+                required: true,
+                message: "Please provide on this field",
+              },
+            ]}
+          >
+            <Radio.Group
+              defaultValue={firstPayment}
+              onChange={(e) => {
+                setFirstPayment(e.target.value);
+                if (e.target.value == "do") setFirstPaymentRule("Deposit Only");
+              }}
+            >
+              <Radio value="do">Deposit Only</Radio>
+              <Radio value="aad">Advance and Deposit</Radio>
+            </Radio.Group>
+            <br />
+            {firstPayment == "aad" && (
+              <>
+                Deposit Month:{" "}
+                <InputNumber
+                  style={{ width: 100 }}
+                  controls={false}
+                  min={1}
+                  onChange={(e) =>
+                    setFirstPaymentRule(`Deposit and ${e} Months Advance`)
+                  }
+                />
+              </>
+            )}
+          </Form.Item>
+          <Form.Item label="Inclusions" name="inclusions">
+            <Select mode="tags"></Select>
+          </Form.Item>
+          <Form.Item label="Restrictions" name="restrictions">
+            <Select mode="tags"></Select>
           </Form.Item>
           <Form.Item label="Images (max: 3)">
             <div
@@ -225,18 +298,6 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
                 </Button> */}
               </div>
             ) : null}
-          </Form.Item>
-          <Form.Item
-            label="Total Spaces to Rent"
-            name="totalSpaceForRent"
-            rules={[
-              {
-                required: true,
-                message: "Please provide on this field",
-              },
-            ]}
-          >
-            <InputNumber style={{ width: 80 }} min={1} />
           </Form.Item>
         </Form>
       </Modal>

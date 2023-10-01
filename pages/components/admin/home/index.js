@@ -32,10 +32,10 @@ Chart.register(
 import DashboardCard from "./components/card";
 import axios from "axios";
 
-const Home = () => {
+const Home = ({ setSelectedKey }) => {
   const [mode, setMode] = useState("Bar Graph");
   const [cardData, setCardData] = useState({
-    totalEstablishment: 0,
+    totalEstablishmentUnverified: 0,
     totalEstablishmentVerified: 0,
     totalLandlord: 0,
     totalStudent: 0,
@@ -180,8 +180,8 @@ const Home = () => {
         <Space direction="vertical" style={{ marginTop: 20 }}>
           {[
             {
-              label: "Total Establishment",
-              value: cardData.totalEstablishment,
+              label: "pending establishment",
+              value: cardData.totalEstablishmentUnverified,
               color: "#ffff00",
             },
             {
@@ -200,7 +200,15 @@ const Home = () => {
               color: "#0000ff",
             },
           ].map((e, i) => (
-            <DashboardCard {...e} index={i} key={i} />
+            <DashboardCard
+              {...e}
+              index={i}
+              key={i}
+              onClick={(index) => {
+                if ([0, 1, 3].includes(index)) setSelectedKey("verification");
+                else setSelectedKey("student");
+              }}
+            />
           ))}
         </Space>
       </Col>

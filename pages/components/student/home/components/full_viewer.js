@@ -163,6 +163,9 @@ const FullViewer = ({ data, open, close }) => {
         placement="bottom"
         height="100%"
         title={data?.name}
+        bodyStyle={{
+          backgroundColor: "#FFD580",
+        }}
         extra={[
           !alreadyAccepted ? (
             extraButtons(status)

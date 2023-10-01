@@ -6,9 +6,10 @@ import json from "../../../assets/json/constant.json";
 import { StudentProfile } from "../../../assets/utilities";
 import dayjs from "dayjs";
 
-const Student = () => {
+const Student = ({ app_key }) => {
   const [students, setStudents] = useState([]);
   const [openStudent, setOpenStudent] = useState({ open: false, data: null });
+  const [trigger, setTrigger] = useState(0);
 
   const column = [
     {
@@ -88,18 +89,18 @@ const Student = () => {
 
       if (data.status == 200) setStudents(data.students);
     })(axios);
-  }, []);
+  }, [trigger]);
+
   return (
     <>
       <StudentProfile
         open={openStudent.open}
         close={() => setOpenStudent({ open: false, data: null })}
         data={openStudent.data}
+        appkey={app_key}
+        refresh={() => setTrigger(trigger + 1)}
       />
       <Table
-        title={() => (
-          <Typography.Text>Masterlist of all students</Typography.Text>
-        )}
         columns={column}
         dataSource={students}
         onRow={(data) => {

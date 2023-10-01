@@ -1,23 +1,46 @@
 import React, { useState } from "react";
 import {
   Button,
+  Col,
   Drawer,
   Input,
   Modal,
   Popconfirm,
+  Tag,
   Space,
   Typography,
+  Row,
+  Image,
 } from "antd";
-import { EstablishmentInfo } from "../../../../assets/utilities";
+import { FaLocationPin, FaUser } from "react-icons/fa6";
+import { MdMyLocation } from "react-icons/md";
+import { BsImages } from "react-icons/bs";
+import { AiOutlineInfoCircle } from "react-icons/ai";
+import dayjs from "dayjs";
+
+// import { EditEstablishmentInfo } from "../../../../assets/utilities";
+import {
+  IconText,
+  Map,
+  NoImage,
+  RoundedContainer,
+} from "../../../../assets/utilities";
 import VerificationHistory from "../../../landlord/establishment/components/verification_history";
 
-const FullViewer = ({ data, open, close, verify, decline }) => {
+const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
   const [openDeclineForm, setOpenDeclineForm] = useState(false);
   const [reason, setReason] = useState("");
   const [openVerificationHistory, setOpenVerificationHistory] = useState({
     open: false,
     data: null,
   });
+  // const [openEditEstablishment, setOpenEstablishment] = useState({
+  //   open: false,
+  //   data: null,
+  // });
+
+  const isFull = data?.totalSpaceForRent - data?.totalOccupied <= 0;
+
   return (
     <>
       <VerificationHistory
@@ -25,6 +48,12 @@ const FullViewer = ({ data, open, close, verify, decline }) => {
         close={() => setOpenVerificationHistory({ open: false, data: null })}
         data={openVerificationHistory.data}
       />
+      {/* <EditEstablishmentInfo
+        open={openEditEstablishment.open}
+        data={openEditEstablishment.data}
+        close={() => setOpenEstablishment({ open: false, data: null })}
+        appkey={appkey}
+      /> */}
       <Modal
         open={openDeclineForm}
         onCancel={() => setOpenDeclineForm(false)}
@@ -56,9 +85,19 @@ const FullViewer = ({ data, open, close, verify, decline }) => {
         placement="bottom"
         height="100%"
         title={data?.name}
+        bodyStyle={{
+          backgroundColor: "#FFD580",
+        }}
         extra={[
+          // <Button
+          //   key="key0"
+          //   style={{ marginRight: 5 }}
+          //   onClick={() => setOpenEstablishment({ open: true, data })}
+          // >
+          //   Edit
+          // </Button>,
           data?.verification?.at(-1).status == "pending" ? (
-            <Space>
+            <Space key="space-key">
               <Button
                 type="primary"
                 key="key1"
@@ -83,6 +122,7 @@ const FullViewer = ({ data, open, close, verify, decline }) => {
               title="Are you sure ?"
               okText="Confirm"
               onConfirm={() => decline(data?._id)}
+              key="confirm-key"
             >
               <Button
                 style={{
@@ -101,13 +141,176 @@ const FullViewer = ({ data, open, close, verify, decline }) => {
                   data: data?.verification,
                 })
               }
+              key="btn-1"
             >
               Verification History
             </Button>
           ),
         ]}
       >
-        <EstablishmentInfo data={data} />
+        <Row>
+          <Col span={6}>
+            <RoundedContainer>
+              <Typography style={{ fontSize: "2em" }}>{data?.name}</Typography>
+              <Space>
+                <div>
+                  {data?.verification?.at(-1).status == "approved" ? (
+                    <Tag color="#87d068">VERIFIED</Tag>
+                  ) : (
+                    <Tag color="red">UNVERIFIED</Tag>
+                  )}
+                </div>
+              </Space>
+              <br />
+              <br />
+              <IconText icon={<FaLocationPin />} text={data?.address} />
+              <Typography>
+                Registered on {dayjs(data?.createdAt).format("MMMM D, YYYY")}
+              </Typography>
+            </RoundedContainer>
+            <RoundedContainer
+              title={
+                <IconText
+                  icon={<FaUser size={20} />}
+                  text="Owner's Info"
+                  fontSize={20}
+                />
+              }
+            >
+              <Typography>
+                <strong>
+                  {data?.ownerId?.firstName} {data?.ownerId?.lastName}
+                </strong>
+                <br />
+                <strong>{data?.ownerId?.email}</strong>
+                <br />
+                <strong>{`+63${data?.ownerId?.phoneNumber}`}</strong>
+              </Typography>
+            </RoundedContainer>
+            <RoundedContainer
+              title={
+                <IconText
+                  icon={<MdMyLocation size={20} />}
+                  text="Map"
+                  fontSize={20}
+                />
+              }
+            >
+              <Map
+                coordinates={{
+                  lat: data?.coordinates[0],
+                  lng: data?.coordinates[1],
+                }}
+                styles={{
+                  maxHeight: 250,
+                }}
+              />
+            </RoundedContainer>
+          </Col>
+          <Col span={18}>
+            <RoundedContainer
+              title={
+                <IconText
+                  icon={<AiOutlineInfoCircle size={18} />}
+                  text="Addtional Info"
+                  fontSize={16}
+                />
+              }
+            >
+              ({data?.totalOccupied ?? 0}/{data?.totalSpaceForRent ?? 0}) No. Of
+              vacancy
+              <br />
+              Type of establishment(s): {data?.type?.join(", ")}
+              <br />
+              {data?.firstPaymentRule}
+            </RoundedContainer>
+            <RoundedContainer
+              title={
+                <IconText
+                  icon={<AiOutlineInfoCircle size={18} />}
+                  text="Package Inclusions"
+                  fontSize={16}
+                />
+              }
+            >
+              {data?.inclusions?.map((e) => (
+                <Tag key={e}>{e}</Tag>
+              ))}
+            </RoundedContainer>
+            <RoundedContainer
+              title={
+                <IconText
+                  icon={<AiOutlineInfoCircle size={18} />}
+                  text="Restrictions"
+                  fontSize={16}
+                />
+              }
+            >
+              <ul style={{ marginLeft: 20 }}>
+                {data?.restrictions?.map((e) => (
+                  <li key={e}>{e}</li>
+                ))}
+              </ul>
+            </RoundedContainer>
+            <RoundedContainer
+              title={
+                <IconText
+                  icon={<BsImages size={20} />}
+                  text="Establishment Photos"
+                  fontSize={20}
+                />
+              }
+            >
+              {data?.establishmentPhotos?.length > 0 ? (
+                <Image.PreviewGroup>
+                  {data.establishmentPhotos((e) => (
+                    <Image src={e} />
+                  ))}
+                </Image.PreviewGroup>
+              ) : (
+                <NoImage />
+              )}
+            </RoundedContainer>
+            <RoundedContainer
+              title={
+                <IconText
+                  icon={<BsImages size={20} />}
+                  text="Business Permit"
+                  fontSize={20}
+                />
+              }
+            >
+              {data?.businessPermitPhoto != null ? (
+                <Image src={data?.businessPermitPhoto} />
+              ) : (
+                <NoImage />
+              )}
+            </RoundedContainer>
+          </Col>
+        </Row>
+
+        {/* <Typography.Title level={4}>Establishment Photos</Typography.Title>
+        {data?.establishmentPhotos?.length > 0 ? (
+          <List
+            itemLayout="horizontal"
+            grid={{ gutter: 3, column: 4 }}
+            dataSource={data?.establishmentPhotos}
+            renderItem={(el, i) => (
+              <List.Item key={i}>
+                <Image src={el} alt={`image ${i}`} />
+              </List.Item>
+            )}
+          />
+        ) : (
+          <NoImage />
+        )}
+
+        <Typography.Title level={4}>Business Permit</Typography.Title>
+        {data?.businessPermitPhoto ? (
+          <Image src={data?.businessPermitPhoto} alt="business permit photo" />
+        ) : (
+          <NoImage />
+        )} */}
       </Drawer>
     </>
   );

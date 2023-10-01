@@ -10,6 +10,7 @@ import {
   Button,
   Tooltip,
   Image,
+  message,
 } from "antd";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 
@@ -18,6 +19,8 @@ import { PageHeader } from "@ant-design/pro-layout";
 import EditProfile from "./components/edit_profile";
 
 import json from "../assets/json/constant.json";
+import ReportGenerator from "./components/report_generator";
+import axios from "axios";
 
 const user = Cookies.get("currentUser");
 
@@ -62,17 +65,123 @@ const Header = ({ app_key }) => {
     data: null,
   });
   const [color, setColor] = useState("");
+  const [report, setReport] = useState({
+    open: false,
+    columns: [],
+    title: "",
+    data: null,
+  });
+
+  const openReport = (type) => {
+    const isEstab = type == "establishment";
+
+    const estabColumn = [
+      { title: "name", align: "center", dataIndex: "name" },
+      {
+        title: "Status",
+        align: "center",
+        render: (_, row) =>
+          row?.verification.at(-1).status == "approved" ?? false
+            ? "Verified"
+            : "Not Verified",
+      },
+      {
+        title: "Owner",
+        align: "center",
+        render: (_, row) => row.ownerId.firstName + " " + row.ownerId.lastName,
+      },
+      {
+        title: "Address",
+        align: "center",
+        render: (_, row) => row.address,
+      },
+      {
+        title: "Space to Rent",
+        align: "center",
+        render: (_, row) => row.totalSpaceForRent,
+      },
+      {
+        title: "Space Occupied",
+        align: "center",
+        render: (_, row) => row.totalOccupied,
+      },
+    ];
+
+    const studColumn = [
+      { title: "ID Number", align: "center", dataIndex: "idNumber" },
+      {
+        title: "Name",
+        align: "center",
+        render: (_, row) => row.firstName + " " + row.lastName,
+      },
+      { title: "Email", align: "center", dataIndex: "email" },
+      { title: "Gender", align: "center", dataIndex: "gender" },
+      { title: "Year", align: "center", dataIndex: "year" },
+      {
+        title: "College",
+        align: "center",
+        render: (_, row) =>
+          json.colleges.filter((e) => e.value == row.college)[0].label,
+      },
+      {
+        title: "Boarding House",
+        align: "center",
+        render: (_, row) =>
+          row?.tenant == null ? (
+            <Typography.Text type="secondary">Not yet</Typography.Text>
+          ) : (
+            row.tenant.establishmentId.name
+          ),
+      },
+    ];
+    message.info("Generating reports..");
+    (async (_) => {
+      if (isEstab) {
+        let { data } = await _.get("/api/admin/get-establishments");
+        if (data.status == 200) {
+          message.success("Report successfully generated");
+          setReport({
+            open: true,
+            columns: estabColumn,
+            title: "Masterlist of all Boarding House",
+            data: data.data,
+          });
+        }
+      } else {
+        let { data } = await _.get("/api/admin/get-students");
+        if (data.status == 200) {
+          message.success("Report successfully generated");
+          setReport({
+            open: true,
+            columns: studColumn,
+            title: "Masterlist of all Students",
+            data: data.students,
+          });
+        }
+      }
+    })(axios);
+  };
 
   useEffect(() => {
     setColor(
       json.colleges.filter(
-        (e) => e.value == JSON.parse(user ?? "{}").college
+        (e) => e.value == JSON.parse(user ?? "{}")?.college
       )[0]?.color
     );
   }, []);
 
   return (
     <>
+      <ReportGenerator
+        {...report}
+        close={() =>
+          setReport({
+            open: false,
+            columns: [],
+            data: null,
+          })
+        }
+      />
       <Affix>
         <Layout.Header
           style={{
@@ -120,6 +229,24 @@ const Header = ({ app_key }) => {
                           data: JSON.parse(user),
                         }),
                     },
+                    JSON.parse(user ?? "{}").role == "student"
+                      ? null
+                      : {
+                          label: "Report",
+                          key: "edit",
+                          children: [
+                            JSON.parse(user ?? "{}").role == "admin"
+                              ? {
+                                  label: "Establishment Information",
+                                  onClick: () => openReport("establishment"),
+                                }
+                              : null,
+                            {
+                              label: "Students Information",
+                              onClick: () => openReport("students"),
+                            },
+                          ],
+                        },
                     {
                       type: "divider",
                     },

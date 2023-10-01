@@ -32,6 +32,10 @@ let UserSchema = new mongoose.Schema(
       unique: true,
       required: false,
     },
+    idPhoto: {
+      type: String,
+      default: "",
+    },
     college: {
       type: String,
     },

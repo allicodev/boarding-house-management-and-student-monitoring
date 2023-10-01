@@ -7,7 +7,9 @@ export default async function handler(req, res) {
     if (req.method !== "GET") throw new Error("Invalid method");
     await dbConnect();
 
-    let totalEstablishment = await Establishment.countDocuments();
+    let totalEstablishmentUnverified = await Establishment.countDocuments({
+      $expr: { $eq: [{ $last: "$verification.status" }, "pending"] },
+    });
     let totalEstablishmentVerified = await Establishment.countDocuments({
       $expr: { $eq: [{ $last: "$verification.status" }, "approved"] },
     });
@@ -18,7 +20,7 @@ export default async function handler(req, res) {
       status: 200,
       message: "Verified successfully",
       data: {
-        totalEstablishment,
+        totalEstablishmentUnverified,
         totalEstablishmentVerified,
         totalStudent,
         totalLandlord,
