@@ -263,7 +263,7 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
             >
               {data?.establishmentPhotos?.length > 0 ? (
                 <Image.PreviewGroup>
-                  {data.establishmentPhotos((e) => (
+                  {data?.establishmentPhotos((e) => (
                     <Image src={e} />
                   ))}
                 </Image.PreviewGroup>
