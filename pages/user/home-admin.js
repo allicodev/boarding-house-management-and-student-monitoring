@@ -19,9 +19,9 @@ const MyApp = ({ app_key }) => {
           selectedKey={selectedKey}
           image="/buksu-log.png"
           items={[
-            { label: "Home", key: "home", icon: <VscGraph /> },
+            { label: "Dashboard", key: "home", icon: <VscGraph /> },
             {
-              label: "Verification",
+              label: "Establishments",
               key: "verification",
               icon: <FaHouseCircleCheck />,
             },

@@ -13,23 +13,20 @@ const RequestTable = ({ sourceData, refresh }) => {
 
   const columns = [
     {
-      title: "id",
-      render: (_, row) => (
-        <>
-          {row._id}{" "}
-          {!row?.seen ? (
-            <small style={{ color: "#ff0000" }} italic="true">
-              New
-            </small>
-          ) : null}
-        </>
-      ),
-    },
-    {
       title: "Name",
       align: "center",
-      render: (_, row) =>
-        row?.studentId?.firstName + " " + row?.studentId?.lastName,
+      render: (_, row) => {
+        return (
+          <span>
+            {row?.studentId?.firstName + " " + row?.studentId?.lastName}{" "}
+            {!row?.seen ? (
+              <small style={{ color: "#ff0000" }} italic="true">
+                New
+              </small>
+            ) : null}
+          </span>
+        );
+      },
     },
     {
       title: "Establishment",

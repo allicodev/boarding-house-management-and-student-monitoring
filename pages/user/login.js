@@ -278,69 +278,6 @@ const Login = ({ app_key }) => {
                     <DatePicker />
                   </Form.Item>
                 )}
-                {registerMode == "Student" && (
-                  <Form.Item
-                    label="ID Number:"
-                    name="idNumber"
-                    style={{ marginBottom: 0 }}
-                    rules={[{ required: true }]}
-                  >
-                    <Input />
-                  </Form.Item>
-                )}
-                <Form.Item
-                  label="ID Photo"
-                  name="profilephoto"
-                  style={{ marginBottom: 0 }}
-                >
-                  <div
-                    style={{ width: 255, cursor: "pointer", marginBottom: 10 }}
-                    id="picker-container1"
-                  >
-                    {image == null || image == "" ? (
-                      <PickerDropPane
-                        apikey={app_key}
-                        onUploadDone={(res) =>
-                          setIdImage(res?.filesUploaded[0]?.url)
-                        }
-                        pickerOptions={{ container: "picker-container1" }}
-                      />
-                    ) : null}
-                  </div>
-
-                  {image != null && image != "" ? (
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "flex-start",
-                        position: "relative",
-                        width: 300,
-                        marginBottom: 10,
-                      }}
-                    >
-                      <Image src={image} alt="random_photo" width="100%" />
-                      <Button
-                        style={{
-                          padding: 0,
-                          fontSize: 15,
-                          position: "absolute",
-                          width: 30,
-                          borderRadius: "100%",
-                          aspectRatio: 1 / 1,
-                          right: 5,
-                          top: 5,
-                        }}
-                        danger
-                        onClick={() => {
-                          setIdImage(null);
-                        }}
-                      >
-                        X
-                      </Button>
-                    </div>
-                  ) : null}
-                </Form.Item>
                 <Form.Item
                   label="Email:"
                   name="email"
@@ -367,6 +304,74 @@ const Login = ({ app_key }) => {
                     rules={[{ required: true }]}
                   >
                     <Select options={json.year} />
+                  </Form.Item>
+                )}
+                {registerMode == "Student" && (
+                  <Form.Item
+                    label="ID Number:"
+                    name="idNumber"
+                    style={{ marginBottom: 0 }}
+                    rules={[{ required: true }]}
+                  >
+                    <Input />
+                  </Form.Item>
+                )}
+                {registerMode == "Student" && (
+                  <Form.Item
+                    label="ID Photo"
+                    name="profilephoto"
+                    style={{ marginBottom: 0 }}
+                  >
+                    <div
+                      style={{
+                        width: 255,
+                        cursor: "pointer",
+                        marginBottom: 10,
+                      }}
+                      id="picker-container1"
+                    >
+                      {idImage == null || idImage == "" ? (
+                        <PickerDropPane
+                          apikey={app_key}
+                          onUploadDone={(res) =>
+                            setIdImage(res?.filesUploaded[0]?.url)
+                          }
+                          pickerOptions={{ container: "picker-container1" }}
+                        />
+                      ) : null}
+                    </div>
+                    {idImage != null && idImage != "" ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "flex-start",
+                          position: "relative",
+                          width: 300,
+                          marginBottom: 10,
+                        }}
+                      >
+                        <Image src={idImage} alt="random_photo" width="100%" />
+                        <Button
+                          style={{
+                            padding: 0,
+                            fontSize: 15,
+                            position: "absolute",
+                            width: 30,
+                            borderRadius: "100%",
+                            aspectRatio: 1 / 1,
+                            right: 5,
+                            top: 5,
+                          }}
+                          danger
+                          onClick={() => {
+                            setIdImage(null);
+                          }}
+                        >
+                          X
+                        </Button>
+                      </div>
+                    ) : null}
                   </Form.Item>
                 )}
                 <Form.Item
@@ -477,6 +482,10 @@ const Login = ({ app_key }) => {
               background: "#FFA500",
             }}
           >
+            <Typography.Title level={4} style={{ textAlign: "center" }}>
+              Office of the Vice President For Culture, Arts, Sports And Student
+              Services
+            </Typography.Title>
             <Image preview={false} src="/buksu-log.png" />
             <Typography.Title
               level={4}

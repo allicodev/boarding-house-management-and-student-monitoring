@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Image,
@@ -12,17 +12,34 @@ import {
   Button,
 } from "antd";
 import json from "../json/constant.json";
-import EditStudentInfo from "./EditStudentInfo";
+import { EditStudentInfo, StudentHistory } from "./index";
 
-import { UserOutlined } from "@ant-design/icons";
+import { UserOutlined, EditOutlined, FileAddOutlined } from "@ant-design/icons";
 
 import dayjs from "dayjs";
 
 const StudentProfile = ({ open, close, data, appkey, refresh }) => {
   const [openEdit, setOpenEdit] = useState({ open: false, data: null });
+  const [openHistory, setOpenHistory] = useState(false);
+  const [id, setId] = useState("");
+  const [history, setHistory] = useState("");
+
+  useEffect(() => {
+    if (data != null) {
+      setId(data?._id);
+      setHistory(data?.history ?? []);
+    }
+  }, [data]);
 
   return (
     <>
+      <StudentHistory
+        open={openHistory}
+        close={() => setOpenHistory(false)}
+        data={history}
+        id={id}
+        refresh={() => refresh()}
+      />
       <EditStudentInfo
         appkey={appkey}
         open={openEdit.open}
@@ -38,14 +55,7 @@ const StudentProfile = ({ open, close, data, appkey, refresh }) => {
         open={open}
         onCancel={close}
         footer={null}
-        title={
-          <Space>
-            <Typography.Text>Student Profile</Typography.Text>
-            <Button onClick={() => setOpenEdit({ open: true, data })}>
-              EDIT
-            </Button>
-          </Space>
-        }
+        title={<Typography.Text>Student Profile</Typography.Text>}
         width={700}
       >
         <Row gutter={[16, 16]}>
@@ -55,12 +65,30 @@ const StudentProfile = ({ open, close, data, appkey, refresh }) => {
                 <UserOutlined
                   style={{ fontSize: 150, justifySelf: "center" }}
                 />
-                <br />
-                <small style={{ textAlign: "center" }}>No Image</small>
+                <small style={{ textAlign: "center", color: "#a1a1a1" }}>
+                  No Image
+                </small>
               </div>
             ) : (
               <Image src={data?.profilePhoto} />
             )}
+            <Space style={{ marginTop: 25 }}>
+              <Button
+                onClick={() => setOpenEdit({ open: true, data })}
+                icon={<EditOutlined />}
+              >
+                EDIT
+              </Button>
+              <Button
+                onClick={() => {
+                  setOpenHistory(true);
+                  close();
+                }}
+                icon={<FileAddOutlined />}
+              >
+                Add History
+              </Button>
+            </Space>
           </Col>
           <Col span={12}>
             <Divider plain>

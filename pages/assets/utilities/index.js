@@ -6,6 +6,7 @@ import EditStudentInfo from "./EditStudentInfo";
 import EditEstablishmentInfo from "./EditEstablishmentInfo";
 import RoundedContainer from "./rounded_container";
 import IconText from "./icon_text";
+import StudentHistory from "./StudentHistory";
 
 export default () => null;
 export {
@@ -13,6 +14,7 @@ export {
   NoImage,
   EstablishmentInfo,
   StudentProfile,
+  StudentHistory,
   EditStudentInfo,
   EditEstablishmentInfo,
   RoundedContainer,

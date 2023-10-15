@@ -1,5 +1,19 @@
 let mongoose = require("mongoose");
 
+let HistorySchema = new mongoose.Schema(
+  {
+    text: {
+      type: String,
+      default: "",
+    },
+    isViolation: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true, _id: false }
+);
+
 let UserSchema = new mongoose.Schema(
   {
     firstName: {
@@ -48,6 +62,9 @@ let UserSchema = new mongoose.Schema(
     },
     dateOfBirth: {
       type: Date,
+    },
+    history: {
+      type: [HistorySchema],
     },
     // end for student
     role: {

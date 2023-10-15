@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Card, message, Typography, Button, Input } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { BsClockHistory } from "react-icons/bs";
+import { StudentHistory } from "../../../../assets/utilities";
 import dayjs from "dayjs";
 import axios from "axios";
 
@@ -8,6 +10,7 @@ const StudentProfile = ({ open, close, data, update, refresh }) => {
   const [loader, setLoader] = useState("");
   const [reason, setReason] = useState("");
   const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
+  const [openHistory, setOpenHistory] = useState({ open: false, history: [] });
 
   const confirm = () =>
     (async () => {
@@ -67,10 +70,20 @@ const StudentProfile = ({ open, close, data, update, refresh }) => {
 
       if (res.data.status == 200) update();
     })();
+
+    if (data != null) {
+      setOpenHistory({ open: false, history: data?.studentId?.history });
+    }
   }, [data]);
 
   return (
     <>
+      <StudentHistory
+        open={openHistory.open}
+        close={() => setOpenHistory({ open: false, history: [] })}
+        data={openHistory.history}
+        viewOnly={true}
+      />
       <Modal
         open={open}
         onCancel={close}
@@ -102,6 +115,18 @@ const StudentProfile = ({ open, close, data, update, refresh }) => {
               onClick={() => setOpenDeclinedModal(true)}
             >
               REJECT
+            </Button>,
+            <Button
+              key="history"
+              type="primary"
+              ghost
+              icon={<BsClockHistory />}
+              onClick={() => {
+                setOpenHistory({ open: true, history: openHistory.history });
+                close();
+              }}
+            >
+              View History
             </Button>,
           ]}
         >

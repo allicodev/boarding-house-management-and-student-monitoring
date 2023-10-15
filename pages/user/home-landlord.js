@@ -19,7 +19,7 @@ const MyApp = ({ app_key }) => {
           selectedIndex={(e) => setSelectedKey(e.key)}
           selectedKey={selectedKey}
           items={[
-            { label: "Home", key: "home", icon: <VscGraph /> },
+            { label: "Dashboard", key: "home", icon: <VscGraph /> },
             {
               label: "Establishment",
               key: "establishment",
