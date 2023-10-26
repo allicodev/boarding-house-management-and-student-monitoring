@@ -61,9 +61,6 @@ const Login = ({ app_key }) => {
         Cookies.set("currentUser", JSON.stringify(data.user));
         message.success(data.message);
         location?.reload();
-      } else if (data.status == 500 && data.message.code == 11000) {
-        message.error("Student ID is taken.");
-        return;
       } else message.error(data.message);
     })(axios);
   };

@@ -1,14 +1,14 @@
 import Request from "../../../database/models/Request";
 import dbConnect from "../../../database/dbConnect";
 import Tenant from "../../../database/models/Tenant";
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 
 export default async function handler(req, res) {
   try {
     if (req.method !== "GET") throw new Error("Invalid method");
     await dbConnect();
 
-    let { type } = req.query;
+    let { type, id } = req.query;
     let data = [];
 
     if (!["request", "tenants"].includes(type)) throw new Error();
@@ -18,7 +18,10 @@ export default async function handler(req, res) {
       data = await Request.aggregate([
         {
           $match: {
-            status: "pending",
+            $and: [
+              { status: "pending" },
+              { establishmentId: mongoose.Types.ObjectId(id) },
+            ],
           },
         },
         {
@@ -50,8 +53,12 @@ export default async function handler(req, res) {
         },
       ]);
     } else if (type === "tenants") {
-      // need to review this, no owner id filtering
       data = await Tenant.aggregate([
+        {
+          $match: {
+            establishmentId: mongoose.Types.ObjectId(id),
+          },
+        },
         {
           $lookup: {
             from: "users",

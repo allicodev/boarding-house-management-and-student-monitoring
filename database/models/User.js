@@ -43,8 +43,6 @@ let UserSchema = new mongoose.Schema(
     // for student
     idNumber: {
       type: String,
-      unique: true,
-      required: false,
     },
     idPhoto: {
       type: String,

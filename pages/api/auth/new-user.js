@@ -14,8 +14,16 @@ export default async function handler(req, res) {
           message: "Email is already taken",
         });
 
+      if (req.body?.idNumber != null ?? false) {
+        let _user = await User.countDocuments({ idNumber: req.body.idNumber });
+        if (_user > 0)
+          return res.json({
+            status: 201,
+            message: "Student ID is already taken",
+          });
+      }
+      console.log(req.body);
       req.body.password = await bcrypt.hash(req.body.password, 8);
-
       return await User.create(req.body).then((_doc) =>
         res.json({
           status: 200,

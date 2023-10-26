@@ -46,9 +46,9 @@ const Establishment = ({ app_key }) => {
       id: null,
     });
 
-  const fetchData = async (type) => {
+  const fetchData = async (type, id) => {
     let { data } = await axios.get(`/api/landlord/request-data`, {
-      params: { type },
+      params: { type, id },
     });
 
     if (data.status != 200) {
@@ -104,13 +104,13 @@ const Establishment = ({ app_key }) => {
                   </Typography.Text>
                   <br />
                   <Space>
-                    <Card onClick={() => fetchData("request")} hoverable>
+                    <Card onClick={() => fetchData("request", e._id)} hoverable>
                       <Statistic
                         title="Request"
                         value={e?.totalRequests > 99 ? "99+" : e?.totalRequests}
                       />
                     </Card>
-                    <Card onClick={() => fetchData("tenants")} hoverable>
+                    <Card onClick={() => fetchData("tenants", e._id)} hoverable>
                       <Statistic title="Tenants" value={e?.totalSpaceRented} />
                     </Card>
                     <Card hoverable>

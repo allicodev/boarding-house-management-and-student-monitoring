@@ -260,12 +260,15 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
                   fontSize={20}
                 />
               }
+              bodyStyle={{ overflow: "scroll" }}
             >
               {data?.establishmentPhotos?.length > 0 ? (
                 <Image.PreviewGroup>
-                  {data?.establishmentPhotos((e) => (
-                    <Image src={e} />
-                  ))}
+                  <Space>
+                    {data?.establishmentPhotos.map((e) => (
+                      <Image width={300} src={e} key={e} />
+                    ))}
+                  </Space>
                 </Image.PreviewGroup>
               ) : (
                 <NoImage />
@@ -281,7 +284,7 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
               }
             >
               {data?.businessPermitPhoto != null ? (
-                <Image src={data?.businessPermitPhoto} />
+                <Image width={300} src={data?.businessPermitPhoto} />
               ) : (
                 <NoImage />
               )}
