@@ -19,7 +19,7 @@ async function dbConnect() {
     cached.promise = mongoose
       .connect(mongodbURL, opts)
       .then((mongoose) => {
-        console.log("🚀 DATABASE CONNECTED");
+        console.log("DB Connected");
         return mongoose;
       })
       .catch((err) => {
