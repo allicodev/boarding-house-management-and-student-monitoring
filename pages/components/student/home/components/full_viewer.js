@@ -10,13 +10,13 @@ const user = JSON.parse(Cookies.get("currentUser") ?? "{}");
 
 const FullViewer = ({ data, open, close }) => {
   const [modal, contextHolder] = Modal.useModal();
-  let _modal = null;
   let [loader, setLoader] = useState("");
   let [currentUser, setCurrentUser] = useState({});
   let [status, setStatus] = useState("");
   let [alreadyAccepted, setAlreadyAccepted] = useState(false);
-
   const [openGuestForm, setOpenGuestForm] = useState(false);
+
+  const _modal = null;
 
   const confirm = () => {
     setLoader("loading");
@@ -29,6 +29,7 @@ const FullViewer = ({ data, open, close }) => {
         message.success(res.data.message);
         setLoader("");
         _modal.destroy();
+        setStatus("pending");
       } else {
         setLoader("");
         _modal.destroy();
@@ -69,7 +70,7 @@ const FullViewer = ({ data, open, close }) => {
               footer: [
                 <Spin spinning={loader != ""} key="footer-key-1">
                   <Space style={{ marginTop: 30 }}>
-                    <Button>CANCEL</Button>
+                    <Button onClick={() => _modal.destroy()}>CANCEL</Button>
                     <Button
                       style={{
                         color: "green",

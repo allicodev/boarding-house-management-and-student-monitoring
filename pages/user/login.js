@@ -27,6 +27,7 @@ const Login = ({ app_key }) => {
   const [registerMode, setRegisterMode] = useState("Student");
   const [image, setImage] = useState(null);
   const [idImage, setIdImage] = useState(null);
+  const [selectedCollege, setSelectedCollege] = useState("");
 
   const validate = (val) => {
     const { email, password, confirmpassword } = val;
@@ -207,7 +208,7 @@ const Login = ({ app_key }) => {
                 }}
                 labelAlign="right"
                 style={{
-                  width: 400,
+                  width: 500,
                   padding: 30,
                   background: "#eee",
                   borderRadius: 20,
@@ -285,12 +286,46 @@ const Login = ({ app_key }) => {
                 </Form.Item>
                 {registerMode == "Student" && (
                   <Form.Item
+                    label="ID Number:"
+                    name="idNumber"
+                    style={{ marginBottom: 0 }}
+                    rules={[{ required: true }]}
+                  >
+                    <Input />
+                  </Form.Item>
+                )}
+
+                {registerMode == "Student" && (
+                  <Form.Item
                     label="College:"
                     name="college"
                     style={{ marginBottom: 0 }}
                     rules={[{ required: true }]}
                   >
-                    <Select options={json.colleges} />
+                    <Select
+                      options={json.colleges}
+                      placement="bottomRight"
+                      onChange={(e) => setSelectedCollege(e)}
+                    />
+                  </Form.Item>
+                )}
+                {registerMode == "Student" && (
+                  <Form.Item
+                    label="Course:"
+                    name="course"
+                    style={{ marginBottom: 0 }}
+                    rules={[{ required: true }]}
+                  >
+                    <Select
+                      options={
+                        json.colleges
+                          .filter((e) => e.value == selectedCollege)[0]
+                          ?.courses.map((e) => {
+                            return { label: e, value: e };
+                          }) ?? []
+                      }
+                      placement="topLeft"
+                    />
                   </Form.Item>
                 )}
                 {registerMode == "Student" && (
@@ -301,16 +336,6 @@ const Login = ({ app_key }) => {
                     rules={[{ required: true }]}
                   >
                     <Select options={json.year} />
-                  </Form.Item>
-                )}
-                {registerMode == "Student" && (
-                  <Form.Item
-                    label="ID Number:"
-                    name="idNumber"
-                    style={{ marginBottom: 0 }}
-                    rules={[{ required: true }]}
-                  >
-                    <Input />
                   </Form.Item>
                 )}
                 {registerMode == "Student" && (

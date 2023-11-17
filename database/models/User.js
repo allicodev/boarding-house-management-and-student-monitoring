@@ -51,6 +51,9 @@ let UserSchema = new mongoose.Schema(
     college: {
       type: String,
     },
+    course: {
+      type: String,
+    },
     year: {
       type: String,
     },

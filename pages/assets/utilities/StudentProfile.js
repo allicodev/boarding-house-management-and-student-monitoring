@@ -11,6 +11,7 @@ import {
   Divider,
   Button,
 } from "antd";
+import Cookies from "js-cookie";
 import json from "../json/constant.json";
 import { EditStudentInfo, StudentHistory } from "./index";
 
@@ -23,12 +24,14 @@ const StudentProfile = ({ open, close, data, appkey, refresh }) => {
   const [openHistory, setOpenHistory] = useState(false);
   const [id, setId] = useState("");
   const [history, setHistory] = useState("");
+  const [role, setRole] = useState("");
 
   useEffect(() => {
     if (data != null) {
       setId(data?._id);
       setHistory(data?.history ?? []);
     }
+    setRole(JSON.parse(Cookies.get("currentUser")).role ?? "");
   }, [data]);
 
   return (
@@ -60,25 +63,37 @@ const StudentProfile = ({ open, close, data, appkey, refresh }) => {
       >
         <Row gutter={[16, 16]}>
           <Col span={12}>
-            {["", null, undefined].includes(data?.profilePhoto) ? (
-              <div style={{ display: "grid", marginTop: 50 }}>
-                <UserOutlined
-                  style={{ fontSize: 150, justifySelf: "center" }}
-                />
-                <small style={{ textAlign: "center", color: "#a1a1a1" }}>
-                  No Image
-                </small>
-              </div>
-            ) : (
-              <Image src={data?.profilePhoto} />
-            )}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+              }}
+            >
+              {["", null, undefined].includes(data?.profilePhoto) ? (
+                <div style={{ display: "grid", marginTop: 50 }}>
+                  <UserOutlined
+                    style={{ fontSize: 150, justifySelf: "center" }}
+                  />
+                </div>
+              ) : (
+                <Image src={data?.profilePhoto} />
+              )}
+              <Typography.Text style={{ marginBottom: 0, fontSize: "1.25em" }}>
+                {data?.firstName} {data?.lastName}{" "}
+              </Typography.Text>
+              <small>(id: {data?.idNumber})</small>
+            </div>
             <Space style={{ marginTop: 25 }}>
-              <Button
-                onClick={() => setOpenEdit({ open: true, data })}
-                icon={<EditOutlined />}
-              >
-                EDIT
-              </Button>
+              {role == "admin" && (
+                <Button
+                  onClick={() => setOpenEdit({ open: true, data })}
+                  icon={<EditOutlined />}
+                >
+                  EDIT
+                </Button>
+              )}
               <Button
                 onClick={() => {
                   setOpenHistory(true);
@@ -93,18 +108,26 @@ const StudentProfile = ({ open, close, data, appkey, refresh }) => {
           <Col span={12}>
             <Divider plain>
               <strong>Basic Info</strong>
-            </Divider>
-            <Typography.Text style={{ marginBottom: 0, fontSize: "1.25em" }}>
-              {data?.firstName} {data?.lastName}{" "}
-            </Typography.Text>
-            <small>(id: {data?.idNumber})</small>
-            <br />
+            </Divider>{" "}
+            <Tag>
+              {dayjs().diff(
+                dayjs(data?.dateOfBirth).format("YYYY-MM-DD"),
+                "years",
+                false
+              )}{" "}
+              years old
+            </Tag>
+            <Tag
+              color={data?.gender == "male" ? "blue-inverse" : "pink-inverse"}
+            >
+              {data?.gender}
+            </Tag>
             {![null, undefined, ""].includes(data?.college) && (
               <Tooltip
-                title={
+                title={`${
                   json.colleges.filter((e) => e.value == data?.college)[0]
                     ?.label
-                }
+                }\n${data?.course ?? ""}`}
               >
                 <Tag
                   color={
@@ -116,11 +139,6 @@ const StudentProfile = ({ open, close, data, appkey, refresh }) => {
                 </Tag>
               </Tooltip>
             )}
-            <Tag
-              color={data?.gender == "male" ? "blue-inverse" : "pink-inverse"}
-            >
-              {data?.gender}
-            </Tag>
             <Tag>
               {
                 json.year.filter((e) => e.value == parseInt(data?.year))[0]

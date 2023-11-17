@@ -39,7 +39,9 @@ const Tenants = () => {
       title: "College",
       render: (_, row) => (
         <Tooltip
-          title={json.colleges.filter((e) => e.value == row?.college)[0]?.label}
+          title={`${
+            json.colleges.filter((e) => e.value == row?.college)[0]?.label
+          }\n${row?.student?.course ?? ""}`}
         >
           <Tag
             color={

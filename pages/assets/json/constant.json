@@ -3,32 +3,91 @@
     {
       "value": "con",
       "label": "CON (College of Nursing)",
+      "courses": ["Bachelor of Science in Nursing"],
       "color": "#ffb6c1"
     },
     {
       "value": "cas",
       "label": "CAS (College of Arts and Sciences)",
+      "courses": [
+        "Doctor of Philosophy in English Language",
+        "Master of Arts in English Language",
+        "Master of Arts in Sociology",
+        "Bachelor of Science in Biology Major in Biotechnology",
+        "Bachelor of Science in Environmental Science Major in Environmental Heritage Studies",
+        "Bachelor of Arts in English Language",
+        "Bachelor of Arts in Economics",
+        "Bachelor of Arts in Sociology",
+        "Bachelor of Arts in Philosophy",
+        "Bachelor of Arts in Social Science",
+        "Bachelor of Science in Mathematics",
+        "Bachelor of Science in Community Development",
+        "Bachelor of Science in Development Communication"
+      ],
       "color": "#90EE90"
     },
     {
       "value": "cot",
       "label": "COT (College of Technologies)",
+      "courses": [
+        "Bachelor of Science in Automotive Technology",
+        "Bachelor of Science in Electronics Technology",
+        "Bachelor of Science in Food Technology",
+        "Bachelor of Science in Information Technology",
+        "Bachelor of Science in Entertainment and Multimedia Computing major in Digital Animation Technology Game Development"
+      ],
       "color": "#ffcccb"
     },
     {
       "value": "cob",
       "label": "COB (College of Business)",
+      "courses": [
+        "Masters in Management Major in Business Management",
+        "Bachelor of Science in Accountancy",
+        "Bachelor of Science in Business Administration Major in Financial Management",
+        "Bachelor of Science in Hospitality Management"
+      ],
       "color": "#ffffe0"
     },
     {
       "value": "coe",
       "label": "COE (College of Education)",
+      "courses": [
+        "Doctor of Philosophy in Education Major in Instructional Systems Design",
+        "Doctor of Philosophy in Science Education Major in Mathematics",
+        "Doctor of Philosophy in Science Education Major in Biology",
+        "Master of Arts in Education with Specialization in English Language Teaching",
+        "Master of Arts in Education with Specialization in Guidance and Counseling",
+        "Master of Arts in Education with Specialization in Mathematics Education",
+        "Master of Arts in Education with Specialization in Mathematics Teaching",
+        "Master of Arts in Education with Specialization in General Science",
+        "Bachelor of Elementary Education",
+        "Bachelor of Secondary Education Major in Mathematics",
+        "Bachelor of Secondary Education Major in Filipino",
+        "Bachelor of Secondary Education Major in English",
+        "Bachelor of Secondary Education Major in Social Studies",
+        "Bachelor of Secondary Education, Major in science ScienceBachelor of Early Childhood Education",
+        "Bachelor of Physical Education"
+      ],
       "color": "#00008b"
     },
     {
       "value": "col",
       "label": "COL (College of Law)",
+      "courses": ["Bachelor of Law (Juris Doctor)"],
       "color": "#CF9FFF"
+    },
+    {
+      "value": "coa",
+      "label": "COA (College of Administration)",
+      "courses": [
+        "Doctor in Public Administration",
+        "Doctor of Philosophy in Educational Administration",
+        "Master in Public Administration",
+        "Master in Educational Administration",
+        "Bachelor of Public Administration Major in Local Governance"
+      ],
+      "color": "#ffffe0"
     }
   ],
   "year": [

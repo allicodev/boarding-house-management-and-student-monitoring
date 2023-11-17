@@ -20,7 +20,9 @@ export default async function handler(req, res) {
           $match: {
             $and: [
               { status: "pending" },
-              { establishmentId: mongoose.Types.ObjectId(id) },
+              [null, undefined, ""].includes(id)
+                ? {}
+                : { establishmentId: mongoose.Types.ObjectId(id) },
             ],
           },
         },

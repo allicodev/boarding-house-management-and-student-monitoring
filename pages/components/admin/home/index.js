@@ -63,7 +63,7 @@ const Home = ({ setSelectedKey }) => {
       let { data } = await _.get("/api/admin/get-students");
 
       if (data.status == 200) {
-        data?.students.forEach((e) => barData[e?.college.toUpperCase()]++);
+        data?.students.forEach((e) => barData[e?.college?.toUpperCase()]++);
         setBarData(barData);
       }
     })(axios);

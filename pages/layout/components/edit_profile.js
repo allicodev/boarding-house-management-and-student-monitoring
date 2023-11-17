@@ -24,6 +24,7 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
   const [form] = Form.useForm();
   const [openChangePassword, setOpenChangedPassword] = useState(false);
   const [image, setImage] = useState(openEditModal?.data?.profilePhoto);
+  const [courses, setCourses] = useState([]);
 
   const handleFinish = async (val) => {
     delete val.profilephoto;
@@ -51,6 +52,13 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
 
   useEffect(() => {
     setImage(openEditModal?.data?.profilePhoto);
+    setCourses(
+      json.colleges
+        .filter((e) => e.value == openEditModal?.data?.college)[0]
+        ?.courses.map((e) => {
+          return { label: e, value: e };
+        }) ?? []
+    );
   }, [openEditModal]);
 
   return (
@@ -209,6 +217,15 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
                 options={json.colleges}
                 onChange={() => setUpdated(true)}
               />
+            </Form.Item>
+          )}
+          {user?.role == "student" && (
+            <Form.Item
+              label="Course:"
+              name="course"
+              initialValue={openEditModal?.data?.course}
+            >
+              <Select options={courses} onChange={() => setUpdated(true)} />
             </Form.Item>
           )}
           {user?.role == "student" && (

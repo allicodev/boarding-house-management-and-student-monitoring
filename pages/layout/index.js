@@ -121,7 +121,7 @@ const Header = ({ app_key }) => {
         title: "College",
         align: "center",
         render: (_, row) =>
-          json.colleges.filter((e) => e.value == row.college)[0].label,
+          json.colleges.filter((e) => e.value == row.college)[0]?.label ?? "",
       },
       {
         title: "Boarding House",
