@@ -48,6 +48,7 @@ const Home = ({ setSelectedKey }) => {
     COB: 0,
     COE: 0,
     COL: 0,
+    COA: 0,
   });
 
   useEffect(() => {
@@ -59,6 +60,7 @@ const Home = ({ setSelectedKey }) => {
         COB: 0,
         COE: 0,
         COL: 0,
+        COA: 0,
       });
       let { data } = await _.get("/api/admin/get-students");
 

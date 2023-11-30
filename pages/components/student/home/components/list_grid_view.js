@@ -30,14 +30,19 @@ const ListView = ({ source, setOpenFullDetails }) => {
     },
     {
       title: "Name",
+      sorter: (a, b) => a.name.length - b.name.length,
       render: (_, row) => row?.name ?? "No name",
     },
     {
       title: "Address",
+      sorter: (a, b) => a.address.length - b.address.length,
       render: (_, row) => row?.address ?? "No Address",
     },
     {
       title: "Owner Name",
+      sorter: (a, b) =>
+        (a?.ownerId?.firstName + " " + a?.ownerId?.lastName).length -
+        (rbow?.ownerId?.firstName + " " + b?.ownerId?.lastName).length,
       render: (_, row) =>
         row?.ownerId?.firstName + " " + row?.ownerId?.lastName ??
         "No owner. Its free",
@@ -45,6 +50,18 @@ const ListView = ({ source, setOpenFullDetails }) => {
     {
       title: "Status",
       align: "center",
+      filters: [
+        {
+          text: "Verified",
+          value: "approved",
+        },
+        {
+          text: "Unverified",
+          value: "declined",
+        },
+      ],
+      onFilter: (selectedFilter, row) =>
+        row.verification.at(-1).status == selectedFilter,
       render: (_, row) =>
         row.verification.at(-1).status == "approved" ? (
           <Tag color="green">VERIFIED</Tag>

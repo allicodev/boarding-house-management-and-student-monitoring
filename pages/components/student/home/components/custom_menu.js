@@ -17,8 +17,7 @@ const CustomMenu = ({ onViewChanged }) => {
           setView(e);
           onViewChanged(e);
         }}
-      />{" "}
-      FILTERS HEREEEE
+      />
     </Space>
   );
 };

@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     let students = await User.aggregate([
       {
         $match: {
-          role: "student",
+          $and: [{ role: "student" }, { college: { $exists: true } }],
         },
       },
       {
