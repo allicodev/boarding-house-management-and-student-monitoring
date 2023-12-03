@@ -19,12 +19,7 @@ import { AiOutlineInfoCircle } from "react-icons/ai";
 import dayjs from "dayjs";
 
 // import { EditEstablishmentInfo } from "../../../../assets/utilities";
-import {
-  IconText,
-  Map,
-  NoImage,
-  RoundedContainer,
-} from "../../../../assets/utilities";
+import { IconText, Map, RoundedContainer } from "../../../../assets/utilities";
 import VerificationHistory from "../../../landlord/establishment/components/verification_history";
 
 const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
@@ -252,17 +247,17 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
                 ))}
               </ul>
             </RoundedContainer>
-            <RoundedContainer
-              title={
-                <IconText
-                  icon={<BsImages size={20} />}
-                  text="Establishment Photos"
-                  fontSize={20}
-                />
-              }
-              bodyStyle={{ overflow: "scroll" }}
-            >
-              {data?.establishmentPhotos?.length > 0 ? (
+            {data?.establishmentPhotos?.length > 0 && (
+              <RoundedContainer
+                title={
+                  <IconText
+                    icon={<BsImages size={20} />}
+                    text="Establishment Photos"
+                    fontSize={20}
+                  />
+                }
+                bodyStyle={{ overflow: "scroll" }}
+              >
                 <Image.PreviewGroup>
                   <Space>
                     {data?.establishmentPhotos.map((e) => (
@@ -270,50 +265,24 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
                     ))}
                   </Space>
                 </Image.PreviewGroup>
-              ) : (
-                <NoImage />
-              )}
-            </RoundedContainer>
-            <RoundedContainer
-              title={
-                <IconText
-                  icon={<BsImages size={20} />}
-                  text="Business Permit"
-                  fontSize={20}
-                />
-              }
-            >
-              {data?.businessPermitPhoto != null ? (
+              </RoundedContainer>
+            )}
+
+            {data?.businessPermitPhoto != null && (
+              <RoundedContainer
+                title={
+                  <IconText
+                    icon={<BsImages size={20} />}
+                    text="Business Permit"
+                    fontSize={20}
+                  />
+                }
+              >
                 <Image width={300} src={data?.businessPermitPhoto} />
-              ) : (
-                <NoImage />
-              )}
-            </RoundedContainer>
+              </RoundedContainer>
+            )}
           </Col>
         </Row>
-
-        {/* <Typography.Title level={4}>Establishment Photos</Typography.Title>
-        {data?.establishmentPhotos?.length > 0 ? (
-          <List
-            itemLayout="horizontal"
-            grid={{ gutter: 3, column: 4 }}
-            dataSource={data?.establishmentPhotos}
-            renderItem={(el, i) => (
-              <List.Item key={i}>
-                <Image src={el} alt={`image ${i}`} />
-              </List.Item>
-            )}
-          />
-        ) : (
-          <NoImage />
-        )}
-
-        <Typography.Title level={4}>Business Permit</Typography.Title>
-        {data?.businessPermitPhoto ? (
-          <Image src={data?.businessPermitPhoto} alt="business permit photo" />
-        ) : (
-          <NoImage />
-        )} */}
       </Drawer>
     </>
   );

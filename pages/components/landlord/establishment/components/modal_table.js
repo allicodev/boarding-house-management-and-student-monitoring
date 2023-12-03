@@ -6,8 +6,8 @@ import {
   Button,
   Popconfirm,
   Input,
-  message,
   Typography,
+  message,
 } from "antd";
 import dayjs from "dayjs";
 import axios from "axios";
@@ -19,6 +19,22 @@ const ModalTable = ({ open, close, data, refresh }) => {
     open: false,
     id: null,
   });
+  const handleArchiveStudent = (__) => {
+    (async (_) => {
+      let res = await _.delete("/api/landlord/remove-in-establishment", {
+        params: {
+          studentId: __?.studentId?._id,
+          establishmentId: __?.establishmentId?._id,
+        },
+      });
+
+      if (res.data.status == 200) {
+        message.success("Successfully Archived");
+        refresh();
+        close();
+      } else message.error(res.data.message ?? "Error in the server");
+    })(axios);
+  };
 
   const columns = [
     {
@@ -40,9 +56,29 @@ const ModalTable = ({ open, close, data, refresh }) => {
       align: "center",
       render: (_, row) =>
         row?.status == null ? (
-          <Typography.Text type="secondary" italic>
-            N/A
-          </Typography.Text>
+          <Popconfirm
+            title="Are you sure ?"
+            okText="Confirm"
+            onCancel={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+            }}
+            onConfirm={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              handleArchiveStudent(row);
+            }}
+          >
+            <Button
+              danger
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+              }}
+            >
+              Archive
+            </Button>
+          </Popconfirm>
         ) : (
           <Space>
             <Popconfirm

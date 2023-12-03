@@ -5,11 +5,25 @@ export default async function handler(req, res) {
   try {
     if (req.method !== "GET") throw new Error("Invalid method");
     await dbConnect();
+    const { college, course } = req.query;
 
     let students = await User.aggregate([
       {
         $match: {
-          $and: [{ role: "student" }, { college: { $exists: true } }],
+          $and: [
+            { role: "student" },
+            { college: { $exists: true } },
+            college != null
+              ? {
+                  college,
+                }
+              : {},
+            course != null
+              ? {
+                  course,
+                }
+              : {},
+          ],
         },
       },
       {

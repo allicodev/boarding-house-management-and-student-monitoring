@@ -54,6 +54,11 @@ const Tenants = () => {
       ),
     },
     {
+      title: "Course",
+      align: "center",
+      render: (_, row) => row?.student?.course,
+    },
+    {
       title: "Establishment",
       dataIndex: "estabName",
     },

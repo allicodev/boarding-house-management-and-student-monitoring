@@ -111,24 +111,33 @@ const Header = ({ app_key }) => {
       { title: "ID Number", align: "center", dataIndex: "idNumber" },
       {
         title: "Name",
-        align: "center",
         render: (_, row) => row.firstName + " " + row.lastName,
       },
       { title: "Email", align: "center", dataIndex: "email" },
       { title: "Gender", align: "center", dataIndex: "gender" },
-      { title: "Year", align: "center", dataIndex: "year" },
+      { title: "Year", align: "center", dataIndex: "year", width: 30 },
       {
         title: "College",
-        align: "center",
         render: (_, row) =>
           json.colleges.filter((e) => e.value == row.college)[0]?.label ?? "",
+      },
+      {
+        title: "Course",
+        render: (_, row) =>
+          row?.course ?? (
+            <Typography.Text type="secondary" italic>
+              No Data
+            </Typography.Text>
+          ),
       },
       {
         title: "Boarding House",
         align: "center",
         render: (_, row) =>
           row?.tenant == null ? (
-            <Typography.Text type="secondary">Not yet</Typography.Text>
+            <Typography.Text type="secondary" italic>
+              No Data
+            </Typography.Text>
           ) : (
             row.tenant.establishmentId.name
           ),
@@ -242,7 +251,7 @@ const Header = ({ app_key }) => {
                                 }
                               : null,
                             {
-                              label: "Students Information",
+                              label: "All Student List",
                               onClick: () => openReport("students"),
                             },
                           ],

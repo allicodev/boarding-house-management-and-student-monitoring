@@ -1,5 +1,4 @@
 import Establishment from "../../../database/models/Establishment";
-import User from "../../../database/models/User";
 import dbConnect from "../../../database/dbConnect";
 import mongoose from "mongoose";
 
@@ -11,7 +10,18 @@ export default async function handler(req, res) {
     let establishment = await Establishment.aggregate([
       {
         $match: {
-          $expr: { $eq: ["$ownerId", mongoose.Types.ObjectId(req.query._id)] },
+          $and: [
+            {
+              $expr: {
+                $eq: ["$ownerId", mongoose.Types.ObjectId(req.query._id)],
+              },
+            },
+            ![null, undefined, ""].includes(req.query.name)
+              ? {
+                  name: req.query.name,
+                }
+              : {},
+          ],
         },
       },
       {
@@ -91,6 +101,7 @@ export default async function handler(req, res) {
 
     res.json({ establishment, status: 200, message: "Fetched successfully" });
   } catch (err) {
+    console.log(err);
     res.json({ status: 500, success: false, message: err });
   }
 }

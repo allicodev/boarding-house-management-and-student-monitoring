@@ -19,7 +19,9 @@ import json from "../json/constant.json";
 const EditStudentInfo = ({ open, close, data, appkey, closeAll }) => {
   const [image, setImage] = useState(null);
   const [updated, setUpdated] = useState(false);
+  const [selectedCollege, setSelectedCollege] = useState("");
   const [form] = Form.useForm();
+  const [inputData, setInputDate] = useState({});
 
   const handleFinish = (val) => {
     (async (_) => {
@@ -45,6 +47,21 @@ const EditStudentInfo = ({ open, close, data, appkey, closeAll }) => {
 
   useEffect(() => {
     setImage(data?.profilePhoto);
+    setSelectedCollege(data?.college);
+    setInputDate(data);
+
+    form.setFieldsValue({
+      firstName: data?.firstName,
+      lastName: data?.lastName,
+      gender: data?.gender,
+      dateOfBirth: dayjs(data?.dateOfBirth, "YYYY-MM-DD"),
+      idNumber: data?.idNumber,
+      college: data?.college,
+      course: data?.course,
+      year: parseInt(data?.year),
+      email: data?.email,
+      phoneNumber: data?.phoneNumber,
+    });
   }, [data]);
 
   return (
@@ -81,7 +98,8 @@ const EditStudentInfo = ({ open, close, data, appkey, closeAll }) => {
             style={{ width: 255, cursor: "pointer", marginBottom: 10 }}
             id="picker-container"
           >
-            {data?.profilePhoto == null || data?.profilePhoto == "" ? (
+            {inputData?.profilePhoto == null ||
+            inputData?.profilePhoto == "" ? (
               <PickerDropPane
                 apikey={appkey}
                 onUploadDone={(res) => {
@@ -126,21 +144,13 @@ const EditStudentInfo = ({ open, close, data, appkey, closeAll }) => {
             </div>
           ) : null}
         </Form.Item>
-        <Form.Item
-          label="First Name"
-          name="firstName"
-          initialValue={data?.firstName}
-        >
+        <Form.Item label="First Name" name="firstName">
           <Input />
         </Form.Item>
-        <Form.Item
-          label="Last Name"
-          name="lastName"
-          initialValue={data?.lastName}
-        >
+        <Form.Item label="Last Name" name="lastName">
           <Input />
         </Form.Item>
-        <Form.Item label="Gender" name="gender" initialValue={data?.gender}>
+        <Form.Item label="Gender" name="gender">
           <Select
             options={[
               { label: "Male", value: "male" },
@@ -149,39 +159,44 @@ const EditStudentInfo = ({ open, close, data, appkey, closeAll }) => {
             onChange={() => setUpdated(true)}
           />
         </Form.Item>
-        <Form.Item
-          label="Date of Birth"
-          name="dateOfBirth"
-          initialValue={dayjs(data?.dateOfBirth, "YYYY-MM-DD")}
-        >
+        <Form.Item label="Date of Birth" name="dateOfBirth">
           <DatePicker
             onChange={() => setUpdated(true)}
             defaultValue={dayjs(data?.dateOfBirth, "YYYY-MM-DD")}
             format="YYYY-MM-DD"
           />
         </Form.Item>
-        <Form.Item
-          label="ID Number"
-          name="idNumber"
-          initialValue={data?.idNumber}
-        >
+        <Form.Item label="ID Number" name="idNumber">
           <Input />
         </Form.Item>
 
-        <Form.Item label="College:" name="college" initialValue={data?.college}>
-          <Select options={json.colleges} onChange={() => setUpdated(true)} />
+        <Form.Item label="College:" name="college">
+          <Select
+            options={json.colleges.map((e) => {
+              return { label: e.label, value: e.value };
+            })}
+            onChange={() => setUpdated(true)}
+          />
         </Form.Item>
-        <Form.Item label="Year" name="year" initialValue={parseInt(data?.year)}>
+        <Form.Item label="Course:" name="course">
+          <Select
+            options={
+              json.colleges
+                .filter((e) => e.value == selectedCollege)[0]
+                ?.courses.map((e) => {
+                  return { label: e, value: e };
+                }) ?? []
+            }
+            placement="topLeft"
+          />
+        </Form.Item>
+        <Form.Item label="Year" name="year">
           <Select options={json.year} onChange={() => setUpdated(true)} />
         </Form.Item>
-        <Form.Item label="Email" name="email" initialValue={data?.email}>
+        <Form.Item label="Email" name="email">
           <Input />
         </Form.Item>
-        <Form.Item
-          label="Phone Number"
-          name="phoneNumber"
-          initialValue={data?.phoneNumber}
-        >
+        <Form.Item label="Phone Number" name="phoneNumber">
           <Input prefix="+63" />
         </Form.Item>
       </Form>

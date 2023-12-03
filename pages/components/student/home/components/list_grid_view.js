@@ -20,15 +20,6 @@ import {
 const ListView = ({ source, setOpenFullDetails }) => {
   const columns = [
     {
-      title: "id",
-      render: (_, row) =>
-        (
-          <Typography.Link>
-            {row?._id.substr(row?._id.length - 6, 6)}
-          </Typography.Link>
-        ) ?? "No ID",
-    },
-    {
       title: "Name",
       sorter: (a, b) => a.name.length - b.name.length,
       render: (_, row) => row?.name ?? "No name",

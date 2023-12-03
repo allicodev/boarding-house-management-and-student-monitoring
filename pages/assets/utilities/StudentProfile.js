@@ -122,6 +122,13 @@ const StudentProfile = ({ open, close, data, appkey, refresh }) => {
             >
               {data?.gender}
             </Tag>
+            <Tag>
+              {
+                json.year.filter((e) => e.value == parseInt(data?.year))[0]
+                  ?.label
+              }
+            </Tag>
+            <br />
             {![null, undefined, ""].includes(data?.college) && (
               <Tooltip
                 title={`${
@@ -134,17 +141,13 @@ const StudentProfile = ({ open, close, data, appkey, refresh }) => {
                     json.colleges.filter((e) => e.value == data?.college)[0]
                       ?.color
                   }
+                  style={{ marginTop: 5 }}
                 >
-                  {data.college?.toUpperCase()}
+                  {data.college?.toUpperCase()}{" "}
+                  {data?.course ? `(${data?.course})` : ""}
                 </Tag>
               </Tooltip>
             )}
-            <Tag>
-              {
-                json.year.filter((e) => e.value == parseInt(data?.year))[0]
-                  ?.label
-              }
-            </Tag>
             <Divider plain>
               <strong>Contact</strong>
             </Divider>

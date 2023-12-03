@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Table, Tag, message, Button } from "antd";
+import { Typography, Table, Tag, message, Button, Space } from "antd";
 
 import FullViewer from "./components/full_viewer";
 import axios from "axios";
 import ReportGenerator from "../../../layout/components/report_generator";
 import json from "../../../assets/json/constant.json";
+import ArchiveTable from "../../../assets/utilities/archive_table";
 const Home = ({ app_key }) => {
   const [establishment, setEstablishment] = useState([]);
   const [openViewer, setOpenViewer] = useState({ open: false, data: null });
@@ -14,6 +15,10 @@ const Home = ({ app_key }) => {
     column: [],
     data: [],
     title: "",
+  });
+  const [openStudentProfile, setOpenStudentProfile] = useState({
+    open: false,
+    data: null,
   });
 
   const column = [
@@ -52,18 +57,41 @@ const Home = ({ app_key }) => {
       ),
     },
     {
-      title: "Functions",
+      title: "View Functions",
       align: "center",
       render: (_, row) => (
-        <Button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            openReport(row?._id);
-          }}
-        >
-          View Report
-        </Button>
+        <Space>
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              openReport(row?._id);
+            }}
+          >
+            Report
+          </Button>
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              (async (_) => {
+                let { data } = await _.get("/api/landlord/get-archive", {
+                  params: {
+                    establishmentId: row._id,
+                  },
+                });
+                if (data.status == 200) {
+                  setOpenStudentProfile({
+                    open: true,
+                    data: data.archiveStudent,
+                  });
+                }
+              })(axios);
+            }}
+          >
+            Archive
+          </Button>
+        </Space>
       ),
     },
   ];
@@ -190,6 +218,11 @@ const Home = ({ app_key }) => {
             title: "",
           })
         }
+      />
+      <ArchiveTable
+        {...openStudentProfile}
+        close={() => setOpenStudentProfile({ open: false, data: null })}
+        appkey={app_key}
       />
       <Table
         columns={column}

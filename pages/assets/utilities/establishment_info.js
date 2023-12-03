@@ -1,11 +1,12 @@
 import { Col, Image, List, Row, Space, Tag, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { NoImage, Map, RoundedContainer, IconText } from "./";
+import { Map, RoundedContainer, IconText } from "./";
 import { MdMyLocation } from "react-icons/md";
 import { FaLocationPin, FaUser } from "react-icons/fa6";
 import { LuPackageCheck } from "react-icons/lu";
 import { TbHomeQuestion, TbHomeExclamation } from "react-icons/tb";
+import { BsImages } from "react-icons/bs";
 
 const EstablishmentInfo = ({ data }) => {
   let [isFull, setIsFull] = useState(false);
@@ -103,28 +104,6 @@ const EstablishmentInfo = ({ data }) => {
             <strong>{`+63${data?.ownerId?.phoneNumber}`}</strong>
           </Typography>
         </RoundedContainer>
-        {/* <Typography.Title level={4}>Establishment Photos</Typography.Title>
-        {data?.establishmentPhotos?.length > 0 ? (
-          <List
-            itemLayout="horizontal"
-            grid={{ gutter: 3, column: 4 }}
-            dataSource={data?.establishmentPhotos}
-            renderItem={(el, i) => (
-              <List.Item key={i}>
-                <Image src={el} alt={`image ${i}`} />
-              </List.Item>
-            )}
-          />
-        ) : (
-          <NoImage />
-        )}
-
-        <Typography.Title level={4}>Business Permit</Typography.Title>
-        {data?.businessPermitPhoto ? (
-          <Image src={data?.businessPermitPhoto} alt="business permit photo" />
-        ) : (
-          <NoImage />
-        )} */}
       </Col>
       <Col
         span={14}
@@ -164,6 +143,29 @@ const EstablishmentInfo = ({ data }) => {
             </Typography.Text>
           )}
         </RoundedContainer>
+        {data?.establishmentPhotos?.length > 0 && (
+          <RoundedContainer
+            title={
+              <IconText
+                icon={<BsImages size={20} />}
+                text="Establishment Photos"
+                fontSize={20}
+              />
+            }
+            bodyStyle={{ overflow: "scroll" }}
+          >
+            <List
+              itemLayout="horizontal"
+              grid={{ gutter: 3, column: 4 }}
+              dataSource={data?.establishmentPhotos}
+              renderItem={(el, i) => (
+                <List.Item key={i}>
+                  <Image src={el} alt={`image ${i}`} />
+                </List.Item>
+              )}
+            />
+          </RoundedContainer>
+        )}
       </Col>
     </Row>
   );

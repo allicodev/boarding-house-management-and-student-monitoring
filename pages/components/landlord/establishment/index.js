@@ -11,9 +11,7 @@ import {
   Space,
   Segmented,
   Spin,
-  Modal,
   Tag,
-  Tooltip,
   Row,
   Col,
   Popconfirm,
@@ -26,8 +24,11 @@ import { DeleteOutlined, SettingOutlined } from "@ant-design/icons";
 
 import ModalTable from "./components/modal_table";
 import VerificationHistory from "./components/verification_history";
+import ReportGenerator from "../../../layout/components/report_generator";
 import DeleteForm from "./components/delete_form";
 import NoImage from "../../../assets/utilities/no_image";
+import json from "../../../assets/json/constant.json";
+import ArchiveTable from "../../../assets/utilities/archive_table";
 
 const Establishment = ({ app_key }) => {
   const [openNewEstablishment, setOpenNewEstablishment] = useState(false);
@@ -45,6 +46,56 @@ const Establishment = ({ app_key }) => {
       open: false,
       id: null,
     });
+  const [report, setReport] = useState({
+    open: false,
+    data: null,
+    title: "",
+  });
+  const [openStudentProfile, setOpenStudentProfile] = useState({
+    open: false,
+    data: null,
+  });
+
+  const column = [
+    { title: "ID Number", align: "center", dataIndex: "idNumber" },
+    {
+      title: "Name",
+      render: (_, row) => row.firstName + " " + row.lastName,
+    },
+    { title: "Email", align: "center", dataIndex: "email" },
+    { title: "Gender", align: "center", dataIndex: "gender" },
+    { title: "Year", align: "center", dataIndex: "year", width: 30 },
+    {
+      title: "College",
+      render: (_, row) => {
+        let text = json.colleges
+          .filter((e) => e.value == row.college)[0]
+          ?.label.split("(")[1];
+        return text.substring(0, text.length - 1) ?? "";
+      },
+    },
+    {
+      title: "Course",
+      render: (_, row) =>
+        row?.course ?? (
+          <Typography.Text type="secondary" italic>
+            No Data
+          </Typography.Text>
+        ),
+    },
+    {
+      title: "Boarding House",
+      align: "center",
+      render: (_, row) =>
+        row?.tenant == null ? (
+          <Typography.Text type="secondary" italic>
+            No Data
+          </Typography.Text>
+        ) : (
+          row.tenant.establishmentId.name
+        ),
+    },
+  ];
 
   const fetchData = async (type, id) => {
     let { data } = await axios.get(`/api/landlord/request-data`, {
@@ -166,6 +217,52 @@ const Establishment = ({ app_key }) => {
                 >
                   Verification History
                 </Button>
+                <Button
+                  onClick={() => {
+                    (async (_) => {
+                      let { data } = await _.get(
+                        "/api/landlord/get-establishments",
+                        {
+                          params: {
+                            _id: e.ownerId._id,
+                            name: e.name,
+                          },
+                        }
+                      );
+                      setReport({
+                        open: true,
+                        data:
+                          data?.establishment?.length > 0
+                            ? data.establishment[0].tenants.map(
+                                (e) => e.studentId
+                              )
+                            : [],
+                        title: `Masterlist of All Student in ${e?.name}`,
+                      });
+                    })(axios);
+                  }}
+                >
+                  Generate Report
+                </Button>
+                <Button
+                  onClick={() => {
+                    (async (_) => {
+                      let { data } = await _.get("/api/landlord/get-archive", {
+                        params: {
+                          establishmentId: e._id,
+                        },
+                      });
+                      if (data.status == 200) {
+                        setOpenStudentProfile({
+                          open: true,
+                          data: data.archiveStudent,
+                        });
+                      }
+                    })(axios);
+                  }}
+                >
+                  View Archives
+                </Button>
                 <Space>
                   <Button icon={<SettingOutlined />} type="primary">
                     Edit
@@ -210,47 +307,61 @@ const Establishment = ({ app_key }) => {
   }, [trigger]);
 
   return (
-    <Spin spinning={loader == "init"}>
-      {establishment.length > 0 && (
-        <Tabs
-          type="editable-card"
-          items={updatedTabData(establishment)}
-          tabBarStyle={{ borderBottom: "1px solid #cecece" }}
-          onEdit={(targetKey, action) =>
-            setOpenNewEstablishment(action == "add")
-          }
+    <>
+      <ReportGenerator
+        {...report}
+        columns={column}
+        close={() => setReport({ open: false, data: [], title: "" })}
+      />
+      <ArchiveTable
+        {...openStudentProfile}
+        close={() => setOpenStudentProfile({ open: false, data: null })}
+        appkey={app_key}
+      />
+      <Spin spinning={loader == "init"}>
+        {establishment.length > 0 && (
+          <Tabs
+            type="editable-card"
+            items={updatedTabData(establishment)}
+            tabBarStyle={{ borderBottom: "1px solid #cecece" }}
+            onEdit={(targetKey, action) =>
+              setOpenNewEstablishment(action == "add")
+            }
+          />
+        )}
+        {establishment.length == 0 && (
+          <Button type="primary" onClick={() => setOpenNewEstablishment(true)}>
+            New Establishment
+          </Button>
+        )}
+        {/* UTILS */}
+        <NewEstablishment
+          open={openNewEstablishment}
+          close={() => setOpenNewEstablishment(false)}
+          refresh={() => setTrigger(trigger + 1)}
+          app_key={app_key}
         />
-      )}
-      {establishment.length == 0 && (
-        <Button type="primary" onClick={() => setOpenNewEstablishment(true)}>
-          New Establishment
-        </Button>
-      )}
-      {/* UTILS */}
-      <NewEstablishment
-        open={openNewEstablishment}
-        close={() => setOpenNewEstablishment(false)}
-        refresh={() => setTrigger(trigger + 1)}
-        app_key={app_key}
-      />
-      <ModalTable
-        open={openTable.open}
-        close={() => setOpenTable({ open: false, data: null })}
-        data={openTable.data}
-        refresh={() => setTrigger(trigger + 1)}
-      />
-      <VerificationHistory
-        open={openVerificationHistory.open}
-        close={() => setOpenVerificationHistory({ open: false, data: null })}
-        data={openVerificationHistory.data}
-      />
-      <DeleteForm
-        open={openDeleteEstablishmentForm.open}
-        close={() => setOpenDeleteEstablishmentForm({ open: false, id: null })}
-        id={openDeleteEstablishmentForm.id}
-        refresh={() => setTrigger(trigger + 1)}
-      />
-    </Spin>
+        <ModalTable
+          open={openTable.open}
+          close={() => setOpenTable({ open: false, data: null })}
+          data={openTable.data}
+          refresh={() => setTrigger(trigger + 1)}
+        />
+        <VerificationHistory
+          open={openVerificationHistory.open}
+          close={() => setOpenVerificationHistory({ open: false, data: null })}
+          data={openVerificationHistory.data}
+        />
+        <DeleteForm
+          open={openDeleteEstablishmentForm.open}
+          close={() =>
+            setOpenDeleteEstablishmentForm({ open: false, id: null })
+          }
+          id={openDeleteEstablishmentForm.id}
+          refresh={() => setTrigger(trigger + 1)}
+        />
+      </Spin>
+    </>
   );
 };
 
