@@ -5,6 +5,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 import GuestForm from "./GuestForm";
+import StudentTermsCondition from "../../../../assets/utilities/student_terms_conitions";
 
 const user = JSON.parse(Cookies.get("currentUser") ?? "{}");
 
@@ -15,27 +16,12 @@ const FullViewer = ({ data, open, close }) => {
   let [status, setStatus] = useState("");
   let [alreadyAccepted, setAlreadyAccepted] = useState(false);
   const [openGuestForm, setOpenGuestForm] = useState(false);
-
+  const [openTermsConditions, setOpenTermsCondition] = useState({
+    open: false,
+    studentId: "",
+    landlordId: "",
+  });
   const _modal = null;
-
-  const confirm = () => {
-    setLoader("loading");
-    (async () => {
-      let res = await axios.post("/api/request/confirm-request", {
-        studentId: currentUser?._id,
-        establishmentId: data?._id,
-      });
-      if (res.data?.status == 200) {
-        message.success(res.data.message);
-        setLoader("");
-        _modal.destroy();
-        setStatus("pending");
-      } else {
-        setLoader("");
-        _modal.destroy();
-      }
-    })();
-  };
 
   const saveAsDraft = () =>
     (async () => {
@@ -67,6 +53,7 @@ const FullViewer = ({ data, open, close }) => {
               width: 370,
               centered: true,
               maskClosable: true,
+              zIndex: 2,
               footer: [
                 <Spin spinning={loader != ""} key="footer-key-1">
                   <Space style={{ marginTop: 30 }}>
@@ -81,7 +68,16 @@ const FullViewer = ({ data, open, close }) => {
                     >
                       SAVE AS DRAFT
                     </Button>
-                    <Button type="primary" onClick={confirm}>
+                    <Button
+                      type="primary"
+                      onClick={() => {
+                        setOpenTermsCondition({
+                          open: true,
+                          studentId: user._id,
+                          landlordId: data?.ownerId?._id,
+                        });
+                      }}
+                    >
                       CONFIRM
                     </Button>
                   </Space>
@@ -158,6 +154,29 @@ const FullViewer = ({ data, open, close }) => {
         close={() => setOpenGuestForm(false)}
         establishmentId={data?._id}
       />
+      <StudentTermsCondition
+        {...openTermsConditions}
+        close={() =>
+          setOpenTermsCondition({ open: false, studentId: "", landlordId: "" })
+        }
+        onProceed={(signatureData) => {
+          setLoader("loading");
+          (async (_) => {
+            let res = await _.post("/api/request/confirm-request", {
+              studentId: currentUser?._id,
+              establishmentId: data?._id,
+              studentSignature: signatureData,
+            });
+            if (res.data?.status == 200) {
+              message.success(res.data.message);
+              setLoader("");
+              setStatus("pending");
+            } else {
+              setLoader("");
+            }
+          })(axios);
+        }}
+      />
       <Drawer
         open={open}
         onClose={close}
@@ -167,6 +186,7 @@ const FullViewer = ({ data, open, close }) => {
         bodyStyle={{
           backgroundColor: "#FFD580",
         }}
+        zIndex={1}
         extra={[
           !alreadyAccepted ? (
             extraButtons(status)

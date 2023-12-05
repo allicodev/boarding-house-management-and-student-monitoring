@@ -22,6 +22,12 @@ let RequestSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    studentSignature: {
+      type: Buffer,
+    },
+    landlordSignature: {
+      type: Buffer,
+    },
   },
   { timestamps: true }
 );

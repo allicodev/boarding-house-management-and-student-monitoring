@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
-import FullViewer from "./components/full_viewer";
-import CustomMenu from "./components/custom_menu";
-import { ListView, GridView } from "./components/list_grid_view";
 import axios from "axios";
 import { message } from "antd";
 
+import FullViewer from "./components/full_viewer";
+import CustomMenu from "./components/custom_menu";
+import { ListView, GridView } from "./components/list_grid_view";
+
 const Home = () => {
+  const [view, setView] = useState("list");
+  const [establishment, setEstablishment] = useState([]);
   const [openFullDetails, setOpenFullDetails] = useState({
     open: false,
     data: {},
   });
-  const [view, setView] = useState("list");
-  const [establishment, setEstablishment] = useState([]);
 
   let fullViewerEntry = {
     open: openFullDetails.open,

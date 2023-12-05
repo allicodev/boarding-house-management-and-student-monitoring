@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Space, Segmented } from "antd";
+import { Row, Col, Space, Segmented, Button } from "antd";
 import { Bar, Pie } from "react-chartjs-2";
 import json from "../../../assets/json/constant.json";
 import {
@@ -40,6 +40,10 @@ const Home = ({ setSelectedKey }) => {
     totalLandlord: 0,
     totalStudent: 0,
   });
+  const [openCollege, setOpenCollege] = useState({
+    open: false,
+    college: {},
+  });
 
   const [barData, setBarData] = useState({
     CON: 0,
@@ -79,7 +83,77 @@ const Home = ({ setSelectedKey }) => {
     })(axios);
   }, []);
 
-  return (
+  return openCollege.open ? (
+    <>
+      <Button
+        style={{ marginLeft: 25, marginRight: 10 }}
+        onClick={() => setOpenCollege({ open: false, college: {} })}
+      >
+        BACK
+      </Button>
+
+      {openCollege.college.label}
+      {/* <Bar
+        options={{
+          responsive: true,
+          animations: {
+            y: {
+              easing: "easeInOutElastic",
+              from: (ctx) => {
+                if (ctx.type === "data") {
+                  if (ctx.mode === "default" && !ctx.dropped) {
+                    ctx.dropped = true;
+                    return 0;
+                  }
+                }
+              },
+            },
+          },
+          plugins: {
+            legend: {
+              display: false,
+            },
+            title: {
+              display: true,
+              text: "Students per Course",
+              position: "top",
+              font: {
+                size: "13px",
+                family: "Sans-Serif",
+              },
+            },
+          },
+          scales: {
+            y: {
+              min: 0,
+              max: 10,
+              stacked: true,
+              title: {
+                display: true,
+                text: "Student(s)",
+              },
+            },
+            x: {
+              title: {
+                display: true,
+                text: "Courses",
+              },
+            },
+          },
+        }}
+        data={{
+          datasets: [
+            {
+              label: "Student(s)",
+              data: barData,
+              backgroundColor: json.colleges.map((e) => e?.color),
+              type: "bar",
+            },
+          ],
+        }}
+      /> */}
+    </>
+  ) : (
     <Row gutter={[16, 16]}>
       <Col span={18}>
         <Segmented
@@ -136,6 +210,25 @@ const Home = ({ setSelectedKey }) => {
                   },
                 },
               },
+              events: ["click"],
+              // onClick: (ev, el) => {
+              //   console.log(el);
+              //   if (
+              //     el &&
+              //     el.length > 0 &&
+              //     el[0] &&
+              //     el[0].datasetIndex !== undefined &&
+              //     el[0].index !== undefined
+              //   ) {
+              //     console.log(el[0]._datasetIndex);
+              //     console.log("proceed");
+              //     const index = el[0].index;
+              //     setOpenCollege({
+              //       open: true,
+              //       college: json.colleges[index],
+              //     });
+              //   }
+              // },
             }}
             data={{
               datasets: [

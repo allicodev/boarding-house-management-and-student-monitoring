@@ -81,18 +81,19 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
         }}
         closable={false}
         title="Add New Establishment"
+        zIndex={1}
         footer={
           <Button
             type="primary"
-            onClick={() =>
+            onClick={() => {
               setOpenTermsCondition({
                 open: true,
                 name:
                   JSON.parse(Cookies.get("currentUser")).firstName +
                   " " +
                   JSON.parse(Cookies.get("currentUser")).lastName,
-              })
-            }
+              });
+            }}
             loading={
               loading.filter((e) => e == "uploading-bp" || e == "uploading-img")
                 .length > 0
@@ -102,7 +103,6 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
           </Button>
         }
         centered
-        destroyOnClose
       >
         <Form form={form} onFinish={handleFinish} layout="vertical">
           <Form.Item

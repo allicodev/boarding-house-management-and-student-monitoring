@@ -207,7 +207,7 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
               title={
                 <IconText
                   icon={<AiOutlineInfoCircle size={18} />}
-                  text="Addtional Info"
+                  text="Additional Info"
                   fontSize={16}
                 />
               }

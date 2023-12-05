@@ -9,6 +9,7 @@ export default async function handler(req, res) {
     let newRequest = Request({
       studentId: mongoose.Types.ObjectId(req.body.studentId),
       establishmentId: mongoose.Types.ObjectId(req.body.establishmentId),
+      studentSignature: Buffer.from(req.body.studentSignature, "base64"),
     });
     await newRequest.save();
 

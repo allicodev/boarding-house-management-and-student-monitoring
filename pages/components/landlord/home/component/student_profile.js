@@ -1,23 +1,46 @@
-import React, { useEffect, useState } from "react";
-import { Modal, Card, message, Typography, Button, Input } from "antd";
-import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  Modal,
+  Card,
+  message,
+  Typography,
+  Button,
+  Input,
+  Image,
+  Row,
+  Col,
+  Tooltip,
+  Divider,
+} from "antd";
+import SignatureCanvas from "react-signature-canvas";
+
+import { CheckOutlined, CloseOutlined, UndoOutlined } from "@ant-design/icons";
 import { BsClockHistory } from "react-icons/bs";
-import { StudentHistory } from "../../../../assets/utilities";
 import dayjs from "dayjs";
 import axios from "axios";
+import Cookies from "js-cookie";
+
+import { StudentHistory } from "../../../../assets/utilities";
 
 const StudentProfile = ({ open, close, data, update, refresh }) => {
   const [loader, setLoader] = useState("");
   const [reason, setReason] = useState("");
   const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
   const [openHistory, setOpenHistory] = useState({ open: false, history: [] });
+  const [currentUser, setCurrentUser] = useState();
+  const signatureRef = useRef(null);
 
-  const confirm = () =>
-    (async () => {
+  const confirm = () => {
+    if (signatureRef.current.isEmpty()) {
+      message.warning("Please provide a signature before confirming.");
+      return;
+    }
+    (async (_) => {
       setLoader("saving");
-      let res = await axios.post("/api/request/accept-request", {
+      let res = await _.post("/api/request/accept-request", {
         _id: data?._id,
         studentId: data?.studentId?._id,
+        landlordSignature: signatureRef.current.toDataURL(),
       });
 
       if (res.data.status == 200) {
@@ -37,7 +60,8 @@ const StudentProfile = ({ open, close, data, update, refresh }) => {
         message.error(res.data.message);
         setLoader("");
       }
-    })();
+    })(axios);
+  };
 
   const cancel = () =>
     (async () => {
@@ -74,6 +98,8 @@ const StudentProfile = ({ open, close, data, update, refresh }) => {
     if (data != null) {
       setOpenHistory({ open: false, history: data?.studentId?.history });
     }
+
+    setCurrentUser(JSON.parse(Cookies.get("currentUser")));
   }, [data]);
 
   return (
@@ -133,15 +159,80 @@ const StudentProfile = ({ open, close, data, update, refresh }) => {
           <Card.Meta
             title={data?.studentId?.firstName + " " + data?.studentId?.lastName}
             description={
-              <Typography.Paragraph>
-                Requeston on {dayjs(data?.createdAt).format("MMMM D, YYYY")}
+              <>
+                <Typography.Paragraph>
+                  Requeston on {dayjs(data?.createdAt).format("MMMM D, YYYY")}
+                  <br />
+                  Student ID: {data?.studentId?.idNumber}
+                  <br />
+                  email: {data?.studentId?.email}
+                  <br />
+                  contact num: {data?.studentId?.phoneNumber}
+                </Typography.Paragraph>
                 <br />
-                Student ID: {data?.studentId?.idNumber}
+                <strong>SIGNATURE</strong>
                 <br />
-                email: {data?.studentId?.email}
-                <br />
-                contact num: {data?.studentId?.phoneNumber}
-              </Typography.Paragraph>
+                <Row gutter={[32, 32]}>
+                  <Col span={12}>
+                    <Image
+                      preview={false}
+                      src={`data:image/png;base64,${data?.studentSignature
+                        .split("base64")[1]
+                        .replace(/=+$/, "")}`}
+                      style={{ border: "1px solid #eee" }}
+                    />
+                    <p style={{ textAlign: "center", marginTop: 13 }}>
+                      {data?.studentId?.firstName +
+                        " " +
+                        data?.studentId?.lastName}
+                    </p>
+                    <Divider
+                      style={{
+                        padding: 0,
+                        margin: 0,
+                        backgroundColor: "#000",
+                      }}
+                    />
+                    <p style={{ textAlign: "center" }}>Tenant</p>
+                  </Col>
+                  <Col span={12}>
+                    <div>
+                      <div style={{ position: "relative" }}>
+                        <SignatureCanvas
+                          penColor="black"
+                          canvasProps={{
+                            width: 200,
+                            height: 200,
+                            className: "signatureCanvas",
+                            style: {
+                              border: "1px solid #eee",
+                            },
+                          }}
+                          ref={signatureRef}
+                        />
+                        <Tooltip title="reset">
+                          <Button
+                            icon={<UndoOutlined />}
+                            style={{ position: "absolute", top: 0 }}
+                            onClick={() => signatureRef.current?.clear()}
+                          />
+                        </Tooltip>
+                      </div>
+                      <p style={{ textAlign: "center" }}>
+                        {currentUser?.firstName + " " + currentUser?.lastName}
+                      </p>
+                      <Divider
+                        style={{
+                          padding: 0,
+                          margin: 0,
+                          backgroundColor: "#000",
+                        }}
+                      />
+                      <p style={{ textAlign: "center" }}>Landlord/Landlady</p>
+                    </div>
+                  </Col>
+                </Row>
+              </>
             }
           />
         </Card>

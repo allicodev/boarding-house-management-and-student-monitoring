@@ -1,40 +1,12 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef } from "react";
 import { Button, Modal, Typography } from "antd";
 
 // ! disabled button still on construction
 
 const LandlordTermsCondition = ({ open, name, close, onProceed }) => {
-  const ref = useRef(null);
-  const [isBottom, setIsBottom] = useState(false);
-
-  const handleScroll = () => {
-    console.log("called");
-    if (scrollContainerRef.current) {
-      const scrollContainer = ref.current;
-      const atBottom =
-        scrollContainer.scrollTop + scrollContainer.clientHeight ===
-        scrollContainer.scrollHeight;
-      setIsBottom(atBottom);
-    }
-  };
-
-  useEffect(() => {
-    const scrollContainer = ref.current;
-
-    if (scrollContainer) {
-      scrollContainer.addEventListener("scroll", handleScroll);
-    }
-
-    return () => {
-      if (scrollContainer) {
-        scrollContainer.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, []);
-
   return (
     <Modal
-      open={true}
+      open={open}
       onCancel={close}
       closable={false}
       title="Terms and Condition"
@@ -43,7 +15,7 @@ const LandlordTermsCondition = ({ open, name, close, onProceed }) => {
         height: 500,
         overflow: "scroll",
       }}
-      ref={(node) => (window.modal = node)}
+      zIndex={999}
       footer={
         <Button
           type="primary"
@@ -54,10 +26,7 @@ const LandlordTermsCondition = ({ open, name, close, onProceed }) => {
         </Button>
       }
     >
-      <Typography.Text
-        style={{ color: "#777", maxHeight: 500, overflow: "scroll" }}
-        ref={ref}
-      >
+      <Typography.Text style={{ color: "#777" }}>
         Dear {name},
         <br />
         <br />

@@ -12,6 +12,7 @@ export default async function handler(req, res) {
       {
         $set: {
           status: req.body.status ?? "accepted",
+          landlordSignature: Buffer.from(req.body.landlordSignature, "base64"),
         },
       }
     ).then(async (e) => {

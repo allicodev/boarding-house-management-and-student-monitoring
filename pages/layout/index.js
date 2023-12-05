@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Layout,
   Menu,
@@ -11,16 +11,18 @@ import {
   Tooltip,
   Image,
   message,
+  AutoComplete,
+  Input,
 } from "antd";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 
 import Cookies from "js-cookie";
+import axios from "axios";
 import { PageHeader } from "@ant-design/pro-layout";
-import EditProfile from "./components/edit_profile";
 
 import json from "../assets/json/constant.json";
+import EditProfile from "./components/edit_profile";
 import ReportGenerator from "./components/report_generator";
-import axios from "axios";
 
 const user = Cookies.get("currentUser");
 
@@ -64,13 +66,16 @@ const Header = ({ app_key }) => {
     open: false,
     data: null,
   });
-  const [color, setColor] = useState("");
   const [report, setReport] = useState({
     open: false,
     columns: [],
     title: "",
     data: null,
   });
+  const [color, setColor] = useState("");
+  const [searching, setSearching] = useState(false);
+  const [searchOptions, setSearchOptions] = useState([]);
+  const timerRef = useRef(null);
 
   const openReport = (type) => {
     const isEstab = type == "establishment";
@@ -171,6 +176,92 @@ const Header = ({ app_key }) => {
     })(axios);
   };
 
+  const itemOption = (title, children, onClickMore) => {
+    // children = [
+    //   {
+    //     title: "",
+    //     count: ""
+    //   }
+    // ]
+    const label = (
+      <span>
+        {title}
+        <a
+          style={{
+            float: "right",
+          }}
+          // href="https://www.google.com/search?q=antd"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          more
+        </a>
+      </span>
+    );
+
+    const option = (e) => {
+      return {
+        title: e.title,
+        label: (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            {e.title}
+            <span>
+              <UserOutlined /> {e.count}
+            </span>
+          </div>
+        ),
+      };
+    };
+    return {
+      label,
+      options: children.map((e) => option(e)),
+    };
+  };
+
+  const runTimer = (searchKeyword) => {
+    setSearching(true);
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    timerRef.current = setTimeout(function () {
+      searchName(searchKeyword);
+    }, 500);
+  };
+
+  const searchName = (search) => {
+    (async (_) => {
+      let { data } = await _.get("/api/admin/search", {
+        params: {
+          search,
+        },
+      });
+
+      if (data.status == 200) {
+        // setSearchOptions();
+        // options={Array(3)
+        //   .fill({})
+        //   .map((e, i) => {
+        //     return itemOption(
+        //       `title ${i + 1}`,
+        //       [
+        //         {
+        //           title: "Andtd cool",
+        //           count: 100,
+        //         },
+        //       ],
+        //       () => {}
+        //     );
+        //   })}
+      }
+      setSearching(false);
+    })(axios);
+  };
+
   useEffect(() => {
     setColor(
       json.colleges.filter(
@@ -223,7 +314,37 @@ const Header = ({ app_key }) => {
               </Tooltip>
             )}
           </div>
-
+          <AutoComplete
+            popupClassName="certain-category-search-dropdown"
+            popupMatchSelectWidth={350}
+            style={{
+              width: 300,
+            }}
+            onChange={(e) => {
+              if (e != "") runTimer(e);
+            }}
+            // options={Array(3)
+            //   .fill({})
+            //   .map((e, i) => {
+            //     return itemOption(
+            //       `title ${i + 1}`,
+            //       [
+            //         {
+            //           title: "Andtd cool",
+            //           count: 100,
+            //         },
+            //       ],
+            //       () => {}
+            //     );
+            //   })}
+            size="large"
+          >
+            <Input.Search
+              size="large"
+              placeholder="input here"
+              loading={searching}
+            />
+          </AutoComplete>
           {user != null && (
             <div style={{ display: "flex", alignSelf: "center" }}>
               <Dropdown
@@ -246,7 +367,7 @@ const Header = ({ app_key }) => {
                           children: [
                             JSON.parse(user ?? "{}").role == "admin"
                               ? {
-                                  label: "Establishment Information",
+                                  label: "All Establishment List",
                                   onClick: () => openReport("establishment"),
                                 }
                               : null,
@@ -294,7 +415,6 @@ const Header = ({ app_key }) => {
               </Dropdown>
             </div>
           )}
-
           {user == null && (
             <Button
               onClick={() => {
