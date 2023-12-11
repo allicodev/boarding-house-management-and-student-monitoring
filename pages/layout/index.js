@@ -13,6 +13,8 @@ import {
   message,
   AutoComplete,
   Input,
+  Table,
+  Modal,
 } from "antd";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 
@@ -23,6 +25,7 @@ import { PageHeader } from "@ant-design/pro-layout";
 import json from "../assets/json/constant.json";
 import EditProfile from "./components/edit_profile";
 import ReportGenerator from "./components/report_generator";
+import LandlordSearchFilter from "./components/landlord_search_filter";
 
 const user = Cookies.get("currentUser");
 
@@ -62,6 +65,24 @@ const Sider = ({ selectedIndex, selectedKey, items, image }) => {
 };
 
 const Header = ({ app_key }) => {
+  const [color, setColor] = useState("");
+  const [searching, setSearching] = useState(false);
+  const timerRef = useRef(null);
+  const [role, setRole] = useState("");
+  const [id, setId] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
+
+  //* controls
+  const [openLandlordFilter, setOpenLandlordFilter] = useState({
+    open: false,
+    id: "",
+  });
+  const [tableConfig, setTableConfig] = useState({
+    open: false,
+    column: [],
+    dataSource: [],
+  });
+
   const [openEditModal, setOpenEditModal] = useState({
     open: false,
     data: null,
@@ -72,10 +93,6 @@ const Header = ({ app_key }) => {
     title: "",
     data: null,
   });
-  const [color, setColor] = useState("");
-  const [searching, setSearching] = useState(false);
-  const [searchOptions, setSearchOptions] = useState([]);
-  const timerRef = useRef(null);
 
   const openReport = (type) => {
     const isEstab = type == "establishment";
@@ -176,13 +193,7 @@ const Header = ({ app_key }) => {
     })(axios);
   };
 
-  const itemOption = (title, children, onClickMore) => {
-    // children = [
-    //   {
-    //     title: "",
-    //     count: ""
-    //   }
-    // ]
+  const itemOption = (title, children, onClick) => {
     const label = (
       <span>
         {title}
@@ -190,31 +201,18 @@ const Header = ({ app_key }) => {
           style={{
             float: "right",
           }}
-          // href="https://www.google.com/search?q=antd"
           target="_blank"
           rel="noopener noreferrer"
         >
-          more
+          total: {children.length}
         </a>
       </span>
     );
 
     const option = (e) => {
       return {
-        title: e.title,
-        label: (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            {e.title}
-            <span>
-              <UserOutlined /> {e.count}
-            </span>
-          </div>
-        ),
+        title: e,
+        label: <div onClick={() => onClick(e.id)}>{e.name}</div>,
       };
     };
     return {
@@ -225,38 +223,88 @@ const Header = ({ app_key }) => {
 
   const runTimer = (searchKeyword) => {
     setSearching(true);
+
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
     timerRef.current = setTimeout(function () {
-      searchName(searchKeyword);
+      searchName(searchKeyword, role);
     }, 500);
   };
 
-  const searchName = (search) => {
+  const searchName = (search, role) => {
     (async (_) => {
       let { data } = await _.get("/api/admin/search", {
         params: {
           search,
+          role,
+          id: role == "landlord" ? id : null,
         },
       });
 
       if (data.status == 200) {
-        // setSearchOptions();
-        // options={Array(3)
-        //   .fill({})
-        //   .map((e, i) => {
-        //     return itemOption(
-        //       `title ${i + 1}`,
-        //       [
-        //         {
-        //           title: "Andtd cool",
-        //           count: 100,
-        //         },
-        //       ],
-        //       () => {}
-        //     );
-        //   })}
+        let _ = [];
+        if (data.data.user?.length != 0) {
+          if (role == "student")
+            _.push(
+              itemOption(
+                "LANDLORD",
+                data.data.user.map((e) => {
+                  return {
+                    id: e._id,
+                    name: e.firstName + " " + e.lastName,
+                  };
+                }),
+                (i) => setOpenLandlordFilter({ open: true, id: i })
+              )
+            );
+          else {
+            let student = data.data.user?.filter((e) => e.role == "student");
+            let landlord = data.data.user?.filter((e) => e.role == "landlord");
+            if (student?.length != 0)
+              _.push(
+                itemOption(
+                  role == "landlord" ? "TENANTS" : "STUDENTS",
+                  student.map((e) => {
+                    return {
+                      id: e._id,
+                      name: e.firstName + " " + e.lastName,
+                    };
+                  })
+                )
+              );
+
+            if (landlord?.length != 0)
+              _.push(
+                itemOption(
+                  "LANDLORD",
+                  landlord.map((e) => {
+                    return {
+                      id: e._id,
+                      name: e.firstName + " " + e.lastName,
+                    };
+                  }),
+                  (i) => setOpenLandlordFilter({ open: true, id: i })
+                )
+              );
+          }
+        }
+
+        if (data.data.estab && data.data.estab?.length != 0) {
+          _.push(
+            itemOption(
+              "ESTABLISHMENT",
+              data.data.estab.map((e) => {
+                return {
+                  id: e._id,
+                  name: e.name,
+                };
+              })
+            )
+          );
+        }
+
+        setSearchResult(_);
       }
       setSearching(false);
     })(axios);
@@ -268,7 +316,12 @@ const Header = ({ app_key }) => {
         (e) => e.value == JSON.parse(user ?? "{}")?.college
       )[0]?.color
     );
-  }, []);
+    if (user) {
+      let _ = JSON.parse(user);
+      setRole(_.role);
+      setId(_._id);
+    }
+  }, [user]);
 
   return (
     <>
@@ -282,6 +335,36 @@ const Header = ({ app_key }) => {
           })
         }
       />
+      <LandlordSearchFilter
+        open={openLandlordFilter.open}
+        close={() => setOpenLandlordFilter({ open: false, id: -1 })}
+        openAs={(_) => {
+          let id = openLandlordFilter.id;
+          setOpenLandlordFilter({ open: false, id: -1 });
+          switch (_) {
+            case "all-tenant": {
+              (async (_) => {
+                const { data } = _.get("/api/tenant/get-tenants", {
+                  params: {
+                    id,
+                  },
+                });
+              })(axios);
+              // setOpenEditModal({ open: true });
+              break;
+            }
+          }
+        }}
+      />
+      {/* TABLE for multipurpose use */}
+      <Modal
+        open={tableConfig.open}
+        onCancel={() => setTableConfig({ open: false, column: [] })}
+        footer={null}
+        closable={false}
+      >
+        <Table columns={tableConfig.column} />
+      </Modal>
       <Affix>
         <Layout.Header
           style={{
@@ -322,27 +405,22 @@ const Header = ({ app_key }) => {
             }}
             onChange={(e) => {
               if (e != "") runTimer(e);
+              else setSearchResult([]);
             }}
-            // options={Array(3)
-            //   .fill({})
-            //   .map((e, i) => {
-            //     return itemOption(
-            //       `title ${i + 1}`,
-            //       [
-            //         {
-            //           title: "Andtd cool",
-            //           count: 100,
-            //         },
-            //       ],
-            //       () => {}
-            //     );
-            //   })}
+            options={searchResult}
             size="large"
           >
             <Input.Search
               size="large"
-              placeholder="input here"
+              placeholder={
+                role == "student"
+                  ? "Search Establishment/Landlord"
+                  : role == "admin"
+                  ? "Search ..."
+                  : "Search Tenant"
+              }
               loading={searching}
+              allowClear
             />
           </AutoComplete>
           {user != null && (

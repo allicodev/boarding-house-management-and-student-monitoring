@@ -5,7 +5,7 @@ import { IoIosPeople } from "react-icons/io";
 import { FaHouseCircleCheck } from "react-icons/fa6";
 import { Sider, Header, Content, Footer } from "../layout";
 
-import Verification from "../components/admin/verification";
+import Establishments from "../components/admin/establishments";
 import Student from "../components/admin/student";
 import Home from "../components/admin/home";
 
@@ -22,7 +22,7 @@ const MyApp = ({ app_key }) => {
             { label: "Dashboard", key: "home", icon: <VscGraph /> },
             {
               label: "Establishments",
-              key: "verification",
+              key: "establishments",
               icon: <FaHouseCircleCheck />,
             },
             { label: "Students", key: "student", icon: <IoIosPeople /> },
@@ -31,8 +31,8 @@ const MyApp = ({ app_key }) => {
         <Layout>
           <Header app_key={app_key} />
           <Content selectedKey={selectedKey} setSelectedKey={setSelectedKey}>
-            {selectedKey == "verification" ? (
-              <Verification app_key={app_key} />
+            {selectedKey == "establishments" ? (
+              <Establishments app_key={app_key} />
             ) : null}
             {selectedKey == "student" ? <Student app_key={app_key} /> : null}
             {selectedKey == "home" ? (

@@ -9,7 +9,7 @@ const ArchiveTable = ({ data, open, close, appkey }) => {
     open: false,
     data: null,
   });
-  console.log(data);
+
   const column = [
     {
       title: "Student",

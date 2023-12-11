@@ -300,7 +300,7 @@ const Home = ({ setSelectedKey }) => {
               index={i}
               key={i}
               onClick={(index) => {
-                if ([0, 1, 3].includes(index)) setSelectedKey("verification");
+                if ([0, 1, 3].includes(index)) setSelectedKey("establishments");
                 else setSelectedKey("student");
               }}
             />

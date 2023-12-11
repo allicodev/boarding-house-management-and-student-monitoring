@@ -19,7 +19,7 @@ import { AiOutlineInfoCircle } from "react-icons/ai";
 import dayjs from "dayjs";
 
 // import { EditEstablishmentInfo } from "../../../../assets/utilities";
-import { IconText, Map, RoundedContainer } from "../../../../assets/utilities";
+import { IconText, RoundedContainer, Map } from "../../../../assets/utilities";
 import VerificationHistory from "../../../landlord/establishment/components/verification_history";
 
 const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
@@ -29,15 +29,33 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
     open: false,
     data: null,
   });
+  const [fullMapConfig, setFullMapConfig] = useState({
+    open: false,
+    coordinates: [0, 0],
+  });
+
   // const [openEditEstablishment, setOpenEstablishment] = useState({
   //   open: false,
   //   data: null,
   // });
 
-  const isFull = data?.totalSpaceForRent - data?.totalOccupied <= 0;
-
+  // const isFull = data?.totalSpaceForRent - data?.totalOccupied <= 0;
   return (
     <>
+      <Modal
+        open={fullMapConfig.open}
+        onCancel={() => setFullMapConfig({ open: false, coordinates: [0, 0] })}
+        width="70%"
+        bodyStyle={{
+          height: "100%",
+        }}
+        className="remove-padding-modal"
+        zIndex={999}
+        closable={false}
+        footer={null}
+      >
+        <Map coordinates={fullMapConfig.coordinates} styles={{ height: 500 }} />
+      </Modal>
       <VerificationHistory
         open={openVerificationHistory.open}
         close={() => setOpenVerificationHistory({ open: false, data: null })}
@@ -83,6 +101,7 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
         bodyStyle={{
           backgroundColor: "#FFD580",
         }}
+        zIndex={1}
         extra={[
           // <Button
           //   key="key0"
@@ -184,21 +203,32 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
             </RoundedContainer>
             <RoundedContainer
               title={
-                <IconText
-                  icon={<MdMyLocation size={20} />}
-                  text="Map"
-                  fontSize={20}
-                />
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <IconText
+                    icon={<MdMyLocation size={20} />}
+                    text="Map"
+                    fontSize={20}
+                  />
+                  <Button
+                    type="text"
+                    onClick={() =>
+                      setFullMapConfig({
+                        open: true,
+                        coordinates: data?.coordinates ?? [0, 0],
+                      })
+                    }
+                  >
+                    View Full Map
+                  </Button>
+                </div>
               }
             >
               <Map
-                coordinates={{
-                  lat: data?.coordinates[0],
-                  lng: data?.coordinates[1],
-                }}
-                styles={{
-                  maxHeight: 250,
-                }}
+                coordinates={data?.coordinates ?? [0, 0]}
+                viewOnly={true}
+                styles={{ height: 300 }}
               />
             </RoundedContainer>
           </Col>
