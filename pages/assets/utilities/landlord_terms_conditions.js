@@ -19,7 +19,10 @@ const LandlordTermsCondition = ({ open, name, close, onProceed }) => {
       footer={
         <Button
           type="primary"
-          onClick={onProceed}
+          onClick={() => {
+            onProceed();
+            close();
+          }}
           block /*disabled={!isBottom} */
         >
           I Understand and Agree to the Terms and Conditions

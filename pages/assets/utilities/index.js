@@ -7,6 +7,8 @@ import EditEstablishmentInfo from "./EditEstablishmentInfo";
 import RoundedContainer from "./rounded_container";
 import IconText from "./icon_text";
 import StudentHistory from "./StudentHistory";
+import LandlordTermsCondition from "./landlord_terms_conditions";
+import { MapPicker, RGeocode } from "./map";
 
 export default () => null;
 export {
@@ -19,4 +21,7 @@ export {
   EditEstablishmentInfo,
   RoundedContainer,
   IconText,
+  LandlordTermsCondition,
+  MapPicker,
+  RGeocode,
 };

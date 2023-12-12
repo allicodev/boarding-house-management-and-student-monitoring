@@ -12,11 +12,13 @@ import {
   message,
   Select,
 } from "antd";
-import { InfoCircleOutlined } from "@ant-design/icons";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { PickerDropPane } from "filestack-react";
-import LandlordTermsCondition from "../../../../assets/utilities/landlord_terms_conditions";
+import {
+  MapPicker,
+  LandlordTermsCondition,
+} from "../../../../assets/utilities";
 
 const NewEstablishment = ({ app_key, open, close, refresh }) => {
   const [form] = Form.useForm();
@@ -29,15 +31,18 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
     open: false,
     name: "",
   });
-
-  const [coords, setCoords] = useState([0, 0]);
+  const [openMap, setOpenMap] = useState(false);
+  const [coordsConfig, setCoorsConfig] = useState({
+    coordinates: [],
+    address: "",
+  });
+  console.log(coordsConfig);
+  const defaultCoordinates = { lat: 125.124651, long: 8.157851 }; //* malaybalay
 
   const handleFinish = async (val) => {
-    // establishmentPhotos
-    // businessPermitPhoto
     val = {
       ...val,
-      coordinates: coords,
+      ...coordsConfig,
       ownerId: JSON.parse(Cookies.get("currentUser"))._id,
       establishmentPhotos: photos,
       businessPermitPhoto,
@@ -56,18 +61,27 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
     } else message.error(data.message);
   };
 
-  const addLoading = (str) =>
-    setLoading(() => {
-      return [...loading, str];
-    });
-
-  const removeLoading = (str) => {
-    loading.splice(loading.indexOf(str), 1);
-    setLoading(loading);
-  };
-
   return (
     <>
+      <Modal
+        open={openMap}
+        footer={null}
+        closable={false}
+        onCancel={() => setOpenMap(false)}
+        zIndex={999}
+        width={1000}
+        className="remove-padding-modal"
+        destroyOnClose
+      >
+        <MapPicker
+          defaultCoordinates={defaultCoordinates}
+          onsubmit={(coordinates, address) =>
+            setCoorsConfig({ coordinates, address })
+          }
+          styles={{ height: 500 }}
+          close={() => setOpenMap(false)}
+        />
+      </Modal>
       <LandlordTermsCondition
         {...openTermsCondition}
         close={() => setOpenTermsCondition({ open: false, name: "" })}
@@ -133,51 +147,18 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item
-            label="Address"
-            name="address"
-            rules={[
-              {
-                required: true,
-                message: "Please input your address",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item label="Coordinates">
-            <Space>
-              <InputNumber
-                style={{ width: 100 }}
-                placeholder="latitude"
-                min={-90}
-                max={90}
-                controls={false}
-                onChange={(e) => setCoords([coords[0], e])}
-              />
-              <InputNumber
-                style={{ width: 100 }}
-                placeholder="longitude"
-                min={-180}
-                max={180}
-                controls={false}
-                onChange={(e) => setCoords([e, coords[1]])}
-              />
-
-              <Tooltip title="click here on how to get coordinates">
-                <Button
-                  size="small"
-                  icon={<InfoCircleOutlined />}
-                  onClick={() =>
-                    window.open(
-                      "https://www.maps.ie/coordinates.html",
-                      "_blank",
-                      "noreferrer"
-                    )
-                  }
-                />
-              </Tooltip>
-            </Space>
+          <Form.Item label="Location">
+            {coordsConfig.coordinates.length != 0 &&
+            coordsConfig.address != "" ? (
+              <div>
+                {coordsConfig.address}{" "}
+                <Button size="small" onClick={() => setOpenMap(true)}>
+                  Change
+                </Button>
+              </div>
+            ) : (
+              <Button onClick={() => setOpenMap(true)}>Pick Location</Button>
+            )}
           </Form.Item>
           <Form.Item
             label="Total Spaces to Rent"
