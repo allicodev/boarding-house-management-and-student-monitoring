@@ -39,20 +39,24 @@ const LandlordTermsCondition = ({
       }}
       zIndex={999}
       footer={
-        <Button
-          type="primary"
-          onClick={() => {
-            if (signatureRef.current.isEmpty()) {
-              message.warning("Signature is empty. Please provide.");
-              return;
-            }
-            onProceed(signatureRef.current.toDataURL());
-            close();
-          }}
-          block /*disabled={!isBottom} */
-        >
-          I Understand and Agree to the Terms and Conditions
-        </Button>
+        !viewOnly ? (
+          <Button
+            type="primary"
+            onClick={() => {
+              if (signatureRef.current.isEmpty()) {
+                message.warning("Signature is empty. Please provide.");
+                return;
+              }
+              onProceed(signatureRef.current.toDataURL());
+              close();
+            }}
+            block /*disabled={!isBottom} */
+          >
+            I Understand and Agree to the Terms and Conditionss
+          </Button>
+        ) : (
+          <></>
+        )
       }
     >
       <Typography.Text style={{ color: "#777" }}>
