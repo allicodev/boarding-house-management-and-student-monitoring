@@ -5,7 +5,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 
 import json from "../../../assets/json/constant.json";
-import { StudentProfile } from "../../../assets/utilities";
+import { StudentProfile, ListStudentBarangay } from "../../../assets/utilities";
 import FilterForm from "./component/FilterForm";
 
 const Student = ({ app_key }) => {
@@ -13,6 +13,11 @@ const Student = ({ app_key }) => {
   const [openStudent, setOpenStudent] = useState({ open: false, data: null });
   const [trigger, setTrigger] = useState(0);
   const [openFilter, setOpenFilter] = useState(false);
+  const [studentListConfig, setStudentListConfig] = useState({
+    open: false,
+    data: [],
+    barangay: "",
+  });
 
   const column = [
     {
@@ -91,22 +96,31 @@ const Student = ({ app_key }) => {
     },
   ];
 
-  // * axios areas
-
-  const fetchStudent = (college, course) => {
+  const fetchStudent = async (college, course, barangay) => {
     let query = {};
     if (college != "") query.college = college;
     if (course != "") query.course = course;
+    if (barangay != "") query.barangay = barangay;
+    return (async (_) => {
+      let { data } = await _.get("/api/admin/get-students", {
+        params: query,
+      });
 
-    (async (_) => {
-      let { data } = await _.get("/api/admin/get-students", { params: query });
-
-      if (data.status == 200) setStudents(data.students);
+      if (data.status == 200) return data.students;
     })(axios);
   };
 
+  const generateListStudent = async (...params) => {
+    const _ = await fetchStudent(...params);
+    console.log(_);
+    setStudentListConfig({ open: true, data: _, barangay: params[2] });
+  };
+
   useEffect(() => {
-    fetchStudent();
+    (async () => {
+      let _ = await fetchStudent();
+      setStudents(_);
+    })();
   }, [trigger]);
 
   return (
@@ -121,18 +135,21 @@ const Student = ({ app_key }) => {
       <FilterForm
         open={openFilter}
         close={() => setOpenFilter(false)}
-        onFilterSubmit={(college, course) => {
-          if (college == "") {
-            fetchStudent();
-          } else {
-            if (course == "") {
-              fetchStudent(college);
-            } else {
-              fetchStudent(college, course);
-            }
-          }
+        onFilterSubmit={async (...params) => {
+          let _ = await fetchStudent(...params);
+          setStudents(_);
         }}
-        clearFilter={() => fetchStudent()}
+        onGenerateList={(...params) => generateListStudent(...params)}
+        clearFilter={async () => {
+          let _ = await fetchStudent();
+          setStudents(_);
+        }}
+      />
+      <ListStudentBarangay
+        {...studentListConfig}
+        close={() =>
+          setStudentListConfig({ open: false, data: [], barangay: "" })
+        }
       />
 
       {/* render */}

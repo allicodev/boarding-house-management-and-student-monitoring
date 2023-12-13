@@ -6,6 +6,9 @@ export default async function handler(req, res) {
   try {
     if (req.method !== "POST") throw new Error("Invalid method");
     await dbConnect();
+    if (req.body?.signature != null)
+      req.body.signature = Buffer.from(req.body.signature, "base64");
+
     let newEstablishment = Establishment(req.body);
     newEstablishment.ownerId = mongoose.Types.ObjectId(req.body.ownerId);
     await newEstablishment.save();

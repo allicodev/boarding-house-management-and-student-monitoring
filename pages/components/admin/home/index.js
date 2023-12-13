@@ -45,6 +45,12 @@ const Home = ({ setSelectedKey }) => {
     college: {},
   });
 
+  // const [tenantsCount, setTenantsCount] = useState({
+  //   sumpong: 0,
+  //   casisang: 0,
+  //   kalasungay: 0,
+  // });
+
   const [barData, setBarData] = useState({
     CON: 0,
     CAS: 0,
@@ -79,6 +85,7 @@ const Home = ({ setSelectedKey }) => {
 
       if (data.status == 200) {
         setCardData(data.data);
+        // setTenantsCount(data.data.tenantsCount);
       }
     })(axios);
   }, []);
@@ -154,15 +161,164 @@ const Home = ({ setSelectedKey }) => {
       /> */}
     </>
   ) : (
-    <Row gutter={[16, 16]}>
-      <Col span={18}>
-        <Segmented
-          options={["Bar Graph", "Pie Graph"]}
-          value={mode}
-          onChange={(e) => setMode(e)}
-          style={{ padding: 5 }}
-        />
-        {mode == "Bar Graph" ? (
+    <>
+      <Row gutter={[16, 16]}>
+        <Col span={18}>
+          <Segmented
+            options={["Bar Graph", "Pie Graph"]}
+            value={mode}
+            onChange={(e) => setMode(e)}
+            style={{ padding: 5 }}
+          />
+          {mode == "Bar Graph" ? (
+            <Bar
+              options={{
+                responsive: true,
+                animations: {
+                  y: {
+                    easing: "easeInOutElastic",
+                    from: (ctx) => {
+                      if (ctx.type === "data") {
+                        if (ctx.mode === "default" && !ctx.dropped) {
+                          ctx.dropped = true;
+                          return 0;
+                        }
+                      }
+                    },
+                  },
+                },
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                  title: {
+                    display: true,
+                    text: "Students per College",
+                    position: "top",
+                    font: {
+                      size: "13px",
+                      family: "Sans-Serif",
+                    },
+                  },
+                },
+                scales: {
+                  y: {
+                    min: 0,
+                    max: 10,
+                    stacked: true,
+                    title: {
+                      display: true,
+                      text: "Student(s)",
+                    },
+                  },
+                  x: {
+                    title: {
+                      display: true,
+                      text: "Colleges",
+                    },
+                  },
+                },
+                events: ["click"],
+                // onClick: (ev, el) => {
+                //   console.log(el);
+                //   if (
+                //     el &&
+                //     el.length > 0 &&
+                //     el[0] &&
+                //     el[0].datasetIndex !== undefined &&
+                //     el[0].index !== undefined
+                //   ) {
+                //     console.log(el[0]._datasetIndex);
+                //     console.log("proceed");
+                //     const index = el[0].index;
+                //     setOpenCollege({
+                //       open: true,
+                //       college: json.colleges[index],
+                //     });
+                //   }
+                // },
+              }}
+              data={{
+                datasets: [
+                  {
+                    label: "Student(s)",
+                    data: barData,
+                    backgroundColor: json.colleges.map((e) => e?.color),
+                    type: "bar",
+                  },
+                ],
+              }}
+            />
+          ) : null}
+          {mode == "Pie Graph" ? (
+            <div style={{ width: 500 }}>
+              <Pie
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: {
+                      position: "top",
+                    },
+                    title: {
+                      display: true,
+                      text: "Students per College Pie Chart",
+                    },
+                  },
+                }}
+                data={{
+                  labels: json.colleges.map((e) => e.label.split(" ")[0]),
+                  datasets: [
+                    {
+                      label: "Student(s)",
+                      data: Object.values(barData),
+                      backgroundColor: json.colleges.map((e) => e?.color),
+                    },
+                  ],
+                }}
+              />
+            </div>
+          ) : null}
+        </Col>
+        <Col span={6}>
+          <Space direction="vertical" style={{ marginTop: 20 }}>
+            {[
+              {
+                label: "pending establishment",
+                value: cardData.totalEstablishmentUnverified,
+                color: "#ffff00",
+              },
+              {
+                label: "Total Verified Establishment",
+                value: cardData.totalEstablishmentVerified,
+                color: "#ff0000",
+              },
+              {
+                label: "Total Student",
+                value: cardData.totalStudent,
+                color: "#00ff00",
+              },
+              {
+                label: "Total Landlord/Landlady registered",
+                value: cardData.totalLandlord,
+                color: "#0000ff",
+              },
+            ].map((e, i) => (
+              <DashboardCard
+                {...e}
+                index={i}
+                key={i}
+                onClick={(index) => {
+                  if ([0, 1, 3].includes(index))
+                    setSelectedKey("establishments");
+                  else setSelectedKey("student");
+                }}
+              />
+            ))}
+          </Space>
+        </Col>
+      </Row>
+      {/* <Row gutter={[16, 16]}>
+        <Col span={18}>
           <Bar
             options={{
               responsive: true,
@@ -182,10 +338,15 @@ const Home = ({ setSelectedKey }) => {
               plugins: {
                 legend: {
                   display: false,
+                  labels: {
+                    text: function (tooltipItem, chart) {
+                      return tooltipItem.text.toUpperCase();
+                    },
+                  },
                 },
                 title: {
                   display: true,
-                  text: "Students per College",
+                  text: "Tenants in Brgy Sumpong, Kalasungay and Casisang",
                   position: "top",
                   font: {
                     size: "13px",
@@ -195,119 +356,44 @@ const Home = ({ setSelectedKey }) => {
               },
               scales: {
                 y: {
-                  min: 0,
-                  max: 10,
-                  stacked: true,
+                  max:
+                    Math.ceil(
+                      Math.max(
+                        tenantsCount.casisang,
+                        tenantsCount.kalasungay,
+                        tenantsCount.sumpong
+                      ) / 10
+                    ) * 10,
                   title: {
                     display: true,
-                    text: "Student(s)",
+                    text: "Tenant(s)",
+                  },
+                  ticks: {
+                    callback: (v) => v.toFixed(0).toUpperCase(),
                   },
                 },
                 x: {
                   title: {
                     display: true,
-                    text: "Colleges",
+                    text: "Barangay",
                   },
                 },
               },
-              events: ["click"],
-              // onClick: (ev, el) => {
-              //   console.log(el);
-              //   if (
-              //     el &&
-              //     el.length > 0 &&
-              //     el[0] &&
-              //     el[0].datasetIndex !== undefined &&
-              //     el[0].index !== undefined
-              //   ) {
-              //     console.log(el[0]._datasetIndex);
-              //     console.log("proceed");
-              //     const index = el[0].index;
-              //     setOpenCollege({
-              //       open: true,
-              //       college: json.colleges[index],
-              //     });
-              //   }
-              // },
             }}
             data={{
               datasets: [
                 {
                   label: "Student(s)",
-                  data: barData,
-                  backgroundColor: json.colleges.map((e) => e?.color),
+                  data: tenantsCount,
+                  backgroundColor: ["#f00", "#0f0", "#00f"],
                   type: "bar",
                 },
               ],
             }}
           />
-        ) : null}
-        {mode == "Pie Graph" ? (
-          <div style={{ width: 500 }}>
-            <Pie
-              options={{
-                responsive: true,
-                plugins: {
-                  legend: {
-                    position: "top",
-                  },
-                  title: {
-                    display: true,
-                    text: "Students per College Pie Chart",
-                  },
-                },
-              }}
-              data={{
-                labels: json.colleges.map((e) => e.label.split(" ")[0]),
-                datasets: [
-                  {
-                    label: "Student(s)",
-                    data: Object.values(barData),
-                    backgroundColor: json.colleges.map((e) => e?.color),
-                  },
-                ],
-              }}
-            />
-          </div>
-        ) : null}
-      </Col>
-      <Col span={6}>
-        <Space direction="vertical" style={{ marginTop: 20 }}>
-          {[
-            {
-              label: "pending establishment",
-              value: cardData.totalEstablishmentUnverified,
-              color: "#ffff00",
-            },
-            {
-              label: "Total Verified Establishment",
-              value: cardData.totalEstablishmentVerified,
-              color: "#ff0000",
-            },
-            {
-              label: "Total Student",
-              value: cardData.totalStudent,
-              color: "#00ff00",
-            },
-            {
-              label: "Total Landlord/Landlady registered",
-              value: cardData.totalLandlord,
-              color: "#0000ff",
-            },
-          ].map((e, i) => (
-            <DashboardCard
-              {...e}
-              index={i}
-              key={i}
-              onClick={(index) => {
-                if ([0, 1, 3].includes(index)) setSelectedKey("establishments");
-                else setSelectedKey("student");
-              }}
-            />
-          ))}
-        </Space>
-      </Col>
-    </Row>
+        </Col>
+      </Row> */}
+    </>
   );
 };
 

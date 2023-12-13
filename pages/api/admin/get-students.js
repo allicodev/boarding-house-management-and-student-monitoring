@@ -5,7 +5,9 @@ export default async function handler(req, res) {
   try {
     if (req.method !== "GET") throw new Error("Invalid method");
     await dbConnect();
-    const { college, course } = req.query;
+    let { college, course, barangay } = req.query;
+
+    if (barangay) barangay = new RegExp(barangay, "i");
 
     let students = await User.aggregate([
       {
@@ -37,6 +39,17 @@ export default async function handler(req, res) {
                 from: "establishments",
                 localField: "establishmentId",
                 foreignField: "_id",
+                pipeline:
+                  barangay != null
+                    ? [
+                        {
+                          $match: {
+                            address: { $regex: barangay },
+                          },
+                        },
+                      ]
+                    : [],
+
                 as: "establishmentId",
               },
             },
@@ -54,6 +67,11 @@ export default async function handler(req, res) {
         },
       },
     ]);
+
+    if (barangay)
+      students = students.filter(
+        (e) => e?.tenant != null && e.tenant?.length != 0
+      );
 
     res.json({
       status: 200,

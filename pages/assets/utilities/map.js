@@ -285,6 +285,7 @@ const RGeocode = async ({ lat, long }) => {
       return response.json();
     })
     .then((data) => {
+      console.log(data);
       if (data?.display_name) {
         return (
           data.display_name.split(",").slice(0, -3).join(",") ??

@@ -101,8 +101,9 @@ const StudentTermsCondition = ({
       <Spin spinning={fetching}>
         <Typography.Text style={{ color: "#777" }}>
           This Agreement is entered into on [Date-Student magbutang], between{" "}
-          {landlord?.firstName + " " + landlord?.lastName} "Landowner" and{" "}
-          {student?.firstName + " " + student?.lastName} "Tenant". Services.
+          {landlord?.firstName + " " + landlord?.lastName} &quot;Landowner&quot;
+          and {student?.firstName + " " + student?.lastName} &quot;Tenant&quot;.
+          Services.
           <br />
           <br />
           <strong>RENTAL TERMS:</strong>
@@ -134,8 +135,8 @@ const StudentTermsCondition = ({
               Confidentiality: Landowner agrees not to share any personal
               information provided by the Tenant, especially student
               information, with any third party, except the school, which
-              co-manages the students' data. The data will be used solely for
-              the purpose of this agreement.
+              co-manages the students&apos; data. The data will be used solely
+              for the purpose of this agreement.
             </li>
           </ol>
         </Typography.Text>
@@ -160,7 +161,7 @@ const StudentTermsCondition = ({
                 <Tooltip title="reset">
                   <Button
                     icon={<UndoOutlined />}
-                    style={{ position: "absolute", left: 0 }}
+                    style={{ position: "absolute", left: 3, top: 3 }}
                     onClick={() => clearSignature(signatureRef2)}
                   />
                 </Tooltip>

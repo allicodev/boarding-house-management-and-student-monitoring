@@ -19,7 +19,12 @@ import { AiOutlineInfoCircle } from "react-icons/ai";
 import dayjs from "dayjs";
 
 // import { EditEstablishmentInfo } from "../../../../assets/utilities";
-import { IconText, RoundedContainer, Map } from "../../../../assets/utilities";
+import {
+  IconText,
+  RoundedContainer,
+  Map,
+  AdminEstabVerifyTermsCondition,
+} from "../../../../assets/utilities";
 import VerificationHistory from "../../../landlord/establishment/components/verification_history";
 
 const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
@@ -34,6 +39,8 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
     coordinates: [0, 0],
   });
 
+  const [openTermsCondition, setOpenTermsCondition] = useState(false);
+
   // const [openEditEstablishment, setOpenEstablishment] = useState({
   //   open: false,
   //   data: null,
@@ -42,6 +49,18 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
   // const isFull = data?.totalSpaceForRent - data?.totalOccupied <= 0;
   return (
     <>
+      {/* UTILS */}
+
+      <AdminEstabVerifyTermsCondition
+        open={openTermsCondition}
+        close={() => setOpenTermsCondition(false)}
+        onProceed={() => {
+          verify(data?._id);
+          setOpenTermsCondition(false);
+        }}
+      />
+
+      {/* END OF UTILS */}
       <Modal
         open={fullMapConfig.open}
         onCancel={() => setFullMapConfig({ open: false, coordinates: [0, 0] })}
@@ -121,15 +140,19 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
                 Reject
               </Button>
 
-              <Popconfirm
+              {/* <Popconfirm
                 title="Are you sure ?"
                 okText="Confirm"
                 onConfirm={() => verify(data?._id)}
+              > */}
+              <Button
+                type="primary"
+                key="key2"
+                onClick={() => setOpenTermsCondition(true)}
               >
-                <Button type="primary" key="key2">
-                  Verify
-                </Button>
-              </Popconfirm>
+                Verify
+              </Button>
+              {/* </Popconfirm> */}
             </Space>
           ) : data?.verification?.at(-1).status == "approved" ? (
             <Popconfirm

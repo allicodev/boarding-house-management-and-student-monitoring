@@ -95,5 +95,51 @@
     { "value": 2, "label": "2nd Year (Sophomore)" },
     { "value": 3, "label": "3rd Year (Junior)" },
     { "value": 4, "label": "4th Year (Senior)" }
+  ],
+  "barangay": [
+    {
+      "label": "Sumpong",
+      "value": "sumpong"
+    },
+    {
+      "label": "Casisang",
+      "value": "casisang"
+    },
+    {
+      "label": "Barangay 1",
+      "value": "barangay 1"
+    },
+    {
+      "label": "Barangay 2",
+      "value": "barangay 2"
+    },
+    {
+      "label": "Barangay 3",
+      "value": "barangay 3"
+    },
+    {
+      "label": "Barangay 4",
+      "value": "barangay 4"
+    },
+    {
+      "label": "Barangay 5",
+      "value": "barangay 5"
+    },
+    {
+      "label": "Barangay 6",
+      "value": "barangay 6"
+    },
+    {
+      "label": "Barangay 7",
+      "value": "barangay 7"
+    },
+    {
+      "label": "Barangay 8",
+      "value": "barangay 8"
+    },
+    {
+      "label": "Barangay 9",
+      "value": "barangay 9"
+    }
   ]
 }

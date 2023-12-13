@@ -31,7 +31,11 @@ const user = Cookies.get("currentUser");
 
 const Sider = ({ selectedIndex, selectedKey, items, image }) => {
   return (
-    <Affix>
+    <Affix
+      style={{
+        zIndex: 1,
+      }}
+    >
       <Layout.Sider collapsible theme="light">
         <div
           style={{
@@ -365,7 +369,11 @@ const Header = ({ app_key }) => {
       >
         <Table columns={tableConfig.column} />
       </Modal>
-      <Affix>
+      <Affix
+        style={{
+          zIndex: 1,
+        }}
+      >
         <Layout.Header
           style={{
             backgroundColor: "#aaa",

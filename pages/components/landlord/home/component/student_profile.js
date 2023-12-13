@@ -213,7 +213,7 @@ const StudentProfile = ({ open, close, data, update, refresh }) => {
                         <Tooltip title="reset">
                           <Button
                             icon={<UndoOutlined />}
-                            style={{ position: "absolute", top: 0 }}
+                            style={{ position: "absolute", top: 3, left: 3 }}
                             onClick={() => signatureRef.current?.clear()}
                           />
                         </Tooltip>

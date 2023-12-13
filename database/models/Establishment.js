@@ -54,6 +54,9 @@ let EstablishmentSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
+    signature: {
+      type: Buffer,
+    },
     // type: {
     //   type: String,
     //   enum: ["male", "female", "mix"],

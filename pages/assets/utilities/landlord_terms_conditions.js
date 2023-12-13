@@ -1,9 +1,31 @@
 import React, { useRef } from "react";
-import { Button, Modal, Typography } from "antd";
+import {
+  Button,
+  Modal,
+  Typography,
+  Tooltip,
+  Image,
+  Divider,
+  message,
+} from "antd";
+import SignatureCanvas from "react-signature-canvas";
+
+import { UndoOutlined } from "@ant-design/icons";
 
 // ! disabled button still on construction
 
-const LandlordTermsCondition = ({ open, name, close, onProceed }) => {
+const LandlordTermsCondition = ({
+  open,
+  name,
+  close,
+  onProceed,
+  viewOnly,
+  dataSignature,
+}) => {
+  const signatureRef = useRef(null);
+
+  const clearSignature = () => signatureRef.current?.clear();
+
   return (
     <Modal
       open={open}
@@ -20,7 +42,11 @@ const LandlordTermsCondition = ({ open, name, close, onProceed }) => {
         <Button
           type="primary"
           onClick={() => {
-            onProceed();
+            if (signatureRef.current.isEmpty()) {
+              message.warning("Signature is empty. Please provide.");
+              return;
+            }
+            onProceed(signatureRef.current.toDataURL());
             close();
           }}
           block /*disabled={!isBottom} */
@@ -191,6 +217,52 @@ const LandlordTermsCondition = ({ open, name, close, onProceed }) => {
           </li>
         </ul>
       </Typography.Text>
+      <strong>SIGNATURE</strong>
+      {viewOnly ? (
+        <>
+          <br />
+          <Image
+            preview={false}
+            src={`data:image/png;base64,${dataSignature
+              ?.split("base64")[1]
+              ?.replace(/=+$/, "")}`}
+            style={{ border: "1px solid #eee" }}
+          />
+          <div style={{ width: 200 }}>
+            <p style={{ textAlign: "center", marginTop: 13 }}>{name}</p>
+            <Divider
+              style={{
+                padding: 0,
+                margin: 0,
+                backgroundColor: "#000",
+              }}
+            />
+            <p style={{ textAlign: "center" }}>Landlord</p>
+          </div>
+        </>
+      ) : (
+        <div style={{ position: "relative" }}>
+          <SignatureCanvas
+            penColor="black"
+            canvasProps={{
+              width: 200,
+              height: 200,
+              className: "signatureCanvas",
+              style: {
+                border: "1px solid #eee",
+              },
+            }}
+            ref={signatureRef}
+          />
+          <Tooltip title="reset">
+            <Button
+              icon={<UndoOutlined />}
+              style={{ position: "absolute", left: 3, top: 3 }}
+              onClick={() => clearSignature()}
+            />
+          </Tooltip>
+        </div>
+      )}
     </Modal>
   );
 };

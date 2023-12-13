@@ -15,6 +15,8 @@ import {
 import Cookies from "js-cookie";
 import axios from "axios";
 import { PickerDropPane } from "filestack-react";
+import { TiArrowBack } from "react-icons/ti";
+
 import {
   MapPicker,
   LandlordTermsCondition,
@@ -27,31 +29,36 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
   const [firstPayment, setFirstPayment] = useState("do");
   const [firstPaymentRule, setFirstPaymentRule] = useState("Deposit Only");
   const [loading, setLoading] = useState([]);
+  const [openMap, setOpenMap] = useState(false);
+  const [enterManualAddress, setEnterManualAddress] = useState(false);
+  const [signature, setSignature] = useState(null);
   const [openTermsCondition, setOpenTermsCondition] = useState({
     open: false,
     name: "",
   });
-  const [openMap, setOpenMap] = useState(false);
   const [coordsConfig, setCoorsConfig] = useState({
     coordinates: [],
     address: "",
   });
-  console.log(coordsConfig);
+  const [addressConfig, setAddressConfig] = useState({
+    address: "",
+    coordinates: [],
+  });
+
   const defaultCoordinates = { lat: 125.124651, long: 8.157851 }; //* malaybalay
 
   const handleFinish = async (val) => {
     val = {
       ...val,
-      ...coordsConfig,
+      ...(enterManualAddress ? addressConfig : coordsConfig),
       ownerId: JSON.parse(Cookies.get("currentUser"))._id,
+      signature,
       establishmentPhotos: photos,
       businessPermitPhoto,
       firstPaymentRule,
     };
 
-    let { data } = await axios.post("/api/landlord/create-establishment", {
-      ...val,
-    });
+    let { data } = await axios.post("/api/landlord/create-establishment", val);
 
     if (data.status == 200) {
       message.success(data.message);
@@ -85,13 +92,19 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
       <LandlordTermsCondition
         {...openTermsCondition}
         close={() => setOpenTermsCondition({ open: false, name: "" })}
-        onProceed={form.submit}
+        onProceed={(signature) => {
+          setSignature(signature);
+          form.submit();
+        }}
       />
       <Modal
         open={open}
         onCancel={() => {
-          close();
           form.resetFields();
+          setAddressConfig({ address: "", coordinates: [] });
+          setCoorsConfig({ address: "", coordinates: [] });
+          setEnterManualAddress(false);
+          close();
         }}
         closable={false}
         title="Add New Establishment"
@@ -99,14 +112,33 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
         footer={
           <Button
             type="primary"
-            onClick={() => {
-              setOpenTermsCondition({
-                open: true,
-                name:
-                  JSON.parse(Cookies.get("currentUser")).firstName +
-                  " " +
-                  JSON.parse(Cookies.get("currentUser")).lastName,
-              });
+            onClick={async () => {
+              if (enterManualAddress) {
+                if (addressConfig.address == "") {
+                  message.error("Address should be provided.");
+                  return;
+                }
+              } else {
+                if (coordsConfig.address == "") {
+                  message.error("Address should be provided.");
+                  return;
+                }
+              }
+
+              await form
+                .validateFields()
+                .then(() => {
+                  setOpenTermsCondition({
+                    open: true,
+                    name:
+                      JSON.parse(Cookies.get("currentUser")).firstName +
+                      " " +
+                      JSON.parse(Cookies.get("currentUser")).lastName,
+                  });
+                })
+                .catch(() => {
+                  message.error("Some input are blank. Please provide.");
+                });
             }}
             loading={
               loading.filter((e) => e == "uploading-bp" || e == "uploading-img")
@@ -117,6 +149,7 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
           </Button>
         }
         centered
+        destroyOnClose
       >
         <Form form={form} onFinish={handleFinish} layout="vertical">
           <Form.Item
@@ -148,16 +181,70 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
             </Select>
           </Form.Item>
           <Form.Item label="Location">
-            {coordsConfig.coordinates.length != 0 &&
-            coordsConfig.address != "" ? (
+            {enterManualAddress ? (
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <Space>
+                  <Input
+                    placeholder="Enter address"
+                    style={{
+                      width: 250,
+                    }}
+                    onChange={(e) =>
+                      setAddressConfig({
+                        ...addressConfig,
+                        address: e.target.value,
+                      })
+                    }
+                  />
+                  <InputNumber
+                    placeholder="Latitude"
+                    min={-90}
+                    max={90}
+                    onChange={(e) =>
+                      setAddressConfig({
+                        ...addressConfig,
+                        coordinates: [e, addressConfig.coordinates[1]],
+                      })
+                    }
+                  />
+                  <InputNumber
+                    placeholder="Longitude"
+                    min={-180}
+                    max={180}
+                    onChange={(e) =>
+                      setAddressConfig({
+                        ...addressConfig,
+                        coordinates: [addressConfig.coordinates[0], e],
+                      })
+                    }
+                  />
+                </Space>
+                <Button
+                  style={{ marginTop: 5 }}
+                  icon={<TiArrowBack />}
+                  onClick={() => setEnterManualAddress(false)}
+                />
+              </div>
+            ) : coordsConfig.coordinates.length != 0 &&
+              coordsConfig.address != "" ? (
               <div>
                 {coordsConfig.address}{" "}
-                <Button size="small" onClick={() => setOpenMap(true)}>
+                <Button
+                  size="small"
+                  onClick={() =>
+                    setCoorsConfig({ coordinates: [], address: "" })
+                  }
+                >
                   Change
                 </Button>
               </div>
             ) : (
-              <Button onClick={() => setOpenMap(true)}>Pick Location</Button>
+              <Space>
+                <Button onClick={() => setOpenMap(true)}>Pick Location</Button>
+                <Button onClick={() => setEnterManualAddress(true)}>
+                  Enter Manually
+                </Button>
+              </Space>
             )}
           </Form.Item>
           <Form.Item

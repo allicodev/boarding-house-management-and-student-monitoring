@@ -8,6 +8,9 @@ import RoundedContainer from "./rounded_container";
 import IconText from "./icon_text";
 import StudentHistory from "./StudentHistory";
 import LandlordTermsCondition from "./landlord_terms_conditions";
+import AdminEstabVerifyTermsCondition from "./admin_estab_verify_terms_condition";
+import ListStudentBarangay from "./list_student_specific_barangay";
+import ArchiveTable from "./archive_table";
 import { MapPicker, RGeocode } from "./map";
 
 export default () => null;
@@ -24,4 +27,7 @@ export {
   LandlordTermsCondition,
   MapPicker,
   RGeocode,
+  AdminEstabVerifyTermsCondition,
+  ListStudentBarangay,
+  ArchiveTable,
 };

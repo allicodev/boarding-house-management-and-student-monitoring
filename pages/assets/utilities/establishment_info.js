@@ -129,12 +129,9 @@ const EstablishmentInfo = ({ data }) => {
         >
           {data?.coordinates != null && data?.coordinates?.length > 0 ? (
             <Map
-              coordinates={{
-                lat: data?.coordinates[0],
-                lng: data?.coordinates[1],
-              }}
+              coordinates={data?.coordinates}
               styles={{
-                maxHeight: 500,
+                height: 450,
               }}
             />
           ) : (

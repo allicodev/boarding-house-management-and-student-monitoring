@@ -5,7 +5,11 @@ import FullViewer from "./components/full_viewer";
 import axios from "axios";
 import ReportGenerator from "../../../layout/components/report_generator";
 import json from "../../../assets/json/constant.json";
-import ArchiveTable from "../../../assets/utilities/archive_table";
+import {
+  ArchiveTable,
+  LandlordTermsCondition,
+} from "../../../assets/utilities";
+
 const Home = ({ app_key }) => {
   const [establishment, setEstablishment] = useState([]);
   const [openViewer, setOpenViewer] = useState({ open: false, data: null });
@@ -19,6 +23,12 @@ const Home = ({ app_key }) => {
   const [openStudentProfile, setOpenStudentProfile] = useState({
     open: false,
     data: null,
+  });
+  const [tcConfig, setTcConfig] = useState({
+    open: false,
+    name: "",
+    viewOnly: true,
+    dataSignature: "",
   });
 
   const column = [
@@ -90,6 +100,20 @@ const Home = ({ app_key }) => {
             }}
           >
             Archive
+          </Button>
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setTcConfig({
+                open: true,
+                name: row?.ownerId?.firstName + " " + row?.ownerId?.lastName,
+                viewOnly: true,
+                dataSignature: row?.signature,
+              });
+            }}
+          >
+            T & C
           </Button>
         </Space>
       ),
@@ -197,6 +221,7 @@ const Home = ({ app_key }) => {
 
   return (
     <>
+      {/* context */}
       <FullViewer
         open={openViewer.open}
         close={() => setOpenViewer({ open: false, data: null })}
@@ -224,6 +249,18 @@ const Home = ({ app_key }) => {
         close={() => setOpenStudentProfile({ open: false, data: null })}
         appkey={app_key}
       />
+      <LandlordTermsCondition
+        {...tcConfig}
+        close={() =>
+          setTcConfig({
+            open: false,
+            name: "",
+            viewOnly: true,
+            dataSignature: "",
+          })
+        }
+      />
+      {/* end */}
       <Table
         columns={column}
         dataSource={establishment}
