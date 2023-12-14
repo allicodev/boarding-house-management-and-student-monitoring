@@ -6,10 +6,14 @@ export default async function handler(req, res) {
     if (req.method !== "GET") throw new Error("Invalid method");
     await dbConnect();
 
+    let { barangay } = req.query;
+    if (barangay) barangay = new RegExp(barangay, "i");
+
     const establishment = await Establishment.aggregate([
       {
         $match: {
           $expr: { $eq: [{ $last: "$verification.status" }, "approved"] },
+          ...(barangay ? { address: { $regex: barangay } } : {}),
         },
       },
       {
