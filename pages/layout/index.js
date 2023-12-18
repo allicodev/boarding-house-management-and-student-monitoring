@@ -15,17 +15,21 @@ import {
   Input,
   Table,
   Modal,
+  Space,
 } from "antd";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 
 import Cookies from "js-cookie";
 import axios from "axios";
 import { PageHeader } from "@ant-design/pro-layout";
+import dayjs from "dayjs";
 
 import json from "../assets/json/constant.json";
 import EditProfile from "./components/edit_profile";
 import ReportGenerator from "./components/report_generator";
-import LandlordSearchFilter from "./components/landlord_search_filter";
+import { StudentProfile } from "../assets/utilities";
+import FullViewer from "../components/admin/establishments/components/full_viewer";
+import FullViewerStudent from "../components/student/home/components/full_viewer";
 
 const user = Cookies.get("currentUser");
 
@@ -81,12 +85,51 @@ const Header = ({ app_key }) => {
     open: false,
     id: "",
   });
+  const [estab, setEstab] = useState([]);
   const [tableConfig, setTableConfig] = useState({
     open: false,
     column: [],
     dataSource: [],
   });
+  const [studentProfileConfig, setStudentProfileConfig] = useState({
+    open: false,
+    data: {},
+  });
+  const [estabConfig, setEstabConfig] = useState({
+    open: false,
+    data: {},
+    verify: (_id) => {
+      (async (_) => {
+        let { data } = await _.get("/api/admin/verify-establishment", {
+          params: {
+            _id,
+          },
+        });
 
+        if (data.status == 200) {
+          message.success(data.message);
+        } else message.error(data.message);
+      })(axios);
+    },
+    decline: (_id, reason) => {
+      (async (_) => {
+        let { data } = await _.get("/api/admin/reject-establishment", {
+          params: {
+            _id,
+            reason,
+          },
+        });
+
+        if (data.status == 200) {
+          message.success(data.message);
+        } else message.error(data.message);
+      })(axios);
+    },
+  });
+  const [estabConfigStudent, setEstabConfigStudent] = useState({
+    open: false,
+    data: {},
+  });
   const [openEditModal, setOpenEditModal] = useState({
     open: false,
     data: null,
@@ -259,7 +302,22 @@ const Header = ({ app_key }) => {
                     name: e.firstName + " " + e.lastName,
                   };
                 }),
-                (i) => setOpenLandlordFilter({ open: true, id: i })
+                (id) => {
+                  (async (_) => {
+                    let { data } = _.get("/api/landlord/get-establishments", {
+                      params: {
+                        _id: id,
+                      },
+                    });
+
+                    if (data.status == 200) {
+                      setEstab(data.establishment);
+                      setOpenLandlordFilter({ open: true, id });
+                    } else {
+                      message.error("There is an error in the server");
+                    }
+                  })(axios);
+                }
               )
             );
           else {
@@ -274,7 +332,26 @@ const Header = ({ app_key }) => {
                       id: e._id,
                       name: e.firstName + " " + e.lastName,
                     };
-                  })
+                  }),
+                  (id) => {
+                    (async (_) => {
+                      let { data } = await _.get(
+                        "/api/admin/get-student-specific",
+                        {
+                          params: {
+                            id,
+                          },
+                        }
+                      );
+
+                      if (data.status == 200) {
+                        setStudentProfileConfig({
+                          open: true,
+                          data: data.student,
+                        });
+                      }
+                    })(axios);
+                  }
                 )
               );
 
@@ -288,7 +365,25 @@ const Header = ({ app_key }) => {
                       name: e.firstName + " " + e.lastName,
                     };
                   }),
-                  (i) => setOpenLandlordFilter({ open: true, id: i })
+                  (id) => {
+                    (async (_) => {
+                      let res = await _.get(
+                        "/api/landlord/get-establishments",
+                        {
+                          params: {
+                            _id: id,
+                          },
+                        }
+                      );
+
+                      if (res.data.status == 200) {
+                        setEstab(res.data.establishment);
+                        setOpenLandlordFilter({ open: true, id });
+                      } else {
+                        message.error("There is an error in the server");
+                      }
+                    })(axios);
+                  }
                 )
               );
           }
@@ -303,7 +398,26 @@ const Header = ({ app_key }) => {
                   id: e._id,
                   name: e.name,
                 };
-              })
+              }),
+              (id) => {
+                (async (_) => {
+                  let { data } = await _.get("/api/admin/get-establishments", {
+                    params: {
+                      id,
+                    },
+                  });
+
+                  if (role == "student") {
+                    setEstabConfigStudent({ open: true, data: data.data[0] });
+                  } else {
+                    setEstabConfig({
+                      ...estabConfig,
+                      open: true,
+                      data: data.data[0],
+                    });
+                  }
+                })(axios);
+              }
             )
           );
         }
@@ -312,6 +426,15 @@ const Header = ({ app_key }) => {
       }
       setSearching(false);
     })(axios);
+  };
+
+  const clearEstabConfig = () => {
+    setEstabConfig({
+      open: false,
+      data: {},
+      verify: estabConfig.verify,
+      decline: estabConfig.decline,
+    });
   };
 
   useEffect(() => {
@@ -339,27 +462,23 @@ const Header = ({ app_key }) => {
           })
         }
       />
-      <LandlordSearchFilter
-        open={openLandlordFilter.open}
-        close={() => setOpenLandlordFilter({ open: false, id: -1 })}
-        openAs={(_) => {
-          let id = openLandlordFilter.id;
-          setOpenLandlordFilter({ open: false, id: -1 });
-          switch (_) {
-            case "all-tenant": {
-              (async (_) => {
-                const { data } = _.get("/api/tenant/get-tenants", {
-                  params: {
-                    id,
-                  },
-                });
-              })(axios);
-              // setOpenEditModal({ open: true });
-              break;
-            }
-          }
-        }}
+      <StudentProfile
+        {...studentProfileConfig}
+        close={() => setStudentProfileConfig({ open: false, data: {} })}
+        appkey={app_key}
+        refresh={() => {}}
       />
+      <FullViewer
+        {...estabConfig}
+        close={() => clearEstabConfig()}
+        appkey={app_key}
+      />
+      <FullViewerStudent
+        open={estabConfigStudent.open}
+        close={() => setEstabConfigStudent({ open: false, data: {} })}
+        data={estabConfigStudent.data}
+      />
+
       {/* TABLE for multipurpose use */}
       <Modal
         open={tableConfig.open}
@@ -368,6 +487,112 @@ const Header = ({ app_key }) => {
         closable={false}
       >
         <Table columns={tableConfig.column} />
+      </Modal>
+      <Modal
+        open={openLandlordFilter.open}
+        onCancel={() => setOpenLandlordFilter({ open: false, id: null })}
+        closable={false}
+        footer={null}
+        width={250}
+        title="Open as"
+      >
+        <Space direction="vertical">
+          <Button
+            style={{ width: 200 }}
+            onClick={() => {
+              (async (_) => {
+                let { data } = await _.get("/api/landlord/request-data", {
+                  params: {
+                    type: "tenants-all",
+                    ownerId: openLandlordFilter.id,
+                  },
+                });
+                if (data?.status == 200) {
+                  setOpenLandlordFilter({ open: false, id: null });
+                  setReport({
+                    open: true,
+                    columns: [
+                      {
+                        title: "Name",
+                        render: (_, row) =>
+                          row?.firstName + " " + row?.lastName,
+                      },
+                      {
+                        title: "Establishment",
+                        render: (_, row) => row?.estabName,
+                      },
+                      {
+                        title: "College",
+                        align: "center",
+                        render: (_, row) => row.college?.toUpperCase(),
+                      },
+                      {
+                        title: "Course",
+                        align: "center",
+                        render: (_, row) => row?.course,
+                      },
+                      ,
+                      {
+                        title: "Year",
+                        align: "center",
+                        render: (_, row) => row?.year,
+                      },
+                      {
+                        title: "gender",
+                        align: "center",
+                        dataIndex: "gender",
+                      },
+                      {
+                        title: "Age",
+                        align: "center",
+                        render: (_, row) =>
+                          dayjs().diff(
+                            dayjs(row?.dateOfBirth).format("YYYY-MM-DD"),
+                            "years",
+                            false
+                          ),
+                      },
+                    ],
+                    title: "List of Students",
+                    data: data.data,
+                  });
+                }
+              })(axios);
+            }}
+          >
+            Print All Tenants
+          </Button>
+          {estab.map((e, i) => (
+            <Button
+              style={{ width: 200 }}
+              key={`estab-${i}`}
+              onClick={() =>
+                (async (_) => {
+                  let { data } = await _.get("/api/admin/get-establishments", {
+                    params: {
+                      ownerId: openLandlordFilter.id,
+                      name: e?.name ?? "",
+                    },
+                  });
+
+                  if (role == "student") {
+                    setEstabConfigStudent({ open: true, data: data.data[0] });
+                    setOpenLandlordFilter({ open: false, id: null });
+                  } else {
+                    setEstabConfig({
+                      ...estabConfig,
+                      open: true,
+                      data: data.data[0],
+                    });
+                    setOpenLandlordFilter({ open: false, id: null });
+                  }
+                })(axios)
+              }
+            >
+              {e?.name ?? "No Name"}
+            </Button>
+          ))}
+        </Space>
       </Modal>
       <Affix
         style={{

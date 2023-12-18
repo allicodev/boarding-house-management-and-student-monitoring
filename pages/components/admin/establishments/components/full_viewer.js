@@ -26,9 +26,11 @@ import {
   AdminEstabVerifyTermsCondition,
 } from "../../../../assets/utilities";
 import VerificationHistory from "../../../landlord/establishment/components/verification_history";
+import ReportGenerator from "../../../../layout/components/report_generator";
 
 const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
   const [openDeclineForm, setOpenDeclineForm] = useState(false);
+  const [showList, setShowList] = useState(false);
   const [reason, setReason] = useState("");
   const [openVerificationHistory, setOpenVerificationHistory] = useState({
     open: false,
@@ -40,7 +42,6 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
   });
 
   const [openTermsCondition, setOpenTermsCondition] = useState(false);
-
   // const [openEditEstablishment, setOpenEstablishment] = useState({
   //   open: false,
   //   data: null,
@@ -50,7 +51,53 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
   return (
     <>
       {/* UTILS */}
-
+      <ReportGenerator
+        columns={[
+          {
+            title: "Name",
+            render: (_, row) => row?.firstName + " " + row?.lastName,
+          },
+          {
+            title: "Establishment",
+            render: () => data?.name,
+          },
+          {
+            title: "College",
+            align: "center",
+            render: (_, row) => row.college?.toUpperCase(),
+          },
+          {
+            title: "Course",
+            align: "center",
+            render: (_, row) => row?.course,
+          },
+          ,
+          {
+            title: "Year",
+            align: "center",
+            render: (_, row) => row?.year,
+          },
+          {
+            title: "gender",
+            align: "center",
+            dataIndex: "gender",
+          },
+          {
+            title: "Age",
+            align: "center",
+            render: (_, row) =>
+              dayjs().diff(
+                dayjs(row?.dateOfBirth).format("YYYY-MM-DD"),
+                "years",
+                false
+              ),
+          },
+        ]}
+        data={data?.tenants?.map((e) => e?.student) ?? []}
+        open={showList}
+        close={() => setShowList(false)}
+        title="List of Students"
+      />
       <AdminEstabVerifyTermsCondition
         open={openTermsCondition}
         close={() => setOpenTermsCondition(false)}
@@ -59,8 +106,6 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
           setOpenTermsCondition(false);
         }}
       />
-
-      {/* END OF UTILS */}
       <Modal
         open={fullMapConfig.open}
         onCancel={() => setFullMapConfig({ open: false, coordinates: [0, 0] })}
@@ -111,6 +156,7 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
           SUBMIT
         </Button>
       </Modal>
+      {/* END OF UTILS */}
       <Drawer
         open={open}
         onClose={close}
@@ -129,6 +175,13 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
           // >
           //   Edit
           // </Button>,
+          <Button
+            key="key0"
+            style={{ marginRight: 5 }}
+            onClick={() => setShowList(true)}
+          >
+            List of Tenants
+          </Button>,
           data?.verification?.at(-1).status == "pending" ? (
             <Space key="space-key">
               <Button

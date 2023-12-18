@@ -1,6 +1,7 @@
 import Request from "../../../database/models/Request";
-import dbConnect from "../../../database/dbConnect";
 import Tenant from "../../../database/models/Tenant";
+import Establishment from "../../../database/models/Establishment";
+import dbConnect from "../../../database/dbConnect";
 import mongoose, { mongo } from "mongoose";
 
 export default async function handler(req, res) {
@@ -11,7 +12,8 @@ export default async function handler(req, res) {
     let { type, id } = req.query;
     let data = [];
 
-    if (!["request", "tenants"].includes(type)) throw new Error();
+    if (!["request", "tenants", "tenants-all"].includes(type))
+      throw new Error();
 
     let ownerId = JSON.parse(req.cookies.currentUser)._id;
     if (type === "request") {
@@ -89,6 +91,33 @@ export default async function handler(req, res) {
           $unwind: "$studentId",
         },
       ]);
+    } else if (type == "tenants-all") {
+      const { ownerId } = req.query;
+
+      let ids = await Establishment.aggregate([
+        {
+          $match: {
+            ownerId: mongoose.Types.ObjectId(ownerId),
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+          },
+        },
+      ]);
+
+      ids = ids.map((e) => e._id);
+      let tenants = await Tenant.find({
+        establishmentId: {
+          $in: ids.map((e) => mongoose.Types.ObjectId(e)),
+        },
+      })
+        .populate("studentId establishmentId")
+        .lean();
+      data = tenants.map((e) => {
+        return { ...e.studentId, estabName: e.establishmentId.name };
+      });
     }
 
     res.json({ data, status: 200 });

@@ -5,8 +5,7 @@ export default async function handler(req, res) {
   try {
     if (req.method !== "GET") throw new Error("Invalid method");
     await dbConnect();
-    let { college, course, barangay } = req.query;
-
+    let { college, course, barangay, year, gender } = req.query;
     if (barangay) barangay = new RegExp(barangay, "i");
 
     let students = await User.aggregate([
@@ -23,6 +22,16 @@ export default async function handler(req, res) {
             course != null
               ? {
                   course,
+                }
+              : {},
+            year != null
+              ? {
+                  year,
+                }
+              : {},
+            gender != null
+              ? {
+                  gender,
                 }
               : {},
           ],
@@ -72,7 +81,6 @@ export default async function handler(req, res) {
       students = students.filter(
         (e) => e?.tenant != null && e.tenant?.length != 0
       );
-
     res.json({
       status: 200,
       message: "Fetched successfully",

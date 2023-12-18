@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Table, Tag, message, Button, Space } from "antd";
+import { FilterOutlined } from "@ant-design/icons";
 
 import FullViewer from "./components/full_viewer";
 import axios from "axios";
@@ -9,11 +10,13 @@ import {
   ArchiveTable,
   LandlordTermsCondition,
 } from "../../../assets/utilities";
+import EstabFilterForm from "../student/component/FilterForm2";
 
 const Home = ({ app_key }) => {
   const [establishment, setEstablishment] = useState([]);
   const [openViewer, setOpenViewer] = useState({ open: false, data: null });
   const [trigger, setTrigger] = useState(0);
+  const [openFilter, setOpenFilter] = useState(false);
   const [report, setReport] = useState({
     open: false,
     column: [],
@@ -78,7 +81,7 @@ const Home = ({ app_key }) => {
               openReport(row?._id);
             }}
           >
-            Report
+            Student List
           </Button>
           <Button
             onClick={(e) => {
@@ -188,11 +191,6 @@ const Home = ({ app_key }) => {
           json.colleges.filter((e) => e.value == row?.studentId?.college)[0]
             ?.label,
       },
-      {
-        title: "Boarding House",
-        align: "center",
-        render: (_, row) => row?.establishmentId?.name,
-      },
     ];
     (async (_) => {
       let { data } = await _.get("/api/admin/students-by-establishment", {
@@ -212,11 +210,22 @@ const Home = ({ app_key }) => {
     })(axios);
   };
 
-  useEffect(() => {
-    (async (_) => {
-      let { data } = await _.get("/api/admin/get-establishments");
-      if (data.status == 200) setEstablishment(data.data);
+  const fetchEstablishment = async (status) => {
+    let query = {};
+    if (status != "") query.status = status;
+    return (async (_) => {
+      let { data } = await _.get("/api/admin/get-establishments", {
+        params: query,
+      });
+      if (data.status == 200) return data.data;
     })(axios);
+  };
+
+  useEffect(() => {
+    (async () => {
+      let _ = await fetchEstablishment();
+      setEstablishment(_);
+    })();
   }, [trigger]);
 
   return (
@@ -260,7 +269,26 @@ const Home = ({ app_key }) => {
           })
         }
       />
+      <EstabFilterForm
+        open={openFilter}
+        close={() => setOpenFilter(false)}
+        onFilterSubmit={async (...params) => {
+          let _ = await fetchEstablishment(...params);
+          setEstablishment(_);
+        }}
+        clearFilter={async () => {
+          let _ = await fetchEstablishment();
+          setEstablishment(_);
+        }}
+      />
       {/* end */}
+      <Button
+        style={{ float: "right", marginBottom: 5 }}
+        onClick={() => setOpenFilter(true)}
+      >
+        Filter
+        <FilterOutlined />
+      </Button>
       <Table
         columns={column}
         dataSource={establishment}

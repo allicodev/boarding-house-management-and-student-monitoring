@@ -1,15 +1,20 @@
-import React from "react";
-import { Modal, Table, Tooltip, Tag } from "antd";
+import React, { useState } from "react";
+import { Modal, Table, Tooltip, Tag, Typography } from "antd";
 import dayjs from "dayjs";
 
 import json from "../json/constant.json";
 
-const ListStudentBarangay = ({ barangay, open, close, data }) => {
+const ListStudentBarangay = ({ open, close, data }) => {
   const columns = [
     { title: "Name", render: (_, row) => row?.firstName + " " + row?.lastName },
     {
       title: "Establishment",
-      render: (_, row) => row?.tenant?.establishmentId?.name,
+      render: (_, row) =>
+        row?.tenant?.establishmentId?.name ?? (
+          <Typography.Text type="secondary" italic>
+            No data
+          </Typography.Text>
+        ),
     },
     {
       title: "College",
@@ -54,7 +59,6 @@ const ListStudentBarangay = ({ barangay, open, close, data }) => {
       open={open}
       onCancel={close}
       closable={false}
-      title={`Barangay ${barangay} Students list`}
       width="90%"
       bodyStyle={{
         height: 500,

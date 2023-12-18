@@ -12,11 +12,15 @@ const FilterForm = ({
   const [selectedCollege, setSelectedCollege] = useState("");
   const [selectedCourse, setSelectedCourse] = useState("");
   const [selectedBarangay, setSelectedBarangay] = useState("");
+  const [year, setYear] = useState("");
+  const [gender, setGender] = useState("");
 
   const clear = () => {
     setSelectedCollege("");
     setSelectedCourse("");
     setSelectedBarangay("");
+    setYear("");
+    setGender("");
     close();
   };
 
@@ -30,15 +34,22 @@ const FilterForm = ({
           <Button
             onClick={() => {
               message.success("Filter Cleared");
+              clearFilter();
               clear();
             }}
           >
             Clear
           </Button>
           <Button
-            disabled={selectedBarangay == ""}
             onClick={() => {
-              onGenerateList(selectedCollege, selectedCourse, selectedBarangay);
+              onGenerateList(
+                selectedCollege,
+                selectedCourse,
+                selectedBarangay,
+                year,
+                gender
+              );
+              message.success("Generate success");
               close();
             }}
           >
@@ -47,10 +58,15 @@ const FilterForm = ({
           <Button
             type="primary"
             onClick={() => {
-              onFilterSubmit(selectedCollege, selectedCourse, selectedBarangay);
+              onFilterSubmit(
+                selectedCollege,
+                selectedCourse,
+                selectedBarangay,
+                year,
+                gender
+              );
               message.success("Filters applied");
               clear();
-              close();
             }}
           >
             Apply Filter
@@ -97,12 +113,38 @@ const FilterForm = ({
           />
         </div>
         <div>
-          Barangay <br />
+          Year Level <br />
+          <Select
+            style={{ width: 300 }}
+            options={[
+              { label: "First year", value: "1" },
+              { label: "Second year", value: "2" },
+              { label: "Third year", value: "3" },
+              { label: "Fourth year", value: "4" },
+            ]}
+            onSelect={(e) => setYear(e)}
+            value={year}
+          />
+        </div>
+        <div>
+          Establishment Vicinity <br />
           <Select
             style={{ width: 300 }}
             options={jason.barangay}
             onSelect={(e) => setSelectedBarangay(e)}
             value={selectedBarangay}
+          />
+        </div>
+        <div>
+          Gender <br />
+          <Select
+            style={{ width: 300 }}
+            options={[
+              { label: "Male", value: "male" },
+              { label: "Female", value: "female" },
+            ]}
+            onSelect={(e) => setGender(e)}
+            value={gender}
           />
         </div>
       </Space>

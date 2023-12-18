@@ -12,12 +12,12 @@ import {
   Button,
 } from "antd";
 import Cookies from "js-cookie";
-import json from "../json/constant.json";
-import { EditStudentInfo, StudentHistory } from "./index";
-
+import dayjs from "dayjs";
 import { UserOutlined, EditOutlined, FileAddOutlined } from "@ant-design/icons";
 
-import dayjs from "dayjs";
+import json from "../json/constant.json";
+import ReportGenerator from "../../layout/components/report_generator";
+import { EditStudentInfo, StudentHistory } from "./index";
 
 const StudentProfile = ({ open, close, data, appkey, refresh }) => {
   const [openEdit, setOpenEdit] = useState({ open: false, data: null });
@@ -25,6 +25,7 @@ const StudentProfile = ({ open, close, data, appkey, refresh }) => {
   const [id, setId] = useState("");
   const [history, setHistory] = useState("");
   const [role, setRole] = useState("");
+  const [openReport, setOpenReport] = useState(false);
 
   useEffect(() => {
     if (data != null) {
@@ -36,6 +37,7 @@ const StudentProfile = ({ open, close, data, appkey, refresh }) => {
 
   return (
     <>
+      {/* context */}
       <StudentHistory
         open={openHistory}
         close={() => setOpenHistory(false)}
@@ -54,12 +56,57 @@ const StudentProfile = ({ open, close, data, appkey, refresh }) => {
           refresh();
         }}
       />
+      <ReportGenerator
+        columns={[
+          { title: "ID Number", align: "center", dataIndex: "idNumber" },
+          {
+            title: "Name",
+            render: (_, row) => row?.firstName + " " + row?.lastName,
+          },
+          { title: "Email", align: "center", dataIndex: "email" },
+          { title: "Gender", align: "center", dataIndex: "gender" },
+          { title: "Year", align: "center", dataIndex: "year", width: 30 },
+          {
+            title: "College",
+            render: (_, row) =>
+              json.colleges.filter((e) => e.value == row?.college)[0]?.label ??
+              "",
+          },
+          {
+            title: "Course",
+            render: (_, row) =>
+              row?.course ?? (
+                <Typography.Text type="secondary" italic>
+                  No Data
+                </Typography.Text>
+              ),
+          },
+          {
+            title: "Boarding House",
+            align: "center",
+            render: (_, row) =>
+              row?.tenant == null ? (
+                <Typography.Text type="secondary" italic>
+                  No Data
+                </Typography.Text>
+              ) : (
+                row.tenant.establishmentId.name
+              ),
+          },
+        ]}
+        data={[data]}
+        open={openReport}
+        close={() => setOpenReport(false)}
+        title="Student Information"
+      />
+      {/* end */}
       <Modal
         open={open}
         onCancel={close}
         footer={null}
         title={<Typography.Text>Student Profile</Typography.Text>}
-        width={700}
+        width={720}
+        zIndex={1}
       >
         <Row gutter={[16, 16]}>
           <Col span={12}>
@@ -103,6 +150,7 @@ const StudentProfile = ({ open, close, data, appkey, refresh }) => {
               >
                 Add History
               </Button>
+              <Button onClick={() => setOpenReport(true)}>PRINT</Button>
             </Space>
           </Col>
           <Col span={12}>

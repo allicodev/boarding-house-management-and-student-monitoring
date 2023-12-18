@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import json from "../../../assets/json/constant.json";
 import { StudentProfile, ListStudentBarangay } from "../../../assets/utilities";
 import FilterForm from "./component/FilterForm";
+import ReportGenerator from "../../../layout/components/report_generator";
 
 const Student = ({ app_key }) => {
   const [students, setStudents] = useState([]);
@@ -96,11 +97,14 @@ const Student = ({ app_key }) => {
     },
   ];
 
-  const fetchStudent = async (college, course, barangay) => {
+  const fetchStudent = async (college, course, barangay, year, gender) => {
     let query = {};
     if (college != "") query.college = college;
     if (course != "") query.course = course;
     if (barangay != "") query.barangay = barangay;
+    if (year != "") query.year = year;
+    if (gender != "") query.gender = gender;
+
     return (async (_) => {
       let { data } = await _.get("/api/admin/get-students", {
         params: query,
@@ -112,7 +116,6 @@ const Student = ({ app_key }) => {
 
   const generateListStudent = async (...params) => {
     const _ = await fetchStudent(...params);
-    console.log(_);
     setStudentListConfig({ open: true, data: _, barangay: params[2] });
   };
 
@@ -145,12 +148,69 @@ const Student = ({ app_key }) => {
           setStudents(_);
         }}
       />
-      <ListStudentBarangay
+      <ReportGenerator
+        {...studentListConfig}
+        close={() =>
+          setStudentListConfig({
+            open: false,
+            data: [],
+            barangay: "",
+          })
+        }
+        title="List of Students"
+        columns={[
+          {
+            title: "Name",
+            render: (_, row) => row?.firstName + " " + row?.lastName,
+          },
+          {
+            title: "Establishment",
+            render: (_, row) =>
+              row?.tenant?.establishmentId?.name ?? (
+                <Typography.Text type="secondary" italic>
+                  No data
+                </Typography.Text>
+              ),
+          },
+          {
+            title: "College",
+            align: "center",
+            render: (_, row) => row.college?.toUpperCase(),
+          },
+          {
+            title: "Course",
+            align: "center",
+            render: (_, row) => row?.course,
+          },
+          ,
+          {
+            title: "Year",
+            align: "center",
+            render: (_, row) => row?.year,
+          },
+          {
+            title: "gender",
+            align: "center",
+            dataIndex: "gender",
+          },
+          {
+            title: "Age",
+            align: "center",
+            render: (_, row) =>
+              dayjs().diff(
+                dayjs(row?.dateOfBirth).format("YYYY-MM-DD"),
+                "years",
+                false
+              ),
+          },
+        ]}
+      />
+      {/* <ListStudentBarangay
         {...studentListConfig}
         close={() =>
           setStudentListConfig({ open: false, data: [], barangay: "" })
         }
-      />
+      /> */}
 
       {/* render */}
       <Button

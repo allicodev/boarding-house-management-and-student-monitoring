@@ -2,12 +2,6 @@ import React, { useRef } from "react";
 import { Drawer, Button, Table, Typography, Col, Image } from "antd";
 import { useReactToPrint } from "react-to-print";
 
-class PDF extends React.Component {
-  render() {
-    return { ...this.props.children };
-  }
-}
-
 const ReportGenerator = ({ columns, data, open, close, title }) => {
   const ref = useRef();
 
@@ -35,10 +29,61 @@ const ReportGenerator = ({ columns, data, open, close, title }) => {
         marginLeft: "50%",
         transform: "translateX(-50%)",
       }}
+      zIndex={999}
     >
-      <PDF ref={ref}>
+      <div ref={ref}>
+        <div
+          style={{
+            minWidth: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Image preview={false} width={120} src="buksu-log.png" />
+          <div style={{ textAlign: "center", marginTop: 30 }}>
+            <Typography.Title
+              level={3}
+              style={{
+                fontFamily: "Baskerville",
+                margin: 0,
+                fontWeight: 900,
+              }}
+            >
+              BUKIDNON STATE UNIVERSITY
+            </Typography.Title>
+            <Typography.Text
+              style={{
+                fontFamily: "Baskerville",
+                fontSize: 18,
+                fontWeight: 600,
+              }}
+            >
+              Malaybalay City, Bukidnon 8700
+            </Typography.Text>
+            <br />
+            <Typography.Text
+              style={{
+                fontFamily: "Baskerville",
+                fontSize: 16,
+                fontWeight: 600,
+              }}
+            >
+              Tel (088) 813-5661 to 5663; TeleFax (088) 813-2717,{" "}
+              <a
+                href="#"
+                style={{
+                  textDecoration: "underline",
+                }}
+              >
+                www.buksu.edu.ph
+              </a>
+            </Typography.Text>
+          </div>
+          <Image preview={false} width={120} src="oss-logo.png" />
+        </div>
         <div style={{ marginTop: 15 }}>
-          <Typography.Title level={3} style={{ textAlign: "center" }}>
+          <Typography.Title level={4} style={{ textAlign: "center" }}>
             {title}
           </Typography.Title>
 
@@ -58,7 +103,7 @@ const ReportGenerator = ({ columns, data, open, close, title }) => {
             </Typography.Text>
           </Col> */}
         </div>
-      </PDF>
+      </div>
     </Drawer>
   );
 };
