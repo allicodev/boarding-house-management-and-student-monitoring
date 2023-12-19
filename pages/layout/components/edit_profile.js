@@ -24,20 +24,26 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
   const [form] = Form.useForm();
   const [openChangePassword, setOpenChangedPassword] = useState(false);
   const [image, setImage] = useState(openEditModal?.data?.profilePhoto);
+  const [image2, setImage2] = useState(openEditModal?.data?.idPhoto);
   const [courses, setCourses] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState("");
+
+  console.log(openEditModal?.data);
 
   const handleFinish = async (val) => {
     delete val.profilephoto;
-    console.log(val);
+    delete val.idPhoto;
+    delete val.course;
 
     if (Object.values(val).includes(undefined)) {
       message.error("Please fill empty field.");
       return;
     }
-
     let { data } = await axios.put("/api/user/update-info", {
       _id: openEditModal?.data?._id,
       profilePhoto: image,
+      idPhoto: image2,
+      course: selectedCourse,
       ...val,
     });
     if (data?.status == 500 && data.message.codeName == "DuplicateKey")
@@ -52,6 +58,7 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
 
   useEffect(() => {
     setImage(openEditModal?.data?.profilePhoto);
+    setImage2(openEditModal?.data?.idPhoto);
     setCourses(
       json.colleges
         .filter((e) => e.value == openEditModal?.data?.college)[0]
@@ -150,6 +157,60 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
             ) : null}
           </Form.Item>
           <Form.Item
+            label="ID Photo"
+            name="idPhoto"
+            style={{ marginBottom: 0 }}
+          >
+            <div
+              style={{ width: 255, cursor: "pointer", marginBottom: 10 }}
+              id="picker-container1"
+            >
+              {image2 == null || image2 == "" ? (
+                <PickerDropPane
+                  apikey={app_key}
+                  onUploadDone={(res) => {
+                    setImage2(res?.filesUploaded[0]?.url);
+                    setUpdated(true);
+                  }}
+                  pickerOptions={{ container: "picker-container1" }}
+                />
+              ) : null}
+            </div>
+
+            {image2 != null && image2 != "" ? (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
+                  position: "relative",
+                  width: 300,
+                  marginBottom: 10,
+                }}
+              >
+                <Image src={image2} alt="random_photo" width="100%" />
+                <Button
+                  style={{
+                    padding: 0,
+                    fontSize: 15,
+                    position: "absolute",
+                    width: 30,
+                    borderRadius: "100%",
+                    aspectRatio: 1 / 1,
+                    right: 5,
+                    top: 5,
+                  }}
+                  danger
+                  onClick={() => {
+                    setImage2(null);
+                  }}
+                >
+                  X
+                </Button>
+              </div>
+            ) : null}
+          </Form.Item>
+          <Form.Item
             label="First Name"
             name="firstName"
             initialValue={openEditModal?.data?.firstName}
@@ -215,7 +276,17 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
             >
               <Select
                 options={json.colleges}
-                onChange={() => setUpdated(true)}
+                onChange={(_) => {
+                  setSelectedCourse("");
+                  setCourses(
+                    json.colleges
+                      .filter((e) => e.value == _)[0]
+                      ?.courses.map((e) => {
+                        return { label: e, value: e };
+                      }) ?? []
+                  );
+                  setUpdated(true);
+                }}
               />
             </Form.Item>
           )}
@@ -225,7 +296,19 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
               name="course"
               initialValue={openEditModal?.data?.course}
             >
-              <Select options={courses} onChange={() => setUpdated(true)} />
+              <Select
+                options={courses}
+                onChange={(e) => {
+                  setSelectedCourse(e);
+                  setUpdated(true);
+                }}
+                value={
+                  selectedCourse != ""
+                    ? selectedCourse
+                    : openEditModal?.data?.course
+                }
+              />
+              <div style={{ display: "none" }} />
             </Form.Item>
           )}
           {user?.role == "student" && (

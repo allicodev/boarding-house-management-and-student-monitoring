@@ -160,8 +160,12 @@ const Student = ({ app_key }) => {
         title="List of Students"
         columns={[
           {
-            title: "Name",
-            render: (_, row) => row?.firstName + " " + row?.lastName,
+            title: "Lastname",
+            dataIndex: "lastName",
+          },
+          {
+            title: "Firstname",
+            dataIndex: "firstName",
           },
           {
             title: "Establishment",

@@ -75,6 +75,11 @@ export default async function handler(req, res) {
           preserveNullAndEmptyArrays: true,
         },
       },
+      {
+        $sort: {
+          lastName: 1,
+        },
+      },
     ]);
 
     if (barangay)

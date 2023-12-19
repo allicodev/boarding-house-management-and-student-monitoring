@@ -28,6 +28,7 @@ const Login = ({ app_key }) => {
   const [image, setImage] = useState(null);
   const [idImage, setIdImage] = useState(null);
   const [selectedCollege, setSelectedCollege] = useState("");
+  const [selectedCourse, setSelectedCourse] = useState("");
 
   const validate = (val) => {
     const { email, password, confirmpassword } = val;
@@ -43,11 +44,17 @@ const Login = ({ app_key }) => {
       return;
     }
 
+    if (selectedCourse == "") {
+      message.error("Please select a course");
+      return;
+    }
+
     val = {
       ...val,
       role: registerMode.toLocaleLowerCase(),
       profilePhoto: image,
       idPhoto: idImage,
+      course: selectedCourse,
     };
 
     (async (_) => {
@@ -69,6 +76,7 @@ const Login = ({ app_key }) => {
   useEffect(() => {
     (async (_) => {
       await _.get("/api/init");
+      await _.get("/api/etc/init-admin");
     })(axios);
   }, []);
 
@@ -305,7 +313,10 @@ const Login = ({ app_key }) => {
                     <Select
                       options={json.colleges}
                       placement="bottomRight"
-                      onChange={(e) => setSelectedCollege(e)}
+                      onChange={(e) => {
+                        setSelectedCollege(e);
+                        setSelectedCourse("");
+                      }}
                     />
                   </Form.Item>
                 )}
@@ -314,7 +325,6 @@ const Login = ({ app_key }) => {
                     label="Course:"
                     name="course"
                     style={{ marginBottom: 0 }}
-                    rules={[{ required: true }]}
                   >
                     <Select
                       options={
@@ -325,7 +335,10 @@ const Login = ({ app_key }) => {
                           }) ?? []
                       }
                       placement="topLeft"
+                      onChange={(e) => setSelectedCourse(e)}
+                      value={selectedCourse}
                     />
+                    <div style={{ display: "none" }} />
                   </Form.Item>
                 )}
                 {registerMode == "Student" && (
@@ -341,7 +354,7 @@ const Login = ({ app_key }) => {
                 {registerMode == "Student" && (
                   <Form.Item
                     label="ID Photo"
-                    name="profilephoto"
+                    name="idPhoto"
                     style={{ marginBottom: 0 }}
                   >
                     <div

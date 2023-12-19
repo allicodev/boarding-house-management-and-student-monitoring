@@ -12,8 +12,7 @@ export default async function handler(req, res) {
     return await User.findOne({ role: "admin" })
       .then(async (data) => {
         if (data) {
-          res.json({ status: 200, message: "Fetch done." });
-          resolve();
+          return res.json({ status: 200, message: "Fetch done." });
         } else {
           let _ = User({
             firstName: "BH",
@@ -23,7 +22,7 @@ export default async function handler(req, res) {
           });
           _.password = await bcrypt.hash("1234", 8);
           await _.save();
-          res.json({ status: 200, message: "Fetch done." });
+          return res.json({ status: 200, message: "Fetch done." });
         }
       })
       .catch((err) => {

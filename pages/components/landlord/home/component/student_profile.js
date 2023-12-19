@@ -11,6 +11,7 @@ import {
   Col,
   Tooltip,
   Divider,
+  Tag,
 } from "antd";
 import SignatureCanvas from "react-signature-canvas";
 
@@ -120,9 +121,61 @@ const StudentProfile = ({ open, close, data, update, refresh }) => {
       >
         <Card
           cover={
-            data?.studentId?.profilePhoto != null ? (
-              <img alt="example" src={data?.studentId?.profilePhoto} />
-            ) : null
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "row",
+              }}
+            >
+              {data?.studentId?.profilePhoto != null ? (
+                <div
+                  style={{
+                    border: "1px solid #eee",
+                    width: "50%",
+                    position: "relative",
+                    borderRadius: 10,
+                  }}
+                >
+                  <Image
+                    alt="example"
+                    src={data?.studentId?.profilePhoto}
+                    style={{ margin: 10 }}
+                    width="100%"
+                  />
+                  <Tag
+                    color="blue"
+                    style={{ position: "absolute", left: 10, top: 10 }}
+                  >
+                    Profile Photo
+                  </Tag>
+                </div>
+              ) : null}
+              {data?.studentId?.idPhoto != null ? (
+                <div
+                  style={{
+                    border: "1px solid #eee",
+                    width: "50%",
+                    position: "relative",
+                    borderRadius: 10,
+                  }}
+                >
+                  <Image
+                    alt="example"
+                    src={data?.studentId?.idPhoto}
+                    style={{ margin: 10 }}
+                    width="100%"
+                  />
+                  <Tag
+                    color="green"
+                    style={{ position: "absolute", left: 10, top: 10 }}
+                  >
+                    ID Photo
+                  </Tag>
+                </div>
+              ) : null}
+            </div>
           }
           actions={[
             <Button

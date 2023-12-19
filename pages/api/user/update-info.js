@@ -14,7 +14,6 @@ export default async function handler(req, res) {
       { $set: { ...req.body } },
       { returnOriginal: false }
     );
-
     res.json({ status: 200, message: "Updated successfully", user });
   } catch (err) {
     res.json({ status: 500, success: false, message: err });
