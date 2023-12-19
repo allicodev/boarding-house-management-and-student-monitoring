@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Form,
@@ -22,7 +22,14 @@ import {
   LandlordTermsCondition,
 } from "../../../../assets/utilities";
 
-const NewEstablishment = ({ app_key, open, close, refresh }) => {
+const NewEstablishment = ({
+  app_key,
+  open,
+  close,
+  refresh,
+  data,
+  isEditMode,
+}) => {
   const [form] = Form.useForm();
   const [photos, setPhotos] = useState([]);
   const [businessPermitPhoto, setBusinessPermitPhoto] = useState();
@@ -48,9 +55,12 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
   const defaultCoordinates = { lat: 125.124651, long: 8.157851 }; //* malaybalay
 
   const handleFinish = async (val) => {
+    const mode = isEditMode ? "update-establishment" : "create-establishment";
+
     val = {
       ...val,
       ...(enterManualAddress ? addressConfig : coordsConfig),
+      ...(isEditMode ? { id: data?._id } : {}),
       ownerId: JSON.parse(Cookies.get("currentUser"))._id,
       signature,
       establishmentPhotos: photos,
@@ -58,15 +68,34 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
       firstPaymentRule,
     };
 
-    let { data } = await axios.post("/api/landlord/create-establishment", val);
+    let res = await axios.post(`/api/landlord/${mode}`, val);
 
-    if (data.status == 200) {
-      message.success(data.message);
+    if (res.data.status == 200) {
+      message.success(res.data.message);
       close();
       refresh();
       setPhotos([]);
-    } else message.error(data.message);
+    } else message.error(res.data.message);
   };
+
+  useEffect(() => {
+    if (data) {
+      form.setFieldsValue(data);
+
+      setAddressConfig({
+        address: data?.address ?? "",
+        coordinates: data?.coordinates ?? [0, 0],
+      });
+      setEnterManualAddress(true);
+      setPhotos(data?.establishmentPhotos);
+      setBusinessPermitPhoto(data?.businessPermitPhoto);
+
+      if (data?.firstPaymentRule?.split(" ")?.length > 2 ?? false) {
+        setFirstPayment("aad");
+        setFirstPaymentRule(data?.firstPaymentRule);
+      } else setFirstPayment("do");
+    }
+  }, [data]);
 
   return (
     <>
@@ -107,7 +136,7 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
           close();
         }}
         closable={false}
-        title="Add New Establishment"
+        title={isEditMode ? "Update Establishment" : "Add New Establishment"}
         zIndex={1}
         footer={
           <Button
@@ -128,13 +157,17 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
               await form
                 .validateFields()
                 .then(() => {
-                  setOpenTermsCondition({
-                    open: true,
-                    name:
-                      JSON.parse(Cookies.get("currentUser")).firstName +
-                      " " +
-                      JSON.parse(Cookies.get("currentUser")).lastName,
-                  });
+                  if (!isEditMode) {
+                    setOpenTermsCondition({
+                      open: true,
+                      name:
+                        JSON.parse(Cookies.get("currentUser")).firstName +
+                        " " +
+                        JSON.parse(Cookies.get("currentUser")).lastName,
+                    });
+                  } else {
+                    form.submit();
+                  }
                 })
                 .catch(() => {
                   message.error("Some input are blank. Please provide.");
@@ -145,7 +178,7 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
                 .length > 0
             }
           >
-            ADD NEW ESTABLISHMENT
+            {isEditMode ? "UPDATE ESTABLISHMENT" : "ADD NEW ESTABLISHMENT"}
           </Button>
         }
         centered
@@ -195,6 +228,7 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
                         address: e.target.value,
                       })
                     }
+                    value={addressConfig.address}
                   />
                   <InputNumber
                     placeholder="Latitude"
@@ -206,6 +240,7 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
                         coordinates: [e, addressConfig.coordinates[1]],
                       })
                     }
+                    value={addressConfig.coordinates[1]}
                   />
                   <InputNumber
                     placeholder="Longitude"
@@ -217,6 +252,7 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
                         coordinates: [addressConfig.coordinates[0], e],
                       })
                     }
+                    value={addressConfig.coordinates[0]}
                   />
                 </Space>
                 <Button
@@ -289,6 +325,7 @@ const NewEstablishment = ({ app_key, open, close, refresh }) => {
                   onChange={(e) =>
                     setFirstPaymentRule(`Deposit and ${e} Months Advance`)
                   }
+                  value={firstPaymentRule?.split(" ")[2]}
                 />
               </>
             )}

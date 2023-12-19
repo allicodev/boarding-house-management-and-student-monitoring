@@ -156,60 +156,63 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
               </div>
             ) : null}
           </Form.Item>
-          <Form.Item
-            label="ID Photo"
-            name="idPhoto"
-            style={{ marginBottom: 0 }}
-          >
-            <div
-              style={{ width: 255, cursor: "pointer", marginBottom: 10 }}
-              id="picker-container1"
+          {user?.role == "student" && (
+            <Form.Item
+              label="ID Photo"
+              name="idPhoto"
+              style={{ marginBottom: 0 }}
             >
-              {image2 == null || image2 == "" ? (
-                <PickerDropPane
-                  apikey={app_key}
-                  onUploadDone={(res) => {
-                    setImage2(res?.filesUploaded[0]?.url);
-                    setUpdated(true);
-                  }}
-                  pickerOptions={{ container: "picker-container1" }}
-                />
-              ) : null}
-            </div>
-
-            {image2 != null && image2 != "" ? (
               <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "flex-start",
-                  position: "relative",
-                  width: 300,
-                  marginBottom: 10,
-                }}
+                style={{ width: 255, cursor: "pointer", marginBottom: 10 }}
+                id="picker-container1"
               >
-                <Image src={image2} alt="random_photo" width="100%" />
-                <Button
+                {image2 == null || image2 == "" ? (
+                  <PickerDropPane
+                    apikey={app_key}
+                    onUploadDone={(res) => {
+                      setImage2(res?.filesUploaded[0]?.url);
+                      setUpdated(true);
+                    }}
+                    pickerOptions={{ container: "picker-container1" }}
+                  />
+                ) : null}
+              </div>
+
+              {image2 != null && image2 != "" ? (
+                <div
                   style={{
-                    padding: 0,
-                    fontSize: 15,
-                    position: "absolute",
-                    width: 30,
-                    borderRadius: "100%",
-                    aspectRatio: 1 / 1,
-                    right: 5,
-                    top: 5,
-                  }}
-                  danger
-                  onClick={() => {
-                    setImage2(null);
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "flex-start",
+                    position: "relative",
+                    width: 300,
+                    marginBottom: 10,
                   }}
                 >
-                  X
-                </Button>
-              </div>
-            ) : null}
-          </Form.Item>
+                  <Image src={image2} alt="random_photo" width="100%" />
+                  <Button
+                    style={{
+                      padding: 0,
+                      fontSize: 15,
+                      position: "absolute",
+                      width: 30,
+                      borderRadius: "100%",
+                      aspectRatio: 1 / 1,
+                      right: 5,
+                      top: 5,
+                    }}
+                    danger
+                    onClick={() => {
+                      setImage2(null);
+                    }}
+                  >
+                    X
+                  </Button>
+                </div>
+              ) : null}
+            </Form.Item>
+          )}
+
           <Form.Item
             label="First Name"
             name="firstName"

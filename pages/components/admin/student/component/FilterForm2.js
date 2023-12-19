@@ -6,7 +6,7 @@ const EstabFilterForm = ({
   open,
   close,
   onFilterSubmit,
-  //   onGenerateList,
+  onGenerateList,
   clearFilter,
 }) => {
   const [status, setStatus] = useState("");
@@ -31,6 +31,14 @@ const EstabFilterForm = ({
             }}
           >
             Clear
+          </Button>
+          <Button
+            onClick={() => {
+              onGenerateList(status);
+              clear();
+            }}
+          >
+            Generate List
           </Button>
           <Button
             type="primary"

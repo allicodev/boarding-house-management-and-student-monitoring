@@ -272,6 +272,46 @@ const Home = ({ app_key }) => {
       <EstabFilterForm
         open={openFilter}
         close={() => setOpenFilter(false)}
+        onGenerateList={async (...params) => {
+          let _ = await fetchEstablishment(...params);
+          setReport({
+            open: true,
+            column: [
+              { title: "name", align: "center", dataIndex: "name" },
+              {
+                title: "Status",
+                align: "center",
+                render: (_, row) =>
+                  row?.verification.at(-1).status == "approved" ?? false
+                    ? "Verified"
+                    : "Not Verified",
+              },
+              {
+                title: "Owner",
+                align: "center",
+                render: (_, row) =>
+                  row.ownerId.firstName + " " + row.ownerId.lastName,
+              },
+              {
+                title: "Address",
+                align: "center",
+                render: (_, row) => row.address,
+              },
+              {
+                title: "Space to Rent",
+                align: "center",
+                render: (_, row) => row.totalSpaceForRent,
+              },
+              {
+                title: "Space Occupied",
+                align: "center",
+                render: (_, row) => row.totalOccupied,
+              },
+            ],
+            data: _,
+            title: "Establishment List",
+          });
+        }}
         onFilterSubmit={async (...params) => {
           let _ = await fetchEstablishment(...params);
           setEstablishment(_);

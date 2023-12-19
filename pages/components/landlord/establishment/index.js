@@ -31,7 +31,11 @@ import json from "../../../assets/json/constant.json";
 import ArchiveTable from "../../../assets/utilities/archive_table";
 
 const Establishment = ({ app_key }) => {
-  const [openNewEstablishment, setOpenNewEstablishment] = useState(false);
+  const [openNewEstablishment, setOpenNewEstablishment] = useState({
+    open: false,
+    data: null,
+    isEditMode: false,
+  });
   const [establishment, setEstablishment] = useState([]);
   const [trigger, setTrigger] = useState(0);
   const [openTable, setOpenTable] = useState({ open: false, data: null });
@@ -264,7 +268,17 @@ const Establishment = ({ app_key }) => {
                   View Archives
                 </Button>
                 <Space>
-                  <Button icon={<SettingOutlined />} type="primary">
+                  <Button
+                    icon={<SettingOutlined />}
+                    type="primary"
+                    onClick={() =>
+                      setOpenNewEstablishment({
+                        open: true,
+                        data: e,
+                        isEditMode: true,
+                      })
+                    }
+                  >
                     Edit
                   </Button>
                   <Popconfirm
@@ -325,19 +339,26 @@ const Establishment = ({ app_key }) => {
             items={updatedTabData(establishment)}
             tabBarStyle={{ borderBottom: "1px solid #cecece" }}
             onEdit={(targetKey, action) =>
-              setOpenNewEstablishment(action == "add")
+              setOpenNewEstablishment(
+                action == "add"
+                  ? { open: true, data: null }
+                  : { open: false, data: null }
+              )
             }
           />
         )}
         {establishment.length == 0 && (
-          <Button type="primary" onClick={() => setOpenNewEstablishment(true)}>
+          <Button
+            type="primary"
+            onClick={() => setOpenNewEstablishment({ open: true, data: null })}
+          >
             New Establishment
           </Button>
         )}
         {/* UTILS */}
         <NewEstablishment
-          open={openNewEstablishment}
-          close={() => setOpenNewEstablishment(false)}
+          {...openNewEstablishment}
+          close={() => setOpenNewEstablishment({ open: false, data: null })}
           refresh={() => setTrigger(trigger + 1)}
           app_key={app_key}
         />
