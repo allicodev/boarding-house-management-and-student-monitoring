@@ -9,13 +9,12 @@ export default async function handler(req, res) {
 
     const { id: _id } = req.query;
 
-    return await User.find({ role: "admin" })
+    return await User.findOne({ role: "admin" })
       .then(async (data) => {
         if (data) {
-          res.json({ status: 200, message: "Fetch done.", hasAdmin: true });
+          res.json({ status: 200, message: "Fetch done." });
           resolve();
         } else {
-          res.json({ status: 200, message: "Fetch done.", hasAdmin: false });
           let _ = User({
             firstName: "BH",
             lastName: "Finder ADMIN",
@@ -23,8 +22,8 @@ export default async function handler(req, res) {
             role: "admin",
           });
           _.password = await bcrypt.hash("1234", 8);
-
           await _.save();
+          res.json({ status: 200, message: "Fetch done." });
         }
       })
       .catch((err) => {
