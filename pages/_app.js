@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "../styles/globals.css";
 import "../styles/main.styles.css";
 import { ConfigProvider } from "antd";
 import Head from "next/head";
+import axios from "axios";
 
 export default function App({ Component, pageProps }) {
+  useEffect(() => {
+    (async (_) => {
+      await _.get("/api/etc/init-admin");
+    })(axios);
+  }, []);
   return (
     <ConfigProvider>
       <Head>

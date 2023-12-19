@@ -22,7 +22,7 @@ export default async function handler(req, res) {
             message: "Student ID is already taken",
           });
       }
-      console.log(req.body);
+
       req.body.password = await bcrypt.hash(req.body.password, 8);
       return await User.create(req.body).then((_doc) =>
         res.json({
