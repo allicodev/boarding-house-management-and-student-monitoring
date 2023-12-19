@@ -709,7 +709,7 @@ const Header = ({ app_key }) => {
                 }}
                 trigger={["click"]}
               >
-                {JSON.parse(user)?.profilePhoto != null ? (
+                {![null, ""].includes(JSON.parse(user)?.profilePhoto) ? (
                   <Image
                     src={JSON.parse(user)?.profilePhoto}
                     width={40}
