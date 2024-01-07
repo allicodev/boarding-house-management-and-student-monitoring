@@ -22,8 +22,13 @@ const Student = ({ app_key }) => {
 
   const column = [
     {
+      title: "Last Name",
+      render: (_, row) => row?.lastName,
+      sorter: (a, b) => a.lastName.localeCompare(b.lastName),
+    },
+    {
       title: "Name",
-      render: (_, row) => row?.firstName + " " + row?.lastName,
+      render: (_, row) => row?.firstName,
       sorter: (a, b) => a.firstName.localeCompare(b.firstName),
     },
     {
@@ -80,10 +85,11 @@ const Student = ({ app_key }) => {
     },
     {
       title: "Course",
+      width: 300,
       dataIndex: "course",
     },
     {
-      title: "Establishment place",
+      title: "Establishment Place",
       sorter: (a, b) =>
         a.tenant?.establishmentId?.name?.localeCompare(
           b.tenant?.establishmentId?.name
