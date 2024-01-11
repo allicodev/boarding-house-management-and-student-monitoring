@@ -1,5 +1,5 @@
 export default function decode(token) {
-  var segments = token.split(".");
+  var segments = token?.split(".");
 
   if (segments.length !== 3) {
     throw new Error("Not enough or too many segments");
