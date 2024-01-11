@@ -42,7 +42,7 @@ const StudentHistory = ({ open, close, data, id, refresh, viewOnly }) => {
       onCancel={close}
       closable={viewOnly}
       footer={null}
-      title={viewOnly ? null : "Add History"}
+      title={viewOnly ? null : "Boarder's Feedback"}
       destroyOnClose
     >
       {!viewOnly && (

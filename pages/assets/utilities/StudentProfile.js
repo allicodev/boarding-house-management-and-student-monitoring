@@ -148,7 +148,7 @@ const StudentProfile = ({ open, close, data, appkey, refresh }) => {
                 }}
                 icon={<FileAddOutlined />}
               >
-                Add History
+                Boarder&apos;s Feedback
               </Button>
               <Button onClick={() => setOpenReport(true)}>PRINT</Button>
             </Space>

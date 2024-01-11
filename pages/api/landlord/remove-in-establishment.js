@@ -1,6 +1,7 @@
 import Tenant from "../../../database/models/Tenant";
 import Archive from "../../../database/models/Archive";
 import dbConnect from "../../../database/dbConnect";
+import Request from "../../../database/models/Request";
 
 export default async function handler(req, res) {
   try {
@@ -11,6 +12,10 @@ export default async function handler(req, res) {
     return await Tenant.findOneAndDelete({ studentId, establishmentId })
       .then(async () => {
         await Archive.create({ studentId, establishmentId, reason });
+        await Request.findOneAndUpdate(
+          { studentId, establishmentId },
+          { $set: { status: "archived" } }
+        );
         return res.json({ status: 200 });
       })
       .catch(() => {

@@ -1,7 +1,7 @@
 import React from "react";
-import { Button, Modal, Typography } from "antd";
+import { Button, Modal, Typography, Divider, Image } from "antd";
 
-const AdminEstabVerifyTermsCondition = ({ open, close, onProceed }) => {
+const AdminEstabVerifyTermsCondition = ({ open, data, close, onProceed }) => {
   return (
     <Modal
       open={open}
@@ -133,6 +133,28 @@ const AdminEstabVerifyTermsCondition = ({ open, close, onProceed }) => {
           </li>
         </ul>
       </Typography.Text>
+      <strong>SIGNATURE</strong>
+      <br />
+      <Image
+        preview={false}
+        src={`data:image/png;base64,${data?.signature
+          ?.split("base64")[1]
+          ?.replace(/=+$/, "")}`}
+        style={{ border: "1px solid #eee" }}
+      />
+      <div style={{ width: 200 }}>
+        <p style={{ textAlign: "center", marginTop: 13 }}>
+          {data?.ownerId?.name}
+        </p>
+        <Divider
+          style={{
+            padding: 0,
+            margin: 0,
+            backgroundColor: "#000",
+          }}
+        />
+        <p style={{ textAlign: "center" }}>Landlord</p>
+      </div>
     </Modal>
   );
 };

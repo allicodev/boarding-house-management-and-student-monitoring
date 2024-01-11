@@ -53,6 +53,10 @@ const RequestHistory = () => {
           <Tag color="#FFA500">
             <CloseOutlined /> CANCELLED
           </Tag>
+        ) : row?.status == "archived" ? (
+          <Tag color="#FFA500">
+            <CloseOutlined /> Archived
+          </Tag>
         ) : (
           <Tooltip title="Click to know the reason">
             <Tag

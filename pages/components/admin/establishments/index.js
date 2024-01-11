@@ -36,7 +36,7 @@ const Home = ({ app_key }) => {
 
   const column = [
     {
-      title: "Establishment Name",
+      title: "Accommodation Name",
       dataIndex: "name",
     },
 

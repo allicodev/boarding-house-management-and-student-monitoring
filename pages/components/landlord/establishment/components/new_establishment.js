@@ -303,7 +303,7 @@ const NewEstablishment = ({
             )}
           </Form.Item>
           <Form.Item
-            label="Total Spaces to Rent"
+            label="Total Spaces"
             name="totalSpaceForRent"
             rules={[
               {
@@ -417,7 +417,7 @@ const NewEstablishment = ({
               </div>
             ))}
           </Form.Item>
-          <Form.Item label="Business Permit">
+          <Form.Item label="Updated Business Permit">
             <div
               style={{ width: 255, cursor: "pointer", marginBottom: 10 }}
               id="picker-container2"

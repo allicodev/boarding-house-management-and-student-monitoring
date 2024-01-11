@@ -72,11 +72,7 @@ const ContentWithSteps = ({ data, close, refresh }) => {
 
     if (_lastStatus == "draft") setIndex(0);
     if (_lastStatus == "pending") setIndex(1);
-    if (
-      _lastStatus == "rejected" ||
-      _lastStatus == "accepted" ||
-      _lastStatus == "cancelled"
-    )
+    if (["rejected", "accepted", "cancelled", "archived"].includes(_lastStatus))
       setIndex(2);
   }, [data]);
 
@@ -237,7 +233,7 @@ const ContentWithSteps = ({ data, close, refresh }) => {
           status={
             lastStatus == "accepted"
               ? "success"
-              : lastStatus == "cancelled"
+              : ["cancelled", "archived"].includes(lastStatus)
               ? "warning"
               : "error"
           }
@@ -246,6 +242,8 @@ const ContentWithSteps = ({ data, close, refresh }) => {
               ? "Your request has been accepted"
               : lastStatus == "cancelled"
               ? "The request is cancelled because you are accepted in other boarding house"
+              : lastStatus == "archived"
+              ? "You have been archived by this establishment"
               : "Your request has been declined"
           }
         >

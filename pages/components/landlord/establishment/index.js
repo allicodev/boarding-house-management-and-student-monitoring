@@ -29,6 +29,7 @@ import DeleteForm from "./components/delete_form";
 import NoImage from "../../../assets/utilities/no_image";
 import json from "../../../assets/json/constant.json";
 import ArchiveTable from "../../../assets/utilities/archive_table";
+import TermsAndCondition from "../../../assets/utilities/landlord_terms_conditions";
 
 const Establishment = ({ app_key }) => {
   const [openNewEstablishment, setOpenNewEstablishment] = useState({
@@ -58,6 +59,13 @@ const Establishment = ({ app_key }) => {
   const [openStudentProfile, setOpenStudentProfile] = useState({
     open: false,
     data: null,
+  });
+
+  const [tcConfig, setTcConfig] = useState({
+    open: false,
+    name: "",
+    viewOnly: true,
+    dataSignature: "",
   });
 
   const column = [
@@ -267,6 +275,18 @@ const Establishment = ({ app_key }) => {
                 >
                   View Archives
                 </Button>
+                <Button
+                  onClick={() => {
+                    setTcConfig({
+                      open: true,
+                      name: e?.ownerId?.firstName + " " + e?.ownerId?.lastName,
+                      viewOnly: true,
+                      dataSignature: e?.signature,
+                    });
+                  }}
+                >
+                  Print Terms and Conditions
+                </Button>
                 <Space>
                   <Button
                     icon={<SettingOutlined />}
@@ -380,6 +400,17 @@ const Establishment = ({ app_key }) => {
           }
           id={openDeleteEstablishmentForm.id}
           refresh={() => setTrigger(trigger + 1)}
+        />
+        <TermsAndCondition
+          {...tcConfig}
+          close={() =>
+            setTcConfig({
+              open: false,
+              name: "",
+              viewOnly: true,
+              dataSignature: "",
+            })
+          }
         />
       </Spin>
     </>

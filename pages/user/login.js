@@ -17,11 +17,12 @@ import {
 import { SwapOutlined } from "@ant-design/icons";
 import { PickerDropPane } from "filestack-react";
 import axios from "axios";
+import GoogleLogin from "react-google-login";
 
 import json from "../assets/json/constant.json";
 import dayjs from "dayjs";
 
-const Login = ({ app_key }) => {
+const Login = ({ app_key, client_id }) => {
   const [mode, setMode] = useState("login");
   const [loginMode, setLoginMode] = useState("Admin");
   const [registerMode, setRegisterMode] = useState("Student");
@@ -174,23 +175,30 @@ const Login = ({ app_key }) => {
                 <Form.Item noStyle>
                   <Button
                     type="primary"
-                    style={{ width: "100%" }}
+                    style={{ width: "100%", marginBottom: 5 }}
                     htmlType="submit"
                     size="large"
                   >
                     Login
                   </Button>
-                  <Button
-                    type="text"
-                    style={{ marginLeft: "50%", transform: "translateX(-50%)" }}
-                    onClick={() => {
-                      Cookies.set("loggedIn", "true");
-                      Cookies.set("mode", "student");
-                      location?.reload();
-                    }}
-                  >
-                    Login as guest
-                  </Button>
+                  {loginMode == "Student" && (
+                    <GoogleLogin
+                      clientId={client_id}
+                      buttonText="Sign in with Google"
+                      style={{
+                        alignSelf: "center",
+                        width: 100,
+                      }}
+                      onSuccess={(e) => {
+                        console.log(e);
+                      }}
+                      onFailure={(e) => {
+                        console.log("ERROR");
+                        console.log(e);
+                      }}
+                      cookiePolicy={"single_host_origin"}
+                    />
+                  )}
                 </Form.Item>
               </Form>
             </Card>
@@ -539,7 +547,12 @@ const Login = ({ app_key }) => {
 };
 
 export async function getServerSideProps() {
-  return { props: { app_key: process.env.FILESTACK_KEY } };
+  return {
+    props: {
+      app_key: process.env.FILESTACK_KEY,
+      client_id: process.env.GOOGLE_CLIENT_ID,
+    },
+  };
 }
 
 export default Login;

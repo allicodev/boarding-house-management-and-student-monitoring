@@ -205,7 +205,7 @@ const EditEstablishmentInfo = ({ open, close, data, appkey }) => {
           ) : null}
         </Form.Item>
         <Form.Item
-          label="Total Spaces to Rent"
+          label="Total Spaces"
           name="totalSpaceForRent"
           rules={[
             {

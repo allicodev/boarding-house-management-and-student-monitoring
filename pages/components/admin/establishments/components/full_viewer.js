@@ -41,7 +41,10 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
     coordinates: [0, 0],
   });
 
-  const [openTermsCondition, setOpenTermsCondition] = useState(false);
+  const [openTermsCondition, setOpenTermsCondition] = useState({
+    open: false,
+    data: null,
+  });
   // const [openEditEstablishment, setOpenEstablishment] = useState({
   //   open: false,
   //   data: null,
@@ -99,11 +102,11 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
         title="List of Students"
       />
       <AdminEstabVerifyTermsCondition
-        open={openTermsCondition}
-        close={() => setOpenTermsCondition(false)}
+        {...openTermsCondition}
+        close={() => setOpenTermsCondition({ open: false, data: null })}
         onProceed={() => {
           verify(data?._id);
-          setOpenTermsCondition(false);
+          setOpenTermsCondition({ open: false, data: null });
         }}
       />
       <Modal
@@ -201,7 +204,7 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
               <Button
                 type="primary"
                 key="key2"
-                onClick={() => setOpenTermsCondition(true)}
+                onClick={() => setOpenTermsCondition({ open: true, data })}
               >
                 Verify
               </Button>

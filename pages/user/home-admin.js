@@ -21,8 +21,8 @@ const MyApp = ({ app_key }) => {
           items={[
             { label: "Dashboard", key: "home", icon: <VscGraph /> },
             {
-              label: "Establishments",
-              key: "establishments",
+              label: "Accommodations",
+              key: "accommodations",
               icon: <FaHouseCircleCheck />,
             },
             { label: "Students", key: "student", icon: <IoIosPeople /> },
@@ -31,7 +31,7 @@ const MyApp = ({ app_key }) => {
         <Layout>
           <Header app_key={app_key} />
           <Content selectedKey={selectedKey} setSelectedKey={setSelectedKey}>
-            {selectedKey == "establishments" ? (
+            {selectedKey == "accommodations" ? (
               <Establishments app_key={app_key} />
             ) : null}
             {selectedKey == "student" ? <Student app_key={app_key} /> : null}
