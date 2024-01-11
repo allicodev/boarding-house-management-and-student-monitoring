@@ -8,6 +8,7 @@ import {
   Select,
   message,
   DatePicker,
+  Tooltip,
 } from "antd";
 import axios from "axios";
 import ChangePassword from "./change_password";
@@ -246,10 +247,11 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
             <Form.Item
               label="Date of Birth"
               name="dateOfBirth"
-              initialValue={dayjs(
-                openEditModal?.data?.dateOfBirth,
-                "YYYY-MM-DD"
-              )}
+              initialValue={
+                openEditModal?.data?.dateOfBirth
+                  ? dayjs(openEditModal?.data?.dateOfBirth, "YYYY-MM-DD")
+                  : null
+              }
             >
               <DatePicker
                 onChange={() => setUpdated(true)}
@@ -318,7 +320,11 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
             <Form.Item
               label="Year"
               name="year"
-              initialValue={parseInt(openEditModal?.data?.year)}
+              initialValue={
+                openEditModal?.data?.year
+                  ? parseInt(openEditModal?.data?.year)
+                  : null
+              }
             >
               <Select options={json.year} onChange={() => setUpdated(true)} />
             </Form.Item>
@@ -337,15 +343,25 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
           >
             <Input prefix="+63" />
           </Form.Item>
-          <Button
-            style={{ width: "100%", fontWeight: 700 }}
-            onClick={() => {
-              setOpenEditModal({ open: false, data: openEditModal?.data });
-              setOpenChangedPassword(true);
-            }}
+          <Tooltip
+            title={
+              openEditModal?.data?.password == "google:"
+                ? "This only works on non-google users"
+                : ""
+            }
           >
-            CHANGE PASSWORD
-          </Button>
+            <Button
+              style={{ width: "100%", fontWeight: 700 }}
+              onClick={() => {
+                setOpenEditModal({ open: false, data: openEditModal?.data });
+                setOpenChangedPassword(true);
+              }}
+              disabled={openEditModal?.data?.password == "google:"}
+              block
+            >
+              CHANGE PASSWORD
+            </Button>
+          </Tooltip>
         </Form>
       </Modal>
       <ChangePassword

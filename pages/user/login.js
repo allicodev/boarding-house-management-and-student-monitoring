@@ -17,7 +17,9 @@ import {
 import { SwapOutlined } from "@ant-design/icons";
 import { PickerDropPane } from "filestack-react";
 import axios from "axios";
-import GoogleLogin from "react-google-login";
+// import GoogleLogin from "react-google-login";
+import GoogleLoginButton from "../assets/utilities/google_login";
+import decode from "../assets/utilities/jwt_decode";
 
 import json from "../assets/json/constant.json";
 import dayjs from "dayjs";
@@ -71,6 +73,43 @@ const Login = ({ app_key, client_id }) => {
         message.success(data.message);
         location?.reload();
       } else message.error(data.message);
+    })(axios);
+  };
+
+  const handleSuccess = (e) => {
+    console.log(decode(e?.credential).payload);
+    const {
+      email,
+      family_name: lastName,
+      given_name: firstName,
+      picture: profilePhoto,
+    } = decode(e?.credential).payload;
+
+    if (email.split("@")[1] != "buksu.edu.ph") {
+      message.error(
+        "Only accept Google Accounts with the “@buksu.edu.ph” domain"
+      );
+      return;
+    }
+
+    (async (_) => {
+      let { data } = await _.post("/api/student/signup-google", {
+        email,
+        lastName,
+        firstName,
+        profilePhoto,
+        idNumber: email.split("@")[0],
+        password: "google:",
+        role: "student",
+      });
+
+      if ([200, 201].includes(data?.status)) {
+        Cookies.set("loggedIn", "true");
+        Cookies.set("mode", data?.user.role);
+        Cookies.set("currentUser", JSON.stringify(data?.user));
+        message.success(data?.message);
+        location?.reload();
+      } else message.error(data?.message);
     })(axios);
   };
 
@@ -148,6 +187,13 @@ const Login = ({ app_key, client_id }) => {
                       return;
                     }
 
+                    if (data.status == 401) {
+                      message.warning(
+                        data?.message ?? "This account is registered as google."
+                      );
+                      return;
+                    }
+
                     if (data.status == 200) {
                       Cookies.set("loggedIn", "true");
                       Cookies.set("mode", loginMode.toLocaleLowerCase());
@@ -182,21 +228,17 @@ const Login = ({ app_key, client_id }) => {
                     Login
                   </Button>
                   {loginMode == "Student" && (
-                    <GoogleLogin
+                    <GoogleLoginButton
                       clientId={client_id}
-                      buttonText="Sign in with Google"
-                      style={{
-                        alignSelf: "center",
-                        width: 100,
-                      }}
-                      onSuccess={(e) => {
-                        console.log(e);
-                      }}
+                      text="Sign in with Google"
+                      onSuccess={handleSuccess}
                       onFailure={(e) => {
                         console.log("ERROR");
                         console.log(e);
                       }}
                       cookiePolicy={"single_host_origin"}
+                      isSignedIn={false}
+                      prompt="select_account"
                     />
                   )}
                 </Form.Item>

@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   if (method === "POST") {
     const validUser = await User.findOne({ email, role: loginMode }).lean();
 
-    if (validUser) {
+    if (validUser && validUser.password != "google:") {
       const validPassword = await bcrypt.compare(password, validUser.password);
 
       if (validPassword) {
@@ -33,6 +33,11 @@ export default async function handler(req, res) {
       } else {
         res.json({ message: "Wrong Password", status: 452 });
       }
+    } else if (validUser?.password == "google:") {
+      res.json({
+        status: 401,
+        message: "This Student is registered as Google Account",
+      });
     } else {
       res.json({ message: "Account doesn't exist", status: 451 });
     }
