@@ -1,24 +1,28 @@
 export default function decode(token) {
-  var segments = token?.split(".");
+  if (typeof token == "string" && ![null, undefined].includes(token)) {
+    var segments = token.split(".");
 
-  if (segments.length !== 3) {
-    throw new Error("Not enough or too many segments");
+    if (segments.length !== 3) {
+      throw new Error("Not enough or too many segments");
+    }
+
+    // All segment should be base64
+    var headerSeg = segments[0];
+    var payloadSeg = segments[1];
+    var signatureSeg = segments[2];
+
+    // base64 decode and parse JSON
+    var header = JSON.parse(base64urlDecode(headerSeg));
+    var payload = JSON.parse(base64urlDecode(payloadSeg));
+
+    return {
+      header: header,
+      payload: payload,
+      signature: signatureSeg,
+    };
+  } else {
+    return {};
   }
-
-  // All segment should be base64
-  var headerSeg = segments[0];
-  var payloadSeg = segments[1];
-  var signatureSeg = segments[2];
-
-  // base64 decode and parse JSON
-  var header = JSON.parse(base64urlDecode(headerSeg));
-  var payload = JSON.parse(base64urlDecode(payloadSeg));
-
-  return {
-    header: header,
-    payload: payload,
-    signature: signatureSeg,
-  };
 }
 
 function base64urlDecode(str) {
