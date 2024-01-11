@@ -17,10 +17,7 @@ import axios from "axios";
 import { PickerDropPane } from "filestack-react";
 import { TiArrowBack } from "react-icons/ti";
 
-import {
-  MapPicker,
-  LandlordTermsCondition,
-} from "../../../../assets/utilities";
+import { MapPicker, LandlordTermsCondition } from "../../../../../utilities";
 
 const NewEstablishment = ({
   app_key,

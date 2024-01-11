@@ -14,7 +14,7 @@ import {
   message,
 } from "antd";
 import { LoadingOutlined, SelectOutlined } from "@ant-design/icons";
-import { Map, NoImage } from "../../../../assets/utilities";
+import { Map, NoImage } from "../../../../../utilities";
 import dayjs from "dayjs";
 import axios from "axios";
 

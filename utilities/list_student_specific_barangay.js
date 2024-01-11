@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal, Table, Tooltip, Tag, Typography } from "antd";
 import dayjs from "dayjs";
 
-import json from "../json/constant.json";
+import json from "../pages/assets/json/constant.json";
 
 const ListStudentBarangay = ({ open, close, data }) => {
   const columns = [

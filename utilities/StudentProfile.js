@@ -15,8 +15,8 @@ import Cookies from "js-cookie";
 import dayjs from "dayjs";
 import { UserOutlined, EditOutlined, FileAddOutlined } from "@ant-design/icons";
 
-import json from "../json/constant.json";
-import ReportGenerator from "../../layout/components/report_generator";
+import json from "../pages/assets/json/constant.json";
+import ReportGenerator from "../pages/layout/components/report_generator";
 import { EditStudentInfo, StudentHistory } from "./index";
 
 const StudentProfile = ({ open, close, data, appkey, refresh }) => {

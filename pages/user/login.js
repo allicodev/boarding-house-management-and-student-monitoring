@@ -18,8 +18,8 @@ import { SwapOutlined } from "@ant-design/icons";
 import { PickerDropPane } from "filestack-react";
 import axios from "axios";
 // import GoogleLogin from "react-google-login";
-import GoogleLoginButton from "../assets/utilities/google_login";
-import decode from "../assets/utilities/jwt_decode";
+import GoogleLoginButton from "../../utilities/google_login";
+import decode from "../..//utilities/jwt_decode";
 
 import json from "../assets/json/constant.json";
 import dayjs from "dayjs";

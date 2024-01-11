@@ -21,7 +21,7 @@ import dayjs from "dayjs";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-import { StudentHistory } from "../../../../assets/utilities";
+import { StudentHistory } from "../../../../../utilities";
 
 const StudentProfile = ({ open, close, data, update, refresh }) => {
   const [loader, setLoader] = useState("");

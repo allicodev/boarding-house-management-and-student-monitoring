@@ -26,10 +26,10 @@ import ModalTable from "./components/modal_table";
 import VerificationHistory from "./components/verification_history";
 import ReportGenerator from "../../../layout/components/report_generator";
 import DeleteForm from "./components/delete_form";
-import NoImage from "../../../assets/utilities/no_image";
+import NoImage from "../../../../utilities/no_image";
 import json from "../../../assets/json/constant.json";
-import ArchiveTable from "../../../assets/utilities/archive_table";
-import TermsAndCondition from "../../../assets/utilities/landlord_terms_conditions";
+import ArchiveTable from "../../../../utilities/archive_table";
+import TermsAndCondition from "../../../../utilities/landlord_terms_conditions";
 
 const Establishment = ({ app_key }) => {
   const [openNewEstablishment, setOpenNewEstablishment] = useState({

@@ -5,7 +5,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 
 import json from "../../../assets/json/constant.json";
-import { StudentProfile } from "../../../assets/utilities";
+import { StudentProfile } from "../../../../utilities";
 
 const user = JSON.parse(Cookies.get("currentUser") ?? "{}");
 

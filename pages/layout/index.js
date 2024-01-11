@@ -27,7 +27,7 @@ import dayjs from "dayjs";
 import json from "../assets/json/constant.json";
 import EditProfile from "./components/edit_profile";
 import ReportGenerator from "./components/report_generator";
-import { StudentProfile } from "../assets/utilities";
+import { StudentProfile } from "../../utilities";
 import FullViewer from "../components/admin/establishments/components/full_viewer";
 import FullViewerStudent from "../components/student/home/components/full_viewer";
 

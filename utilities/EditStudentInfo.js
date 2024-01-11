@@ -14,7 +14,7 @@ import dayjs from "dayjs";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-import json from "../json/constant.json";
+import json from "../pages/assets/json/constant.json";
 
 const EditStudentInfo = ({ open, close, data, appkey, closeAll }) => {
   const [image, setImage] = useState(null);

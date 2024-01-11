@@ -24,7 +24,7 @@ import {
   RoundedContainer,
   Map,
   AdminEstabVerifyTermsCondition,
-} from "../../../../assets/utilities";
+} from "../../../../../utilities";
 import VerificationHistory from "../../../landlord/establishment/components/verification_history";
 import ReportGenerator from "../../../../layout/components/report_generator";
 

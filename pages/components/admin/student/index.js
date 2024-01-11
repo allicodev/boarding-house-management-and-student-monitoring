@@ -5,7 +5,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 
 import json from "../../../assets/json/constant.json";
-import { StudentProfile, ListStudentBarangay } from "../../../assets/utilities";
+import { StudentProfile, ListStudentBarangay } from "../../../../utilities";
 import FilterForm from "./component/FilterForm";
 import ReportGenerator from "../../../layout/components/report_generator";
 

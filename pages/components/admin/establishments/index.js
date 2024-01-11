@@ -6,10 +6,7 @@ import FullViewer from "./components/full_viewer";
 import axios from "axios";
 import ReportGenerator from "../../../layout/components/report_generator";
 import json from "../../../assets/json/constant.json";
-import {
-  ArchiveTable,
-  LandlordTermsCondition,
-} from "../../../assets/utilities";
+import { ArchiveTable, LandlordTermsCondition } from "../../../../utilities";
 import EstabFilterForm from "../student/component/FilterForm2";
 
 const Home = ({ app_key }) => {

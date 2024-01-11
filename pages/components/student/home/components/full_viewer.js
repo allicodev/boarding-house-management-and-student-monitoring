@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Button, Drawer, Space, Modal, Spin, message, Typography } from "antd";
-import { EstablishmentInfo } from "../../../../assets/utilities";
+import { EstablishmentInfo } from "../../../../../utilities";
 import axios from "axios";
 import Cookies from "js-cookie";
 
 import GuestForm from "./GuestForm";
-import StudentTermsCondition from "../../../../assets/utilities/student_terms_conitions";
+import StudentTermsCondition from "../../../../../utilities/student_terms_conitions";
 
 const user = JSON.parse(Cookies.get("currentUser") ?? "{}");
 
