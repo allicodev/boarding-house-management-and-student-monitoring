@@ -249,6 +249,17 @@ const FullViewer = ({ data, open, close, verify, decline, appkey }) => {
                   ) : (
                     <Tag color="red">UNVERIFIED</Tag>
                   )}
+                  {data?.tenantType != undefined && (
+                    <>
+                      {data?.tenantType == "male" ? (
+                        <Tag color="blue">MALE</Tag>
+                      ) : data?.tenantType == "female" ? (
+                        <Tag color="#ffc0cb">FEMALE</Tag>
+                      ) : (
+                        <Tag color="#ff00ff">Mix</Tag>
+                      )}
+                    </>
+                  )}
                 </div>
               </Space>
               <br />

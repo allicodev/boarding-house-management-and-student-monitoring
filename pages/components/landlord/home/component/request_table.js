@@ -29,7 +29,7 @@ const RequestTable = ({ sourceData, refresh }) => {
       },
     },
     {
-      title: "Establishment",
+      title: "Accommodation",
       align: "center",
       render: (_, row) => row?.establishmentId.name,
     },

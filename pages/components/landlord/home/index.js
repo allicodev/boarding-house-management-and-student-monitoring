@@ -143,7 +143,7 @@ const Home = () => {
               },
               title: {
                 display: true,
-                text: "Total Tenants per Establishment",
+                text: "Total Tenants per Accommodation",
                 position: "top",
                 font: {
                   size: "13px",

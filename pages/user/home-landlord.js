@@ -21,8 +21,8 @@ const MyApp = ({ app_key }) => {
           items={[
             { label: "Dashboard", key: "home", icon: <VscGraph /> },
             {
-              label: "Establishment",
-              key: "establishment",
+              label: "Accommodation",
+              key: "accommodation",
               icon: <BsFillHouseFill />,
             },
             {
@@ -36,7 +36,7 @@ const MyApp = ({ app_key }) => {
           <Header app_key={app_key} />
           <Content selectedKey={selectedKey} setSelectedKey={setSelectedKey}>
             {selectedKey == "home" ? <Home /> : null}
-            {selectedKey == "establishment" ? (
+            {selectedKey == "accommodation" ? (
               <Establishment app_key={app_key} />
             ) : null}
             {selectedKey == "tenants" ? <Tenants /> : null}

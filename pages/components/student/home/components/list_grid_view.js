@@ -27,6 +27,7 @@ const ListView = ({ source, setOpenFullDetails }) => {
     {
       title: "Address",
       sorter: (a, b) => a.address.length - b.address.length,
+      width: 400,
       render: (_, row) => row?.address ?? "No Address",
     },
     {
@@ -39,25 +40,36 @@ const ListView = ({ source, setOpenFullDetails }) => {
         "No owner. Its free",
     },
     {
-      title: "Status",
+      title: "Tenant Type",
       align: "center",
       filters: [
         {
-          text: "Verified",
-          value: "approved",
+          text: "Male",
+          value: "male",
         },
         {
-          text: "Unverified",
-          value: "declined",
+          text: "Female",
+          value: "female",
+        },
+        {
+          text: "Mix",
+          value: "mix",
         },
       ],
-      onFilter: (selectedFilter, row) =>
-        row.verification.at(-1).status == selectedFilter,
+      onFilter: (selectedFilter, row) => row?.tenantType == selectedFilter,
       render: (_, row) =>
-        row.verification.at(-1).status == "approved" ? (
-          <Tag color="green">VERIFIED</Tag>
+        row?.tenantType != undefined ? (
+          row?.tenantType == "male" ? (
+            <Tag color="blue">MALE</Tag>
+          ) : row?.tenantType == "female" ? (
+            <Tag color="#ffc0cb">FEMALE</Tag>
+          ) : (
+            <Tag color="#ff00ff">Mix</Tag>
+          )
         ) : (
-          <Tag color="red">UNVERIFIED</Tag>
+          <Typography.Text type="secondary" italic>
+            Not Set
+          </Typography.Text>
         ),
     },
     {

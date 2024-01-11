@@ -30,6 +30,17 @@ const EstablishmentInfo = ({ data }) => {
               {data?.totalSpaceForRent})
             </Tag>
             <Tag color="blue">{data?.firstPaymentRule}</Tag>
+            {data?.tenantType != undefined && (
+              <>
+                {data?.tenantType == "male" ? (
+                  <Tag color="blue">MALE</Tag>
+                ) : data?.tenantType == "female" ? (
+                  <Tag color="#ffc0cb">FEMALE</Tag>
+                ) : (
+                  <Tag color="#ff00ff">Mix</Tag>
+                )}
+              </>
+            )}
           </Space>
           <br />
           <br />

@@ -197,7 +197,7 @@ const NewEstablishment = ({
           >
             <Input />
           </Form.Item>
-          <Form.Item label="Establishment Type" name="type">
+          <Form.Item label="Accommodation Type" name="type">
             <Select
               mode="multiple"
               style={{
@@ -212,6 +212,25 @@ const NewEstablishment = ({
                 </Select.Option>
               ))}
             </Select>
+          </Form.Item>
+          <Form.Item label="Tenant Type" name="tenantType">
+            <Select
+              defaultValue="mix"
+              options={[
+                {
+                  value: "male",
+                  label: "Male",
+                },
+                {
+                  value: "female",
+                  label: "Female",
+                },
+                {
+                  value: "mix",
+                  label: "Mix",
+                },
+              ]}
+            />
           </Form.Item>
           <Form.Item label="Location">
             {enterManualAddress ? (

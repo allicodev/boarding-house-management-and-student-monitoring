@@ -57,10 +57,10 @@ let EstablishmentSchema = new mongoose.Schema(
     signature: {
       type: Buffer,
     },
-    // type: {
-    //   type: String,
-    //   enum: ["male", "female", "mix"],
-    // },
+    tenantType: {
+      type: String,
+      enum: ["male", "female", "mix"],
+    },
   },
   { timestamps: true }
 );

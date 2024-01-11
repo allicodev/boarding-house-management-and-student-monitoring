@@ -44,7 +44,7 @@ const Login = ({ app_key }) => {
       return;
     }
 
-    if (selectedCourse == "") {
+    if (registerMode == "Student" && selectedCourse == "") {
       message.error("Please select a course");
       return;
     }

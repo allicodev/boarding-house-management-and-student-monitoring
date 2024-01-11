@@ -14,6 +14,7 @@ const Home = () => {
   const [establishment, setEstablishment] = useState([]);
   const [openFilter, setOpenFilter] = useState(false);
   const [selectedBarangay, setSelectedBarangay] = useState("");
+  const [selectedType, setSelectedType] = useState([]);
   const [trigger, setTrigger] = useState(0);
   const [openFullDetails, setOpenFullDetails] = useState({
     open: false,
@@ -31,6 +32,9 @@ const Home = () => {
       let { data } = await axios.get("/api/student/get-establishments", {
         params: {
           ...(selectedBarangay != "" ? { barangay: selectedBarangay } : {}),
+          ...(selectedType.length != 0
+            ? { type: JSON.stringify(selectedType) }
+            : {}),
         },
       });
       if (data.status == 200) setEstablishment(data.data);
@@ -77,6 +81,22 @@ const Home = () => {
             options={jason.barangay}
             onSelect={(e) => setSelectedBarangay(e)}
             value={selectedBarangay}
+          />
+        </div>
+        <div style={{ marginTop: 10 }}>
+          Accommodation Type <br />
+          <Select
+            style={{ width: 300 }}
+            mode="multiple"
+            onChange={(e) => setSelectedType(e)}
+            options={["Pad", "Boarding House", "Bed Spacer", "Dormitory"].map(
+              (e) => {
+                return {
+                  label: e,
+                  value: e,
+                };
+              }
+            )}
           />
         </div>
       </Modal>

@@ -9,6 +9,10 @@ import { StudentProfile, ListStudentBarangay } from "../../../assets/utilities";
 import FilterForm from "./component/FilterForm";
 import ReportGenerator from "../../../layout/components/report_generator";
 
+// TODO: add home address input to the student
+// TODO: verfication history in landlord should have time, not only dates
+// TODO: major updates for map
+
 const Student = ({ app_key }) => {
   const [students, setStudents] = useState([]);
   const [openStudent, setOpenStudent] = useState({ open: false, data: null });
