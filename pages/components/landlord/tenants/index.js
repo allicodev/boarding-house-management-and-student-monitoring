@@ -48,7 +48,13 @@ const Tenants = () => {
               json.colleges.filter((e) => e.value == row?.college)[0]?.color
             }
           >
-            {row?.college?.toUpperCase() ?? "No Data"}
+            <span
+              style={{
+                color: row?.college?.toUpperCase() == "COB" ? "#000" : "#fff",
+              }}
+            >
+              {row?.college?.toUpperCase() ?? "No Data"}
+            </span>
           </Tag>
         </Tooltip>
       ),
