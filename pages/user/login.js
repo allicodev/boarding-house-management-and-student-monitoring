@@ -85,9 +85,9 @@ const Login = ({ app_key, client_id }) => {
       picture: profilePhoto,
     } = decode(e?.credential).payload;
 
-    if (email.split("@")[1] != "buksu.edu.ph") {
+    if (email.split("@")[1] != "student.buksu.edu.ph") {
       message.error(
-        "Only accept Google Accounts with the “@buksu.edu.ph” domain"
+        "Only accept Google Accounts with the “@student.buksu.edu.ph” domain"
       );
       return;
     }
