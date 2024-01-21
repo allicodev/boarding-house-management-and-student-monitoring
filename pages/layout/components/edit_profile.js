@@ -119,7 +119,10 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
                     setImage(res?.filesUploaded[0]?.url);
                     setUpdated(true);
                   }}
-                  pickerOptions={{ container: "picker-container" }}
+                  pickerOptions={{
+                    container: "picker-container",
+                    accept: "image/*",
+                  }}
                 />
               ) : null}
             </div>
@@ -174,7 +177,10 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
                       setImage2(res?.filesUploaded[0]?.url);
                       setUpdated(true);
                     }}
-                    pickerOptions={{ container: "picker-container1" }}
+                    pickerOptions={{
+                      container: "picker-container1",
+                      accept: "image/*",
+                    }}
                   />
                 ) : null}
               </div>

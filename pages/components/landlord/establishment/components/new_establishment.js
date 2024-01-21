@@ -369,6 +369,7 @@ const NewEstablishment = ({
                   pickerOptions={{
                     container: "picker-container",
                     maxFiles: 3,
+                    accept: "image/*",
                   }}
                 />
               ) : null}
@@ -427,6 +428,7 @@ const NewEstablishment = ({
                   }}
                   pickerOptions={{
                     container: "picker-container2",
+                    accept: "image/*",
                   }}
                 />
               ) : null}

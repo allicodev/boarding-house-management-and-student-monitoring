@@ -421,7 +421,10 @@ const Login = ({ app_key, client_id }) => {
                           onUploadDone={(res) =>
                             setIdImage(res?.filesUploaded[0]?.url)
                           }
-                          pickerOptions={{ container: "picker-container1" }}
+                          pickerOptions={{
+                            container: "picker-container1",
+                            accept: "image/*",
+                          }}
                         />
                       ) : null}
                     </div>
@@ -503,7 +506,10 @@ const Login = ({ app_key, client_id }) => {
                         onUploadDone={(res) =>
                           setImage(res?.filesUploaded[0]?.url)
                         }
-                        pickerOptions={{ container: "picker-container2" }}
+                        pickerOptions={{
+                          container: "picker-container2",
+                          accept: "image/*",
+                        }}
                       />
                     ) : null}
                   </div>

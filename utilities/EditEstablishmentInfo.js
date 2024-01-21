@@ -109,7 +109,11 @@ const EditEstablishmentInfo = ({ open, close, data, appkey }) => {
                 onUploadDone={(res) => {
                   setPhotos(res?.filesUploaded.map((_) => _.url));
                 }}
-                pickerOptions={{ container: "picker-container", maxFiles: 3 }}
+                pickerOptions={{
+                  container: "picker-container",
+                  maxFiles: 3,
+                  accept: "image/*",
+                }}
               />
             ) : null}
           </div>
@@ -163,7 +167,10 @@ const EditEstablishmentInfo = ({ open, close, data, appkey }) => {
                 onUploadDone={(res) => {
                   setBusinessPermitPhoto(res?.filesUploaded[0]?.url);
                 }}
-                pickerOptions={{ container: "picker-container2" }}
+                pickerOptions={{
+                  container: "picker-container2",
+                  accept: "image/*",
+                }}
               />
             ) : null}
           </div>

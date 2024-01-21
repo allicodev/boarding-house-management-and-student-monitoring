@@ -106,7 +106,10 @@ const EditStudentInfo = ({ open, close, data, appkey, closeAll }) => {
                   setImage(res?.filesUploaded[0]?.url);
                   setUpdated(true);
                 }}
-                pickerOptions={{ container: "picker-container" }}
+                pickerOptions={{
+                  container: "picker-container",
+                  accept: "image/*",
+                }}
               />
             ) : null}
           </div>
